@@ -66,12 +66,13 @@ export default function Portfolio() {
               className="group overflow-hidden rounded-3xl bg-white shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
             >
 
-              <div className="relative h-64 overflow-hidden md:h-72">
+              <div className="relative h-64 overflow-hidden rounded-t-3xl md:h-72">
 
                 <Image
                   src={project.image}
                   alt={project.title}
                   fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />
 

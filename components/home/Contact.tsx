@@ -1,6 +1,7 @@
 "use client";
 
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
+import QuoteForm from "@/components/QuoteForm";
 
 export default function Contact() {
   return (
@@ -32,8 +33,15 @@ export default function Contact() {
 
         {/* Contact Cards */}
 
-        <div className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2 lg:grid-cols-4">
+        {/* Quote Form */}
 
+        <div className="mt-12 md:mt-16">
+          <QuoteForm />
+        </div>
+
+        {/* Contact Cards */}
+
+        <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           <a
             href="tel:+12022868497"
             className="rounded-3xl bg-slate-800 p-6 transition-all duration-300 hover:-translate-y-2 hover:bg-blue-600"
