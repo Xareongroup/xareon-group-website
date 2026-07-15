@@ -1,15 +1,19 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
-const apiKey = process.env.RESEND_API_KEY;
-
-if (!apiKey) {
-  throw new Error("RESEND_API_KEY is not defined");
-}
-
-const resend = new Resend(apiKey);
 export async function POST(req: Request) {
   try {
+    const apiKey = process.env.RESEND_API_KEY;
+
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: "Missing RESEND_API_KEY" },
+        { status: 500 }
+      );
+    }
+
+    const resend = new Resend(apiKey);
+
     const { name, email, phone, message } = await req.json();
 
     await resend.emails.send({
@@ -28,6 +32,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true });
+
   } catch (error) {
     console.error(error);
 
