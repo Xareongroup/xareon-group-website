@@ -1,0 +1,17 @@
+✅ Website built with Next.js
+✅ Deployed on Vercel
+✅ Connected to your custom domain
+✅ HTTPS enabled
+✅ Professional design
+✅ Mobile responsive
+✅ Contact form
+✅ Portfolio
+✅ Reviews
+✅ SEO foundation
+✅ GitHub repository for future updates
+
+
+
+APIkey for resend.com:  re_TvjpwwnR_PKmwKCdYkfZ1ffY83fTYWnhT
+
+git clone https://github.com/Xareongroup/xareon-group-website.git

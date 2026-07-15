@@ -1,216 +1,133 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Phone,
-  Mail,
-  MapPin,
-  Clock,
-} from "lucide-react";
+import { Phone, Mail, MapPin, Clock } from "lucide-react";
 
 export default function Contact() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    message: "",
-  });
-
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
-    e.preventDefault();
-
-    setLoading(true);
-    setSuccess(false);
-
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed");
-      }
-
-      setSuccess(true);
-
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        message: "",
-      });
-    } catch (error) {
-      alert("Something went wrong. Please try again.");
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <section
       id="contact"
-      className="bg-slate-100 py-24"
+      className="bg-slate-900 py-16 md:py-24"
     >
-      <div className="mx-auto max-w-7xl px-6">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+
+        {/* Heading */}
 
         <div className="text-center">
 
-          <span className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-600">
+          <span className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-400 md:text-sm">
             Contact Us
           </span>
 
-          <h2 className="mt-4 text-4xl font-bold text-slate-900 md:text-5xl">
-            Request Your Free Estimate
+          <h2 className="mt-4 text-3xl font-bold text-white md:text-5xl">
+            Let's Get Your Project Started
           </h2>
 
-          <p className="mx-auto mt-6 max-w-3xl text-lg text-slate-600">
-            We'd love to hear about your project. Call us, email us,
-            or send us a message using the form below.
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-300 md:mt-6 md:text-lg">
+            Whether it's a small repair, TV mounting, furniture assembly,
+            smart home installation, or general handyman services,
+            we're ready to help.
           </p>
 
         </div>
 
-        <div className="mt-20 grid gap-12 lg:grid-cols-2">
+        {/* Contact Cards */}
 
-          {/* Contact Information */}
+        <div className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2 lg:grid-cols-4">
 
-          <div className="space-y-8">
+          <a
+            href="tel:+12022868497"
+            className="rounded-3xl bg-slate-800 p-6 transition-all duration-300 hover:-translate-y-2 hover:bg-blue-600"
+          >
+            <Phone className="mb-5 h-10 w-10 text-blue-400" />
 
-            <div className="flex gap-5">
-              <Phone className="text-blue-600" size={30} />
-              <div>
-                <h3 className="font-bold text-xl">
-                  Phone
-                </h3>
-                <p className="text-slate-600">
-                  (202) 286-8497
-                </p>
-              </div>
-            </div>
+            <h3 className="text-xl font-bold text-white">
+              Call
+            </h3>
 
-            <div className="flex gap-5">
-              <Mail className="text-blue-600" size={30} />
-              <div>
-                <h3 className="font-bold text-xl">
-                  Email
-                </h3>
-                <p className="text-slate-600">
-                  info@xareongroup.com
-                </p>
-              </div>
-            </div>
+            <p className="mt-3 text-slate-300">
+              (202) 286-8497
+            </p>
+          </a>
 
-            <div className="flex gap-5">
-              <MapPin className="text-blue-600" size={30} />
-              <div>
-                <h3 className="font-bold text-xl">
-                  Service Area
-                </h3>
-                <p className="text-slate-600">
-                  Maryland • Washington DC • Northern Virginia
-                </p>
-              </div>
-            </div>
+          <a
+            href="mailto:info@xareongroup.com"
+            className="rounded-3xl bg-slate-800 p-6 transition-all duration-300 hover:-translate-y-2 hover:bg-blue-600"
+          >
+            <Mail className="mb-5 h-10 w-10 text-blue-400" />
 
-            <div className="flex gap-5">
-              <Clock className="text-blue-600" size={30} />
-              <div>
-                <h3 className="font-bold text-xl">
-                  Business Hours
-                </h3>
-                <p className="text-slate-600">
-                  Available 24/7
-                </p>
-              </div>
-            </div>
+            <h3 className="text-xl font-bold text-white">
+              Email
+            </h3>
 
+            <p className="mt-3 break-all text-slate-300">
+              info@xareongroup.com
+            </p>
+          </a>
+
+          <div className="rounded-3xl bg-slate-800 p-6">
+            <MapPin className="mb-5 h-10 w-10 text-blue-400" />
+
+            <h3 className="text-xl font-bold text-white">
+              Service Area
+            </h3>
+
+            <p className="mt-3 text-slate-300">
+              Maryland
+              <br />
+              Washington DC
+              <br />
+              Northern Virginia
+            </p>
           </div>
 
-          {/* Contact Form */}
+          <div className="rounded-3xl bg-slate-800 p-6">
+            <Clock className="mb-5 h-10 w-10 text-blue-400" />
 
-          <form
-            onSubmit={handleSubmit}
-            className="rounded-3xl bg-white p-8 shadow-lg"
-          >
+            <h3 className="text-xl font-bold text-white">
+              Hours
+            </h3>
 
-            <div className="space-y-6">
+            <p className="mt-3 text-slate-300">
+              Available
+              <br />
+              24 Hours
+              <br />
+              7 Days a Week
+            </p>
+          </div>
 
-              <input
-                type="text"
-                name="name"
-                placeholder="Full Name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className="w-full rounded-xl border p-4"
-              />
+        </div>
 
-              <input
-                type="email"
-                name="email"
-                placeholder="Email Address"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="w-full rounded-xl border p-4"
-              />
+        {/* Call to Action */}
 
-              <input
-                type="tel"
-                name="phone"
-                placeholder="Phone Number"
-                value={formData.phone}
-                onChange={handleChange}
-                required
-                className="w-full rounded-xl border p-4"
-              />
+        <div className="mt-12 rounded-3xl bg-blue-600 p-8 text-center md:mt-16 md:p-12">
 
-              <textarea
-                rows={5}
-                name="message"
-                placeholder="Tell us about your project..."
-                value={formData.message}
-                onChange={handleChange}
-                required
-                className="w-full rounded-xl border p-4"
-              />
+          <h3 className="text-2xl font-bold text-white md:text-3xl">
+            Ready to Get Started?
+          </h3>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full rounded-xl bg-blue-600 py-4 text-lg font-bold text-white transition hover:bg-blue-700 disabled:opacity-50"
-              >
-                {loading ? "Sending..." : "Request Free Estimate"}
-              </button>
+          <p className="mx-auto mt-4 max-w-2xl text-blue-100">
+            Contact XAREON GROUP today for reliable home repair,
+            installation and handyman services.
+          </p>
 
-              {success && (
-                <p className="text-center font-semibold text-green-600">
-                  Thank you! Your estimate request has been sent successfully.
-                </p>
-              )}
+          <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:justify-center">
 
-            </div>
+            <a
+              href="tel:+12022868497"
+              className="w-full rounded-2xl bg-white px-8 py-4 text-lg font-semibold text-blue-700 transition hover:bg-slate-100 sm:w-auto"
+            >
+              📞 Call Now
+            </a>
 
-          </form>
+            <a
+              href="mailto:info@xareongroup.com"
+              className="w-full rounded-2xl border border-white px-8 py-4 text-lg font-semibold text-white transition hover:bg-white hover:text-blue-700 sm:w-auto"
+            >
+              ✉ Email Us
+            </a>
+
+          </div>
 
         </div>
 

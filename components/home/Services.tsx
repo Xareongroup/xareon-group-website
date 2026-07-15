@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import FadeIn from "@/components/ui/FadeIn";
+
 export default function Services() {
   const services = [
     {
@@ -54,20 +55,20 @@ export default function Services() {
     <FadeIn>
       <section
         id="services"
-        className="bg-white py-24"
+        className="bg-white py-16 md:py-24"
       >
-        <div className="mx-auto max-w-7xl px-6">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
           {/* Section Heading */}
           <div className="text-center">
-            <span className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-600">
+            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-600 md:text-sm">
               Our Services
             </span>
 
-            <h2 className="mt-4 text-4xl font-bold text-slate-900 md:text-5xl">
+            <h2 className="mt-4 text-3xl font-bold leading-tight text-slate-900 md:text-5xl">
               Professional Home Services You Can Trust
             </h2>
 
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-600">
+            <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-600 md:mt-6 md:text-lg">
               From small repairs to complete installations, XAREON GROUP
               delivers dependable workmanship with honesty, precision,
               and exceptional customer service.
@@ -75,27 +76,27 @@ export default function Services() {
           </div>
 
           {/* Services Grid */}
-          <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2 lg:grid-cols-3 md:gap-8">
             {services.map((service) => {
               const Icon = service.icon;
 
               return (
                 <div
                   key={service.title}
-                  className="group rounded-2xl border border-slate-200 bg-white p-8 shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-xl"
+                  className="group flex h-full flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl md:p-8"
                 >
-                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-blue-50 transition group-hover:bg-blue-600">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 transition group-hover:bg-blue-600 md:h-14 md:w-14">
                     <Icon
-                      size={30}
-                      className="text-blue-600 transition group-hover:text-white"
+                      size={26}
+                      className="text-blue-600 transition group-hover:text-white md:h-8 md:w-8"
                     />
                   </div>
 
-                  <h3 className="mt-6 text-2xl font-bold text-slate-900">
+                  <h3 className="mt-5 text-xl font-bold text-slate-900 md:mt-6 md:text-2xl">
                     {service.title}
                   </h3>
 
-                  <p className="mt-4 leading-7 text-slate-600">
+                  <p className="mt-3 flex-grow text-sm leading-7 text-slate-600 md:mt-4 md:text-base">
                     {service.description}
                   </p>
                 </div>
