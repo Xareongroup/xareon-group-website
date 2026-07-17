@@ -120,7 +120,7 @@ const response = await fetch("/api/contact", {
         <input
           {...register("name")}
           placeholder="John Smith"
-          className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-600"
+          className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-600"
         />
 
         {errors.name && (
@@ -143,7 +143,7 @@ const response = await fetch("/api/contact", {
             type="email"
             {...register("email")}
             placeholder="john@email.com"
-            className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-600"
+            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-600"
           />
 
           {errors.email && (
@@ -164,7 +164,7 @@ const response = await fetch("/api/contact", {
             type="tel"
             {...register("phone")}
             placeholder="(202) 286-8497"
-            className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-600"
+            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-600"
           />
 
           {errors.phone && (
@@ -185,7 +185,7 @@ const response = await fetch("/api/contact", {
 
         <select
           {...register("service")}
-          className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-600"
+          className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-600"
         >
           <option value="">Select a service</option>
           <option>Home Repair</option>
@@ -216,7 +216,7 @@ const response = await fetch("/api/contact", {
 
           <select
             {...register("propertyType")}
-            className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-600"
+            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-600"
           >
             <option value="">Select</option>
             <option>Residential</option>
@@ -240,7 +240,7 @@ const response = await fetch("/api/contact", {
           <input
             {...register("city")}
             placeholder="Rockville"
-            className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-600"
+            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-600"
           />
 
           {errors.city && (
@@ -263,7 +263,7 @@ const response = await fetch("/api/contact", {
           rows={6}
           {...register("description")}
           placeholder="Tell us about your project..."
-          className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-600"
+          className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-600"
         />
 
         {errors.description && (

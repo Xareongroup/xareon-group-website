@@ -12,6 +12,10 @@
 
 
 
-APIkey for resend.com:  re_TvjpwwnR_PKmwKCdYkfZ1ffY83fTYWnhT
+APIkey for resend.com:  re_iX2KXxaN_7fagc8V5ViUb1rBkXeTqktWf
 
 git clone https://github.com/Xareongroup/xareon-group-website.git
+
+Cloudflare Turnstile keys: 
+0x4AAAAAAD2urHpIn0JidqTu
+0x4AAAAAAD2urNl5jwMcWl4J1v44EhGXT9k
