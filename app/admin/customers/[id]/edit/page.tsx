@@ -57,7 +57,7 @@ export default function EditCustomerPage({
       setLoading(false);
     }
 
-    loadCustomer();
+    void loadCustomer();
   }, [params, supabase]);
 
   async function handleSubmit(values: CustomerFormValues) {
@@ -91,21 +91,33 @@ export default function EditCustomerPage({
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-4xl rounded-xl bg-white p-8 shadow">
-        Loading customer...
+      <div className="mx-auto max-w-7xl px-6 py-8">
+
+        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+
+          <div className="animate-pulse text-slate-500">
+            Loading customer...
+          </div>
+
+        </div>
+
       </div>
     );
   }
 
   return (
-    <CustomerForm
-      title="Edit Customer"
-      description="Update customer information."
-      submitText="Update Customer"
-      initialValues={customer}
-      loading={saving}
-      error={error}
-      onSubmit={handleSubmit}
-    />
+    <div className="mx-auto max-w-7xl px-6 py-8">
+
+      <CustomerForm
+        title="Edit Customer"
+        description="Update customer information."
+        submitText="Update Customer"
+        initialValues={customer}
+        loading={saving}
+        error={error}
+        onSubmit={handleSubmit}
+      />
+
+    </div>
   );
 }

@@ -50,25 +50,34 @@ export default function CustomerForm({
   }
 
   return (
-    <div className="mx-auto max-w-4xl rounded-xl bg-white p-8 shadow">
+    <div className="mx-auto max-w-5xl rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
 
-      <h1 className="text-3xl font-bold">
-        {title}
-      </h1>
+      {/* ====================================================== */}
+      {/* Header */}
+      {/* ====================================================== */}
 
-      <p className="mt-2 text-slate-500">
-        {description}
-      </p>
+      <div className="border-b border-slate-200 pb-6">
+
+        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">
+          {title}
+        </h1>
+
+        <p className="mt-2 text-slate-500">
+          {description}
+        </p>
+
+      </div>
 
       <form
         onSubmit={handleSubmit}
-        className="mt-8 space-y-6"
+        className="mt-8 space-y-8"
       >
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
 
           <div>
-            <label className="block font-medium">
+
+            <label className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
               First Name
             </label>
 
@@ -77,13 +86,15 @@ export default function CustomerForm({
               onChange={(e) =>
                 update("first_name", e.target.value)
               }
-              className="mt-2 w-full rounded-lg border p-3"
+              className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 transition focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-100"
               required
             />
+
           </div>
 
           <div>
-            <label className="block font-medium">
+
+            <label className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
               Last Name
             </label>
 
@@ -92,17 +103,19 @@ export default function CustomerForm({
               onChange={(e) =>
                 update("last_name", e.target.value)
               }
-              className="mt-2 w-full rounded-lg border p-3"
+              className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 transition focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-100"
               required
             />
+
           </div>
 
-        </div>
+                </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
 
           <div>
-            <label className="block font-medium">
+
+            <label className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
               Email
             </label>
 
@@ -112,12 +125,14 @@ export default function CustomerForm({
               onChange={(e) =>
                 update("email", e.target.value)
               }
-              className="mt-2 w-full rounded-lg border p-3"
+              className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 transition focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-100"
             />
+
           </div>
 
           <div>
-            <label className="block font-medium">
+
+            <label className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
               Phone
             </label>
 
@@ -126,14 +141,16 @@ export default function CustomerForm({
               onChange={(e) =>
                 update("phone", e.target.value)
               }
-              className="mt-2 w-full rounded-lg border p-3"
+              className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 transition focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-100"
             />
+
           </div>
 
         </div>
 
         <div>
-          <label className="block font-medium">
+
+          <label className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
             Address
           </label>
 
@@ -142,12 +159,14 @@ export default function CustomerForm({
             onChange={(e) =>
               update("address", e.target.value)
             }
-            className="mt-2 w-full rounded-lg border p-3"
+            className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 transition focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-100"
           />
+
         </div>
 
         <div>
-          <label className="block font-medium">
+
+          <label className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
             Notes
           </label>
 
@@ -157,22 +176,25 @@ export default function CustomerForm({
             onChange={(e) =>
               update("notes", e.target.value)
             }
-            className="mt-2 w-full rounded-lg border p-3"
+            className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 transition focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-100"
           />
+
         </div>
 
         {error && (
-          <div className="rounded-lg bg-red-100 p-3 text-red-700">
+
+          <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
             {error}
           </div>
+
         )}
 
-        <div className="flex justify-end">
+        <div className="flex justify-end border-t border-slate-200 pt-6">
 
           <button
             type="submit"
             disabled={loading}
-            className="rounded-lg bg-blue-600 px-6 py-3 text-white hover:bg-blue-700 disabled:opacity-50"
+            className="rounded-xl bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? "Saving..." : submitText}
           </button>

@@ -1,52 +1,79 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const links = [
-  { href: "/admin/dashboard", label: "Dashboard" },
-  { href: "/admin/customers", label: "Customers" },
-  { href: "/admin/estimates", label: "Estimates" },
-  { href: "/admin/jobs", label: "Jobs" },
-  { href: "/admin/contracts", label: "Contracts" },
-  { href: "/admin/invoices", label: "Invoices" },
-  { href: "/admin/settings", label: "Settings" },
+  { href: "/admin/dashboard", label: "Dashboard", icon: "📊" },
+  { href: "/admin/customers", label: "Customers", icon: "👥" },
+  { href: "/admin/estimates", label: "Estimates", icon: "📄" },
+  { href: "/admin/jobs", label: "Jobs", icon: "🛠️" },
+  { href: "/admin/contracts", label: "Contracts", icon: "📝" },
+  { href: "/admin/invoices", label: "Invoices", icon: "💰" },
+  { href: "/admin/settings", label: "Settings", icon: "⚙️" },
 ];
 
 export default function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-slate-900 text-white flex flex-col">
-      <div className="border-b border-slate-700 p-6">
-        <h1 className="text-xl font-bold">
-          XAREON
-        </h1>
+    <aside className="flex w-72 flex-col bg-slate-900 text-white shadow-xl">
 
-        <p className="text-sm text-slate-400">
-          Business Portal
-        </p>
-      </div>
+      {/* Logo */}
+      <Link
+        href="/admin/dashboard"
+        className="border-b border-slate-700 p-6 transition hover:bg-slate-800"
+      >
+        <div className="flex flex-col items-center justify-center">
 
-      <nav className="flex-1 p-4 space-y-2">
+          <Image
+            src="/logo/xareon1-logo.png"
+            alt="XAREON Group"
+            width={140}
+            height={140}
+            priority
+            className="h-auto w-auto"
+          />
+
+          <p className="mt-3 text-sm font-medium tracking-wide text-slate-300 uppercase">
+            Business Portal
+          </p>
+
+        </div>
+      </Link>
+
+      {/* Navigation */}
+      <nav className="flex-1 space-y-2 p-4">
         {links.map((link) => {
-          const active = pathname.startsWith(link.href);
+          const active =
+            pathname === link.href ||
+            pathname.startsWith(`${link.href}/`);
 
           return (
             <Link
               key={link.href}
               href={link.href}
-              className={`block rounded-lg px-4 py-3 transition ${
+              className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
                 active
-                  ? "bg-blue-600 text-white"
-                  : "text-slate-300 hover:bg-slate-800"
+                  ? "bg-blue-600 text-white shadow-lg"
+                  : "text-slate-300 hover:bg-slate-800 hover:text-white"
               }`}
             >
-              {link.label}
+              <span className="text-lg">{link.icon}</span>
+
+              <span>{link.label}</span>
             </Link>
           );
         })}
       </nav>
+
+      {/* Footer */}
+      <div className="border-t border-slate-700 p-4 text-center">
+        <p className="text-xs text-slate-500">
+          © {new Date().getFullYear()} XAREON Group
+        </p>
+      </div>
     </aside>
   );
 }

@@ -1,0 +1,111 @@
+@page {
+  size: Letter;
+  margin: 0.4in;
+}
+
+@media print {
+
+  html,
+  body {
+    background: #fff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  nav,
+  aside,
+  header,
+  footer,
+  button,
+  a {
+    display: none !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  .estimate-print,
+  .estimate-print * {
+    visibility: visible;
+  }
+
+  .estimate-print {
+  position: static !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  background: white !important;
+  overflow: visible !important;
+}
+
+  /* Keep important sections together */
+
+  .no-break {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  table {
+  width: 100%;
+  border-collapse: collapse;
+  page-break-inside: auto;
+}
+
+thead {
+  display: table-header-group;
+}
+
+tfoot {
+  display: table-footer-group;
+}
+
+tr {
+  page-break-inside: avoid;
+  page-break-after: auto;
+}
+
+  thead {
+    display: table-header-group;
+  }
+
+  tfoot {
+    display: table-footer-group;
+  }
+
+  tr,
+  td,
+  th {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  img {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    page-break-after: avoid;
+  }
+
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Remove browser shadows */
+
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+}

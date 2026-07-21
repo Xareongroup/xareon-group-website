@@ -1,27 +1,18 @@
+import { resend } from "@/lib/resend";
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
 
 export async function POST(req: Request) {
   try {
-    const apiKey = process.env.RESEND_API_KEY;
+    
     const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
 
-    if (!apiKey) {
-      return NextResponse.json(
-        { success: false, error: "Missing RESEND_API_KEY" },
-        { status: 500 }
-      );
-    }
-
-    if (!turnstileSecret) {
+       if (!turnstileSecret) {
       return NextResponse.json(
         { success: false, error: "Missing TURNSTILE_SECRET_KEY" },
         { status: 500 }
       );
     }
-
-    const resend = new Resend(apiKey);
-
+    
 const formData = await req.formData();
 
 const name = formData.get("name") as string;
