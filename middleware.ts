@@ -29,21 +29,7 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // Allow the login page
-  if (request.nextUrl.pathname === "/admin/login") {
-    return response;
-  }
-
-  // Protect the rest of /admin
-  if (!user) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/admin/login";
-    return NextResponse.redirect(url);
-  }
+  await supabase.auth.getUser();
 
   return response;
 }
