@@ -1,0 +1,63 @@
+interface DataTableProps {
+  loading: boolean;
+  error?: string;
+
+  isEmpty: boolean;
+
+  emptyState: React.ReactNode;
+
+  headers: React.ReactNode;
+
+  children: React.ReactNode;
+}
+
+export default function DataTable({
+  loading,
+  error,
+  isEmpty,
+  emptyState,
+  headers,
+  children,
+}: DataTableProps) {
+  return (
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+      {loading ? (
+
+        <div className="flex items-center justify-center p-16 text-slate-500">
+          Loading...
+        </div>
+
+      ) : error ? (
+
+        <div className="flex items-center justify-center p-16 text-red-600">
+          {error}
+        </div>
+
+      ) : isEmpty ? (
+
+        emptyState
+
+      ) : (
+
+        <table className="min-w-full">
+
+          <thead className="bg-slate-50 text-xs uppercase tracking-[0.18em] text-slate-500">
+
+            {headers}
+
+          </thead>
+
+          <tbody>
+
+            {children}
+
+          </tbody>
+
+        </table>
+
+      )}
+
+    </div>
+  );
+}

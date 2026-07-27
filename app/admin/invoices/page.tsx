@@ -6,6 +6,19 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { formatCurrency } from "@/lib/utils/currency";
 
+import PageHeader from "@/components/admin/PageHeader";
+import StatsCard from "@/components/admin/StatsCard";
+import SearchBar from "@/components/admin/SearchBar";
+import StatusBadge from "@/components/admin/StatusBadge";
+import EmptyState from "@/components/admin/EmptyState";
+import DataTable from "@/components/admin/DataTable";
+
+import {
+  Receipt,
+  CheckCircle,
+  Clock,
+} from "lucide-react";
+
 interface Invoice {
   id: string;
   invoice_number: string | null;
@@ -18,28 +31,6 @@ interface Invoice {
     first_name: string;
     last_name: string;
   } | null;
-}
-
-function getStatusColor(status: string) {
-  switch (status) {
-    case "Draft":
-      return "bg-slate-100 text-slate-700";
-
-    case "Sent":
-      return "bg-blue-100 text-blue-700";
-
-    case "Paid":
-      return "bg-green-100 text-green-700";
-
-    case "Overdue":
-      return "bg-red-100 text-red-700";
-
-    case "Cancelled":
-      return "bg-orange-100 text-orange-700";
-
-    default:
-      return "bg-slate-100 text-slate-700";
-  }
 }
 
 export default function InvoicesPage() {
@@ -84,18 +75,19 @@ export default function InvoicesPage() {
     if (error) {
       console.error(error);
       setError(error.message);
-    } else {
-
-      const formatted: Invoice[] =
-        (data ?? []).map((invoice: any) => ({
-          ...invoice,
-          customer: Array.isArray(invoice.customer)
-            ? invoice.customer[0] ?? null
-            : invoice.customer,
-        }));
-
-      setInvoices(formatted);
+      setLoading(false);
+      return;
     }
+
+    const formatted: Invoice[] =
+      (data ?? []).map((invoice: any) => ({
+        ...invoice,
+        customer: Array.isArray(invoice.customer)
+          ? invoice.customer[0] ?? null
+          : invoice.customer,
+      }));
+
+    setInvoices(formatted);
 
     setLoading(false);
   }
@@ -103,13 +95,13 @@ export default function InvoicesPage() {
   useEffect(() => {
     void loadInvoices();
   }, []);
-
-  const filteredInvoices =
+    const filteredInvoices =
     useMemo(() => {
 
       return invoices.filter((invoice) => {
 
         const matchesSearch =
+
           invoice.invoice_number
             ?.toLowerCase()
             .includes(search.toLowerCase()) ||
@@ -119,7 +111,9 @@ export default function InvoicesPage() {
             .includes(search.toLowerCase());
 
         const matchesStatus =
+
           statusFilter === "All" ||
+
           invoice.status === statusFilter;
 
         return (
@@ -136,293 +130,204 @@ export default function InvoicesPage() {
 
   const paidInvoices =
     invoices.filter(
-      (i) => i.status === "Paid"
+      (invoice) => invoice.status === "Paid"
     ).length;
 
   const sentInvoices =
     invoices.filter(
-      (i) => i.status === "Sent"
+      (invoice) => invoice.status === "Sent"
     ).length;
 
   const overdueInvoices =
     invoices.filter(
-      (i) => i.status === "Overdue"
+      (invoice) => invoice.status === "Overdue"
     ).length;
 
   return (
+
     <div className="mx-auto max-w-7xl px-6 py-8">
 
-      {/* Header */}
+      <PageHeader
+        title="Invoices"
+        description="Manage invoices, payments, and billing."
+        buttonText="New Invoice"
+        buttonHref="/admin/invoices/new"
+      />
 
-      <div className="mb-8 flex flex-col gap-6 border-b border-slate-200 pb-6 lg:flex-row lg:items-end lg:justify-between">
+      <div className="mb-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
 
-        <div>
+        <StatsCard
+          title="Total Invoices"
+          value={totalInvoices}
+          color="blue"
+          icon={
+            <Receipt className="h-8 w-8 text-blue-600" />
+          }
+        />
 
-          <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">
-            Invoices
-          </h1>
+        <StatsCard
+          title="Paid"
+          value={paidInvoices}
+          color="green"
+          icon={
+            <CheckCircle className="h-8 w-8 text-green-600" />
+          }
+        />
 
-          <p className="mt-2 text-base text-slate-500">
-            Manage invoices, payments, and billing.
-          </p>
+        <StatsCard
+          title="Sent"
+          value={sentInvoices}
+          color="blue"
+          icon={
+            <Receipt className="h-8 w-8 text-blue-600" />
+          }
+        />
 
-        </div>
-
-        <Link
-          href="/admin/invoices/new"
-          className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700"
-        >
-          + New Invoice
-        </Link>
-
-      </div>
-
-      {/* Statistics */}
-
-      <div className="mb-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-sm text-slate-500">
-            Total Invoices
-          </p>
-
-          <h2 className="mt-3 text-3xl font-bold">
-            {totalInvoices}
-          </h2>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-sm text-slate-500">
-            Paid
-          </p>
-
-          <h2 className="mt-3 text-3xl font-bold text-green-600">
-            {paidInvoices}
-          </h2>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-sm text-slate-500">
-            Sent
-          </p>
-
-          <h2 className="mt-3 text-3xl font-bold text-blue-600">
-            {sentInvoices}
-          </h2>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-sm text-slate-500">
-            Overdue
-          </p>
-
-          <h2 className="mt-3 text-3xl font-bold text-red-600">
-            {overdueInvoices}
-          </h2>
-        </div>
+        <StatsCard
+          title="Overdue"
+          value={overdueInvoices}
+          color="red"
+          icon={
+            <Clock className="h-8 w-8 text-red-600" />
+          }
+        />
 
       </div>
-            {/* Search & Filter */}
 
-      <div className="mb-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <SearchBar
+        search={search}
+        onSearchChange={setSearch}
+        placeholder="Search invoice number or customer..."
+        status={statusFilter}
+        onStatusChange={setStatusFilter}
+        statusOptions={[
+          "All",
+          "Draft",
+          "Sent",
+          "Paid",
+          "Overdue",
+          "Cancelled",
+        ]}
+      />
 
-        <div className="grid gap-4 lg:grid-cols-[1fr_240px]">
-
-          <input
-            type="text"
-            placeholder="Search invoice number or customer..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500"
+      <DataTable
+        loading={loading}
+        error={error}
+               isEmpty={filteredInvoices.length === 0}
+        emptyState={
+          <EmptyState
+            icon={
+              <Receipt className="mx-auto h-16 w-16 text-slate-400" />
+            }
+            title="No Invoices Found"
+            description="Create your first invoice to get started."
+            buttonText="Create Invoice"
+            buttonHref="/admin/invoices/new"
           />
+        }
+        headers={
+          <tr>
+            <th className="px-6 py-3 text-left">
+              Invoice #
+            </th>
 
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="rounded-xl border border-slate-300 px-4 py-3"
+            <th className="px-6 py-3 text-left">
+              Customer
+            </th>
+
+            <th className="px-6 py-3 text-left">
+              Status
+            </th>
+
+            <th className="px-6 py-3 text-left">
+              Issue Date
+            </th>
+
+            <th className="px-6 py-3 text-left">
+              Due Date
+            </th>
+
+            <th className="px-6 py-3 text-right">
+              Total
+            </th>
+
+            <th className="px-6 py-3 text-center">
+              Actions
+            </th>
+          </tr>
+        }
+      >
+        {filteredInvoices.map((invoice) => (
+
+          <tr
+            key={invoice.id}
+            className="border-t border-slate-100 transition hover:bg-slate-50"
           >
-            <option>All</option>
-            <option>Draft</option>
-            <option>Sent</option>
-            <option>Paid</option>
-            <option>Overdue</option>
-            <option>Cancelled</option>
-          </select>
 
-        </div>
+            <td className="px-6 py-4 font-semibold text-slate-900">
+              {invoice.invoice_number ?? "Pending"}
+            </td>
 
-      </div>
+            <td className="px-6 py-4">
+              {invoice.customer
+                ? `${invoice.customer.first_name} ${invoice.customer.last_name}`
+                : "Unknown Customer"}
+            </td>
 
-      {/* Invoice Table */}
+            <td className="px-6 py-4">
+              <StatusBadge
+                status={invoice.status}
+              />
+            </td>
 
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <td className="px-6 py-4">
+              {invoice.issue_date
+                ? new Date(
+                    invoice.issue_date
+                  ).toLocaleDateString()
+                : "-"}
+            </td>
 
-        {loading ? (
+            <td className="px-6 py-4">
+              {invoice.due_date
+                ? new Date(
+                    invoice.due_date
+                  ).toLocaleDateString()
+                : "-"}
+            </td>
 
-          <div className="p-12 text-center text-slate-500">
-            Loading invoices...
-          </div>
+            <td className="px-6 py-4 text-right font-semibold">
+              {formatCurrency(
+                invoice.total ?? 0
+              )}
+            </td>
 
-        ) : error ? (
+            <td className="px-6 py-4">
+              <div className="flex justify-center gap-2">
 
-          <div className="p-12 text-center text-red-600">
-            {error}
-          </div>
-
-        ) : filteredInvoices.length === 0 ? (
-
-          <div className="p-12 text-center">
-
-            <div className="mb-4 text-5xl">
-              💳
-            </div>
-
-            <h3 className="text-xl font-semibold">
-              No Invoices Found
-            </h3>
-
-            <p className="mt-2 text-slate-500">
-              Create your first invoice to get started.
-            </p>
-
-            <Link
-              href="/admin/invoices/new"
-              className="mt-6 inline-flex rounded-lg bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700"
-            >
-              Create Invoice
-            </Link>
-
-          </div>
-
-        ) : (
-
-          <table className="min-w-full">
-
-            <thead className="bg-slate-50 text-xs uppercase tracking-[0.18em] text-slate-500">
-
-              <tr>
-
-                <th className="px-6 py-3 text-left">
-                  Invoice #
-                </th>
-
-                <th className="px-6 py-3 text-left">
-                  Customer
-                </th>
-
-                <th className="px-6 py-3 text-left">
-                  Status
-                </th>
-
-                <th className="px-6 py-3 text-left">
-                  Issue Date
-                </th>
-
-                <th className="px-6 py-3 text-left">
-                  Due Date
-                </th>
-
-                <th className="px-6 py-3 text-right">
-                  Total
-                </th>
-
-                <th className="px-6 py-3 text-center">
-                  Actions
-                </th>
-
-              </tr>
-
-            </thead>
-
-            <tbody>
-
-              {filteredInvoices.map((invoice) => (
-
-                <tr
-                  key={invoice.id}
-                  className="border-t border-slate-100 transition hover:bg-slate-50"
+                <Link
+                  href={`/admin/invoices/${invoice.id}`}
+                  className="rounded-md border border-slate-300 px-3 py-1.5 text-sm transition hover:bg-slate-100"
                 >
+                  View
+                </Link> 
+                                <Link
+                  href={`/admin/invoices/${invoice.id}/edit`}
+                  className="rounded-md border border-slate-300 px-3 py-1.5 text-sm transition hover:bg-slate-100"
+                >
+                  Edit
+                </Link>
 
-                  <td className="px-6 py-4 font-semibold text-slate-900">
-                    {invoice.invoice_number ?? "Pending"}
-                  </td>
+              </div>
+            </td>
 
-                  <td className="px-6 py-4">
+          </tr>
 
-                    {invoice.customer
-                      ? `${invoice.customer.first_name} ${invoice.customer.last_name}`
-                      : "Unknown Customer"}
+        ))}
 
-                  </td>
-
-                  <td className="px-6 py-4">
-
-                    <span
-                      className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${getStatusColor(
-                        invoice.status
-                      )}`}
-                    >
-                      {invoice.status}
-                    </span>
-
-                  </td>
-
-                  <td className="px-6 py-4">
-
-                    {invoice.issue_date
-                      ? new Date(invoice.issue_date).toLocaleDateString()
-                      : "-"}
-
-                  </td>
-
-                  <td className="px-6 py-4">
-
-                    {invoice.due_date
-                      ? new Date(invoice.due_date).toLocaleDateString()
-                      : "-"}
-
-                  </td>
-
-                  <td className="px-6 py-4 text-right font-semibold">
-
-                    {formatCurrency(invoice.total ?? 0)}
-
-                  </td>
-
-                  <td className="px-6 py-4">
-
-                    <div className="flex justify-center gap-2">
-
-                      <Link
-                        href={`/admin/invoices/${invoice.id}`}
-                        className="rounded-md border border-slate-300 px-3 py-1.5 text-sm transition hover:bg-slate-100"
-                      >
-                        View
-                      </Link>
-
-                      <Link
-                        href={`/admin/invoices/${invoice.id}/edit`}
-                        className="rounded-md border border-slate-300 px-3 py-1.5 text-sm transition hover:bg-slate-100"
-                      >
-                        Edit
-                      </Link>
-
-                    </div>
-
-                  </td>
-
-                </tr>
-
-              ))}
-
-            </tbody>
-
-          </table>
-
-        )}
-
-      </div>
+      </DataTable>
 
     </div>
+
   );
 }

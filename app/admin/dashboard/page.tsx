@@ -1,152 +1,393 @@
-import { createClient } from "@/lib/supabase/server";
+import Link from "next/link";
 
-export default async function DashboardPage() {
-  const supabase = await createClient();
+import {
+  DollarSign,
+  Wallet,
+  TrendingUp,
+  Briefcase,
+  Users,
+  FileText,
+  UserPlus,
+  ClipboardList,
+  Hammer,
+  Receipt,
+  CreditCard,
+} from "lucide-react";
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+import Card from "@/components/ui/Card";
+import DashboardGrid from "@/components/admin/dashboard/DashboardGrid";
+import StatCard from "@/components/admin/dashboard/StatCard";
+import RevenueChart from "@/components/admin/dashboard/RevenueChart";
+import RecentActivity from "@/components/admin/dashboard/RecentActivity";
+import UpcomingJobs from "@/components/admin/dashboard/UpcomingJobs";
 
-  const [
-    { count: customers },
-    { count: estimates },
-    { count: jobs },
-    { count: invoices },
-  ] = await Promise.all([
-    supabase.from("customers").select("*", { count: "exact", head: true }),
-    supabase.from("estimates").select("*", { count: "exact", head: true }),
-    supabase.from("jobs").select("*", { count: "exact", head: true }),
-    supabase.from("invoices").select("*", { count: "exact", head: true }),
+import { getDashboardStats } from "@/lib/dashboard/getDashboardStats";
+import { getDashboardActivity } from "@/lib/dashboard/getDashboardActivity";
+
+import { formatCurrency } from "@/lib/utils/currency";
+
+export default async function AdminDashboard() {
+  const [stats, activity] = await Promise.all([
+    getDashboardStats(),
+    getDashboardActivity(),
   ]);
 
+  const upcomingJobs = activity.upcomingJobs.map((job: any) => ({
+    id: job.id,
+    customer: job.title,
+    service: job.status,
+    scheduledFor: job.scheduled_date
+      ? new Date(job.scheduled_date).toLocaleDateString()
+      : "Not Scheduled",
+  }));
+
+  const activities = [
+    ...activity.recentCustomers.map((customer: any) => ({
+      id: `customer-${customer.id}`,
+      type: "customer" as const,
+      title: `${customer.first_name} ${customer.last_name}`,
+      description: "New customer added",
+      time: customer.created_at
+        ? new Date(customer.created_at).toLocaleDateString()
+        : "",
+    })),
+
+    ...activity.recentInvoices.map((invoice: any) => ({
+      id: `invoice-${invoice.id}`,
+      type: "invoice" as const,
+      title: invoice.invoice_number,
+      description: invoice.status,
+      time: invoice.created_at
+        ? new Date(invoice.created_at).toLocaleDateString()
+        : "",
+    })),
+
+    ...activity.recentPayments.map((payment: any) => ({
+      id: `payment-${payment.id}`,
+      type: "payment" as const,
+      title: formatCurrency(payment.amount),
+      description: payment.payment_method,
+      time: payment.payment_date
+        ? new Date(payment.payment_date).toLocaleDateString()
+        : "",
+    })),
+  ];
+
   return (
-    <div className="mx-auto max-w-7xl px-6 py-8">
+    <div className="space-y-10">
 
-      {/* ====================================================== */}
       {/* Header */}
-      {/* ====================================================== */}
 
-      <div className="border-b border-slate-200 pb-6">
+      <div>
 
-        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
           Dashboard
         </h1>
 
         <p className="mt-2 text-slate-600">
-          Welcome back,
-          <span className="ml-1 font-semibold text-slate-900">
-            {user?.email}
-          </span>
+          Welcome back to XAREON CRM.
         </p>
 
       </div>
 
-      {/* ====================================================== */}
-      {/* Statistics */}
-      {/* ====================================================== */}
+      <DashboardGrid
 
-      <div className="mt-8 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+        stats={
 
-        <StatCard
-          title="Customers"
-          value={customers ?? 0}
-          color="blue"
-        />
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
 
-        <StatCard
-          title="Estimates"
-          value={estimates ?? 0}
-          color="emerald"
-        />
+            <StatCard
+  title="Total Revenue"
+  value={formatCurrency(stats.totalRevenue)}
+  icon={DollarSign}
+  color="green"
+  change="Business Lifetime"
+/>
 
-        <StatCard
-          title="Jobs"
-          value={jobs ?? 0}
-          color="amber"
-        />
+            <StatCard
+  title="Outstanding Balance"
+  value={formatCurrency(stats.outstandingBalance)}
+  icon={Wallet}
+  color="red"
+  change="Awaiting payment"
+  changeType="negative"
+/>
 
-        <StatCard
-          title="Invoices"
-          value={invoices ?? 0}
-          color="violet"
-        />
+            <StatCard
+  title="Paid This Month"
+  value={formatCurrency(stats.paidThisMonth)}
+  icon={TrendingUp}
+  color="blue"
+  change="Current month"
+  changeType="positive"
+/>
 
-      </div>
+            <StatCard
+  title="Active Jobs"
+  value={stats.activeJobs}
+  icon={Briefcase}
+  color="orange"
+  change="In progress"
+/>
 
-      {/* ====================================================== */}
-      {/* Quick Actions */}
-      {/* ====================================================== */}
+            <StatCard
+  title="Customers"
+  value={stats.customerCount}
+  icon={Users}
+  color="blue"
+  change="Total customers"
+/>
 
-      <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <StatCard
+  title="Pending Estimates"
+  value={stats.pendingEstimates}
+  icon={FileText}
+  color="purple"
+  change="Waiting approval"
+/>
 
-        <h2 className="text-xl font-semibold text-slate-900">
-          Quick Actions
-        </h2>
+          </div>
 
-        <p className="mt-2 text-slate-500">
-          Quickly create new records from one place.
-        </p>
+        }
 
-        <div className="mt-6 flex flex-wrap gap-3">
+        main={
 
-          <a
-            href="/admin/customers/new"
-            className="rounded-xl bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700"
-          >
-            + Customer
-          </a>
+          <div className="space-y-6">
 
-          <a
-            href="/admin/estimates/new"
-            className="rounded-xl bg-emerald-600 px-5 py-3 font-medium text-white transition hover:bg-emerald-700"
-          >
-            + Estimate
-          </a>
+            <RevenueChart
+  monthlyRevenue={stats.monthlyRevenue}
+  monthlyInvoices={stats.monthlyInvoices}
+  outstandingBalance={stats.outstandingBalance}
+  revenueData={stats.revenueData}
+/>
 
-          <a
-            href="/admin/invoices/new"
-            className="rounded-xl bg-violet-600 px-5 py-3 font-medium text-white transition hover:bg-violet-700"
-          >
-            + Invoice
-          </a>
+            <Card
+              title="Recent Payments"
+              description="Latest recorded payments"
+            >
 
+              <div className="space-y-4">
+
+                {activity.recentPayments.length === 0 ? (
+
+                  <p className="text-slate-500">
+                    No recent payments.
+                  </p>
+
+                ) : (
+
+                  activity.recentPayments.map((payment: any) => {
+
+                    const customer =
+                      Array.isArray(payment.invoice?.customer)
+                        ? payment.invoice.customer[0]
+                        : payment.invoice?.customer;
+
+                    return (
+
+                      <div
+                        key={payment.id}
+                        className="flex items-center justify-between border-b pb-3 last:border-none"
+                      >
+
+                        <div>
+
+                          <p className="font-medium">
+
+                            {customer
+                              ? `${customer.first_name} ${customer.last_name}`
+                              : "Unknown"}
+
+                          </p>
+
+                          <p className="text-sm text-slate-500">
+                            {payment.payment_method}
+                          </p>
+
+                        </div>
+
+                        <p className="font-semibold text-emerald-600">
+                          {formatCurrency(payment.amount)}
+                        </p>
+
+                      </div>
+
+                    );
+
+                  })
+
+                )}
+
+              </div>
+
+            </Card>
+
+            <Card
+              title="Recent Invoices"
+              description="Recently created invoices"
+            >
+                            <div className="space-y-4">
+
+                {activity.recentInvoices.length === 0 ? (
+
+                  <p className="text-slate-500">
+                    No invoices.
+                  </p>
+
+                ) : (
+
+                  activity.recentInvoices.map((invoice: any) => (
+
+                    <div
+                      key={invoice.id}
+                      className="flex items-center justify-between border-b pb-3 last:border-none"
+                    >
+
+                      <div>
+
+                        <p className="font-medium">
+                          {invoice.invoice_number}
+                        </p>
+
+                        <p className="text-sm text-slate-500">
+                          {invoice.status}
+                        </p>
+
+                      </div>
+
+                      <p className="font-semibold">
+                        {formatCurrency(invoice.total)}
+                      </p>
+
+                    </div>
+
+                  ))
+
+                )}
+
+              </div>
+
+            </Card>
+
+          </div>
+
+        }
+
+        side={
+
+          <div className="space-y-6">
+
+            <UpcomingJobs
+              jobs={upcomingJobs}
+            />
+
+            <RecentActivity
+              activities={activities}
+            />
+
+          </div>
+
+        }
+
+        bottom={
+  <Card
+    title="Quick Actions"
+    description="Create and manage your business faster."
+  >
+    <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-5">
+
+      <Link
+        href="/admin/customers/new"
+        className="group rounded-2xl border border-slate-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-blue-500 hover:shadow-lg"
+      >
+        <div className="mb-4 inline-flex rounded-xl bg-blue-100 p-3 text-blue-600">
+          <UserPlus className="h-6 w-6" />
         </div>
 
-      </div>
+        <h3 className="font-semibold text-slate-900">
+          New Customer
+        </h3>
+
+        <p className="mt-2 text-sm text-slate-500">
+          Add a new customer profile.
+        </p>
+      </Link>
+
+      <Link
+        href="/admin/estimates/new"
+        className="group rounded-2xl border border-slate-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-indigo-500 hover:shadow-lg"
+      >
+        <div className="mb-4 inline-flex rounded-xl bg-indigo-100 p-3 text-indigo-600">
+          <ClipboardList className="h-6 w-6" />
+        </div>
+
+        <h3 className="font-semibold text-slate-900">
+          New Estimate
+        </h3>
+
+        <p className="mt-2 text-sm text-slate-500">
+          Create a quote for a customer.
+        </p>
+      </Link>
+
+      <Link
+        href="/admin/jobs/new"
+        className="group rounded-2xl border border-slate-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-amber-500 hover:shadow-lg"
+      >
+        <div className="mb-4 inline-flex rounded-xl bg-amber-100 p-3 text-amber-600">
+          <Hammer className="h-6 w-6" />
+        </div>
+
+        <h3 className="font-semibold text-slate-900">
+          New Job
+        </h3>
+
+        <p className="mt-2 text-sm text-slate-500">
+          Schedule a new service job.
+        </p>
+      </Link>
+
+      <Link
+        href="/admin/invoices/new"
+        className="group rounded-2xl border border-slate-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500 hover:shadow-lg"
+      >
+        <div className="mb-4 inline-flex rounded-xl bg-emerald-100 p-3 text-emerald-600">
+          <Receipt className="h-6 w-6" />
+        </div>
+
+        <h3 className="font-semibold text-slate-900">
+          New Invoice
+        </h3>
+
+        <p className="mt-2 text-sm text-slate-500">
+          Generate an invoice instantly.
+        </p>
+      </Link>
+
+      <Link
+        href="/admin/payments"
+        className="group rounded-2xl border border-slate-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-green-500 hover:shadow-lg"
+      >
+        <div className="mb-4 inline-flex rounded-xl bg-green-100 p-3 text-green-600">
+          <CreditCard className="h-6 w-6" />
+        </div>
+
+        <h3 className="font-semibold text-slate-900">
+          Payments
+        </h3>
+
+        <p className="mt-2 text-sm text-slate-500">
+          View and manage payments.
+        </p>
+      </Link>
 
     </div>
-  );
+  </Card>
 }
 
-function StatCard({
-  title,
-  value,
-  color,
-}: {
-  title: string;
-  value: number;
-  color: "blue" | "emerald" | "amber" | "violet";
-}) {
-  const colors = {
-    blue: "text-blue-600 bg-blue-50",
-    emerald: "text-emerald-600 bg-emerald-50",
-    amber: "text-amber-600 bg-amber-50",
-    violet: "text-violet-600 bg-violet-50",
-  };
-
-  return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-
-      <div
-        className={`inline-flex rounded-xl px-3 py-2 text-sm font-semibold ${colors[color]}`}
-      >
-        {title}
-      </div>
-
-      <p className="mt-6 text-5xl font-extrabold tracking-tight text-slate-900">
-        {value}
-      </p>
+      />
 
     </div>
+
   );
 }

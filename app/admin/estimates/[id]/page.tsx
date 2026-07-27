@@ -1,4 +1,4 @@
-import ConvertToInvoiceButton from "@/components/admin/estimates/ConvertToInvoiceButton";
+import ConvertToJobButton from "@/components/admin/estimates/ConvertToJobButton";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -20,18 +20,21 @@ export default async function EstimateDetailsPage({
 
   // Load Estimate
   const { data: estimate, error: estimateError } = await supabase
-    .from("estimates")
-    .select(`
-      *,
-      customer:customers(
-        id,
-        first_name,
-        last_name,
-        email,
-        phone,
-        address
-      )
-    `)
+  .from("estimates")
+  .select(`
+    *,
+    customer:customers(
+      id,
+      first_name,
+      last_name,
+      email,
+      phone,
+      address
+    ),
+    jobs(
+      id
+    )
+  `)
     .eq("id", id)
     .single();
 
@@ -90,10 +93,11 @@ export default async function EstimateDetailsPage({
             Preview
           </Link>
 
-          <ConvertToInvoiceButton
-            estimateId={estimate.id}
-          />
+          <ConvertToJobButton
+  estimateId={estimate.id}
+/>
 
+      
         </div>
 
       </div>
