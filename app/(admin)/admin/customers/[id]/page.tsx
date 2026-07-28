@@ -1,3 +1,4 @@
+import ArchiveCustomerButton from "@/components/admin/customers/ArchiveCustomerButton";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -50,10 +51,11 @@ export default async function CustomerDetailsPage({
   }
 
   const [
-    estimatesResponse,
-    jobsResponse,
-    invoicesResponse,
-  ] = await Promise.all([
+  estimatesResponse,
+  jobsResponse,
+  invoicesResponse,
+  paymentsResponse,
+] = await Promise.all([
     supabase
       .from("estimates")
       .select("*")
@@ -71,17 +73,31 @@ export default async function CustomerDetailsPage({
       }),
 
     supabase
-      .from("invoices")
-      .select("*")
-      .eq("customer_id", id)
-      .order("created_at", {
-        ascending: false,
-      }),
-  ]);
+  .from("invoices")
+  .select("*")
+  .eq("customer_id", id)
+  .order("created_at", {
+    ascending: false,
+  }),
+
+supabase
+  .from("payments")
+  .select(`
+    *,
+    invoices!inner(
+      customer_id
+    )
+  `)
+  .eq("invoices.customer_id", id)
+  .order("created_at", {
+    ascending: false,
+  }),
+]);
 
   const estimates = estimatesResponse.data ?? [];
   const jobs = jobsResponse.data ?? [];
   const invoices = invoicesResponse.data ?? [];
+  const payments = paymentsResponse.data ?? [];
 
   return (
     <div className="mx-auto max-w-7xl space-y-8 px-6 py-8">
@@ -91,12 +107,28 @@ export default async function CustomerDetailsPage({
         description="Customer profile and account history."
       />
 
-      <Link href="/admin/customers">
-        <Button variant="outline">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Customers
-        </Button>
-      </Link>
+      <div className="flex flex-wrap gap-3">
+
+  <Link href="/admin/customers">
+    <Button variant="outline">
+      <ArrowLeft className="mr-2 h-4 w-4" />
+      Back to Customers
+    </Button>
+  </Link>
+
+
+  <Link href={`/admin/customers/${customer.id}/edit`}>
+    <Button>
+      Edit Customer
+    </Button>
+  </Link>
+
+
+  <ArchiveCustomerButton
+    customerId={customer.id}
+  />
+
+</div>
 
       <div className="grid gap-6 lg:grid-cols-3">
 
@@ -289,6 +321,18 @@ export default async function CustomerDetailsPage({
 
               </div>
 
+              <div className="flex items-center justify-between">
+
+  <span className="text-slate-600">
+    Payments
+  </span>
+
+  <Badge variant="success">
+    {payments.length}
+  </Badge>
+
+</div>
+
             </div>
 
           </div>
@@ -466,6 +510,60 @@ export default async function CustomerDetailsPage({
           )}
 
         </Card>
+
+        <Card
+  title="Recent Payments"
+  description={`${payments.length} payment${payments.length !== 1 ? "s" : ""}`}
+>
+
+  {payments.length === 0 ? (
+
+    <p className="text-sm text-slate-500">
+      No payments have been recorded yet.
+    </p>
+
+  ) : (
+
+    <div className="space-y-3">
+
+      {payments.slice(0, 5).map((payment) => (
+
+        <div
+          key={payment.id}
+          className="flex items-center justify-between rounded-xl border border-slate-200 p-4 hover:bg-slate-50 transition"
+        >
+
+          <div>
+
+            <p className="font-semibold text-slate-900">
+              ${Number(payment.amount ?? 0).toFixed(2)}
+            </p>
+
+            <p className="text-sm text-slate-500">
+              {payment.payment_method || "Payment"}
+            </p>
+
+            <p className="text-xs text-slate-400 mt-1">
+              Date: {payment.payment_date ?? "—"}
+            </p>
+
+          </div>
+
+
+          <Badge variant="success">
+            Paid
+          </Badge>
+
+
+        </div>
+
+      ))}
+
+    </div>
+
+  )}
+
+</Card>
 
                   <Card
         title="Contracts"

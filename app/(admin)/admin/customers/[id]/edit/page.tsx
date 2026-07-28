@@ -4,9 +4,12 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/client";
+import { updateCustomer } from "@/app/actions/customers";
+
 import CustomerForm, {
   CustomerFormValues,
 } from "@/components/admin/CustomerForm";
+
 
 export default function EditCustomerPage({
   params,
@@ -29,6 +32,7 @@ export default function EditCustomerPage({
     notes: "",
   });
 
+
   useEffect(() => {
     async function loadCustomer() {
       const { id } = await params;
@@ -39,11 +43,13 @@ export default function EditCustomerPage({
         .eq("id", id)
         .single();
 
+
       if (error || !data) {
         setError("Customer not found.");
         setLoading(false);
         return;
       }
+
 
       setCustomer({
         first_name: data.first_name ?? "",
@@ -54,40 +60,58 @@ export default function EditCustomerPage({
         notes: data.notes ?? "",
       });
 
+
       setLoading(false);
     }
+
 
     void loadCustomer();
   }, [params, supabase]);
 
-  async function handleSubmit(values: CustomerFormValues) {
+
+
+  async function handleSubmit(
+    values: CustomerFormValues
+  ) {
     const { id } = await params;
 
     setSaving(true);
     setError("");
 
-    const { error } = await supabase
-      .from("customers")
-      .update({
-        first_name: values.first_name,
-        last_name: values.last_name,
-        email: values.email,
-        phone: values.phone,
-        address: values.address,
-        notes: values.notes,
-      })
-      .eq("id", id);
 
-    setSaving(false);
+    try {
 
-    if (error) {
-      setError(error.message);
-      return;
+      await updateCustomer(
+        id,
+        values
+      );
+
+
+      router.push(
+        `/admin/customers/${id}`
+      );
+
+      router.refresh();
+
+
+    } catch (error) {
+
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError(
+          "Failed to update customer."
+        );
+      }
+
+    } finally {
+
+      setSaving(false);
+
     }
-
-    router.push(`/admin/customers/${id}`);
-    router.refresh();
   }
+
+
 
   if (loading) {
     return (
@@ -104,6 +128,8 @@ export default function EditCustomerPage({
       </div>
     );
   }
+
+
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-8">

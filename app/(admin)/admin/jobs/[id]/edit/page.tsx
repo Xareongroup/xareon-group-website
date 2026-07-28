@@ -19,6 +19,11 @@ interface EstimateOption {
   estimate_number: string;
 }
 
+interface EmployeeOption {
+  id: string;
+  full_name: string;
+}
+
 export default function EditJobPage() {
   const { id } = useParams<{ id: string }>();
 
@@ -27,6 +32,7 @@ export default function EditJobPage() {
 
   const [customers, setCustomers] = useState<CustomerOption[]>([]);
   const [estimates, setEstimates] = useState<EstimateOption[]>([]);
+  const [employees, setEmployees] = useState<EmployeeOption[]>([]);
 
   const [initialValues, setInitialValues] =
     useState<Partial<JobFormValues>>();
@@ -43,6 +49,7 @@ export default function EditJobPage() {
       const [
         customersResult,
         estimatesResult,
+        employeesResult,
         jobResult,
       ] = await Promise.all([
         supabase
@@ -54,6 +61,11 @@ export default function EditJobPage() {
           .from("estimates")
           .select("id, estimate_number")
           .order("estimate_number"),
+
+        supabase
+          .from("employees")
+          .select("id, first_name, last_name")
+          .order("first_name"),
 
         supabase
           .from("jobs")
@@ -74,6 +86,12 @@ export default function EditJobPage() {
         return;
       }
 
+      if (employeesResult.error) {
+        setError(employeesResult.error.message);
+        setPageLoading(false);
+        return;
+      }
+
       if (jobResult.error) {
         setError(jobResult.error.message);
         setPageLoading(false);
@@ -89,6 +107,13 @@ export default function EditJobPage() {
 
       setEstimates(estimatesResult.data ?? []);
 
+      setEmployees(
+        (employeesResult.data ?? []).map((employee) => ({
+          id: employee.id,
+          full_name: `${employee.first_name} ${employee.last_name}`,
+        }))
+      );
+
       setInitialValues({
         job_number: jobResult.data.job_number ?? "",
         customer_id: jobResult.data.customer_id ?? "",
@@ -98,7 +123,8 @@ export default function EditJobPage() {
         status: jobResult.data.status ?? "Scheduled",
         priority: jobResult.data.priority ?? "Normal",
         scheduled_date: jobResult.data.scheduled_date ?? "",
-        technician: jobResult.data.technician ?? "",
+        assigned_employee_id:
+          jobResult.data.assigned_employee_id ?? "",
         service_address: jobResult.data.service_address ?? "",
         customer_phone: jobResult.data.customer_phone ?? "",
         notes: jobResult.data.notes ?? "",
@@ -124,7 +150,7 @@ export default function EditJobPage() {
         status: values.status,
         priority: values.priority,
         scheduled_date: values.scheduled_date || null,
-        technician: values.technician,
+        assigned_employee_id: values.assigned_employee_id,
         service_address: values.service_address,
         customer_phone: values.customer_phone,
         notes: values.notes,
@@ -152,7 +178,6 @@ export default function EditJobPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-8">
-
       <JobForm
         title="Edit Job"
         description="Update this work order."
@@ -160,11 +185,11 @@ export default function EditJobPage() {
         initialValues={initialValues}
         customers={customers}
         estimates={estimates}
+        employees={employees}
         loading={loading}
         error={error}
         onSubmit={handleSubmit}
       />
-
     </div>
   );
 }

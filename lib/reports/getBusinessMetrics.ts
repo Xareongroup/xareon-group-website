@@ -9,12 +9,50 @@ export interface BusinessMetrics {
   invoiceCount: number;
 }
 
-export async function getBusinessMetrics(): Promise<BusinessMetrics> {
+function getStartDate(range: string): string | null {
+  const now = new Date();
+
+  switch (range) {
+    case "today":
+      now.setHours(0, 0, 0, 0);
+      return now.toISOString();
+
+    case "30d":
+      now.setDate(now.getDate() - 30);
+      return now.toISOString();
+
+    case "90d":
+      now.setDate(now.getDate() - 90);
+      return now.toISOString();
+
+    case "year":
+      return new Date(now.getFullYear(), 0, 1).toISOString();
+
+    default:
+      return null;
+  }
+}
+
+export async function getBusinessMetrics(
+  range: string = "30d"
+): Promise<BusinessMetrics> {
   const supabase = adminSupabase;
 
-  const { data: invoices } = await supabase
+  let query = supabase
     .from("invoices")
-    .select("total,balance_due,status");
+    .select("total,balance_due,status,created_at");
+
+  const startDate = getStartDate(range);
+
+  if (startDate) {
+    query = query.gte("created_at", startDate);
+  }
+
+  const { data: invoices, error } = await query;
+
+  if (error) {
+    throw error;
+  }
 
   const rows = invoices ?? [];
 

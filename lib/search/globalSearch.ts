@@ -1,67 +1,98 @@
 import { adminSupabase } from "@/lib/supabase/admin";
 
-export interface SearchResult {
+export interface SearchCustomer {
   id: string;
-  type: "customer" | "invoice" | "job" | "payment";
-  title: string;
-  subtitle: string;
-  href: string;
+  name: string;
+  email: string | null;
+  phone: string | null;
+}
+
+export interface SearchJob {
+  id: string;
+  job_number: string | null;
+  title: string | null;
+  status: string | null;
+}
+
+export interface SearchInvoice {
+  id: string;
+  invoice_number: string | null;
+  status: string | null;
+  total: number | null;
+}
+
+export interface SearchPayment {
+  id: string;
+  amount: number | null;
+  reference: string | null;
+}
+
+export interface GlobalSearchResult {
+  customers: SearchCustomer[];
+  jobs: SearchJob[];
+  invoices: SearchInvoice[];
+  payments: SearchPayment[];
 }
 
 export async function globalSearch(
   query: string
-): Promise<SearchResult[]> {
-  const supabase = adminSupabase;
+): Promise<GlobalSearchResult> {
+  const search = query.trim();
 
-  const term = query.trim();
-
-  if (!term) {
-    return [];
+  if (search.length < 2) {
+    return {
+      customers: [],
+      jobs: [],
+      invoices: [],
+      payments: [],
+    };
   }
 
-  const [customers, invoices, jobs] = await Promise.all([
+  const supabase = adminSupabase;
+
+  const [
+    customersResult,
+    jobsResult,
+    invoicesResult,
+    paymentsResult,
+  ] = await Promise.all([
     supabase
       .from("customers")
-      .select("id,first_name,last_name")
-      .or(`first_name.ilike.%${term}%,last_name.ilike.%${term}%`)
-      .limit(5),
-
-    supabase
-      .from("invoices")
-      .select("id,invoice_number")
-      .ilike("invoice_number", `%${term}%`)
+      .select("id,name,email,phone")
+      .or(
+        `name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`
+      )
       .limit(5),
 
     supabase
       .from("jobs")
-      .select("id,title")
-      .ilike("title", `%${term}%`)
+      .select("id,job_number,title,status")
+      .or(
+        `job_number.ilike.%${search}%,title.ilike.%${search}%`
+      )
+      .limit(5),
+
+    supabase
+      .from("invoices")
+      .select("id,invoice_number,status,total")
+      .or(
+        `invoice_number.ilike.%${search}%`
+      )
+      .limit(5),
+
+    supabase
+      .from("payments")
+      .select("id,amount,reference")
+      .or(
+        `reference.ilike.%${search}%`
+      )
       .limit(5),
   ]);
 
-  return [
-    ...(customers.data ?? []).map((c) => ({
-      id: c.id,
-      type: "customer" as const,
-      title: `${c.first_name} ${c.last_name}`,
-      subtitle: "Customer",
-      href: `/admin/customers/${c.id}`,
-    })),
-
-    ...(invoices.data ?? []).map((i) => ({
-      id: i.id,
-      type: "invoice" as const,
-      title: i.invoice_number,
-      subtitle: "Invoice",
-      href: `/admin/invoices/${i.id}`,
-    })),
-
-    ...(jobs.data ?? []).map((j) => ({
-      id: j.id,
-      type: "job" as const,
-      title: j.title,
-      subtitle: "Job",
-      href: `/admin/jobs/${j.id}`,
-    })),
-  ];
+  return {
+    customers: customersResult.data ?? [],
+    jobs: jobsResult.data ?? [],
+    invoices: invoicesResult.data ?? [],
+    payments: paymentsResult.data ?? [],
+  };
 }
