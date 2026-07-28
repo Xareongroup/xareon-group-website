@@ -4,25 +4,14 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/client";
+import { getNextDocumentNumber } from "@/lib/documentNumbers";
 
-import PageHeader from "@/components/admin/PageHeader";
-import FormSection from "@/components/admin/FormSection";
-
-interface Customer {
-  id: string;
-  first_name: string;
-  last_name: string;
-}
-
-interface Estimate {
-  id: string;
-  estimate_number: string;
-}
-
-interface Job {
-  id: string;
-  job_number: string;
-}
+import ContractForm, {
+  ContractFormValues,
+  CustomerOption,
+  EstimateOption,
+  JobOption,
+} from "@/components/admin/ContractForm";
 
 export default function NewContractPage() {
 
@@ -33,41 +22,39 @@ export default function NewContractPage() {
   const [loading, setLoading] =
     useState(false);
 
+  const [error, setError] =
+    useState("");
+
   const [customers, setCustomers] =
-    useState<Customer[]>([]);
+    useState<CustomerOption[]>([]);
 
   const [estimates, setEstimates] =
-    useState<Estimate[]>([]);
+    useState<EstimateOption[]>([]);
 
   const [jobs, setJobs] =
-    useState<Job[]>([]);
+    useState<JobOption[]>([]);
 
-  const [title, setTitle] =
-    useState("");
+  const initialValues: ContractFormValues = {
 
-  const [customerId, setCustomerId] =
-    useState("");
+    title: "",
 
-  const [estimateId, setEstimateId] =
-    useState("");
+    customer_id: "",
 
-  const [jobId, setJobId] =
-    useState("");
+    estimate_id: "",
 
-  const [status, setStatus] =
-    useState("Draft");
+    job_id: "",
 
-  const [scopeOfWork, setScopeOfWork] =
-    useState("");
+    status: "Draft",
 
-  const [paymentTerms, setPaymentTerms] =
-    useState("");
+    scope_of_work: "",
 
-  const [warranty, setWarranty] =
-    useState("");
+    payment_terms: "",
 
-  const [notes, setNotes] =
-    useState("");
+    warranty: "",
+
+    notes: "",
+
+  };
 
   async function loadData() {
 
@@ -80,7 +67,8 @@ export default function NewContractPage() {
       jobsResult,
 
     ] = await Promise.all([
-              supabase
+
+      supabase
         .from("customers")
         .select("id, first_name, last_name")
         .order("first_name"),
@@ -109,344 +97,129 @@ export default function NewContractPage() {
   }
 
   useEffect(() => {
+
     void loadData();
+
   }, []);
-
-  async function handleSubmit(
-    e: React.FormEvent
+    async function handleSubmit(
+    values: ContractFormValues
   ) {
-
-    e.preventDefault();
 
     setLoading(true);
 
-    const { error } = await supabase
+    setError("");
 
-      .from("contracts")
+    try {
 
-      .insert({
+      const contractNumber =
+        await getNextDocumentNumber(
+          supabase,
+          "contract"
+        );
 
-        title,
+      console.log(
+        "Generated Contract Number:",
+        contractNumber
+      );
 
-        customer_id:
-          customerId || null,
+      const { error } =
+        await supabase
+          .from("contracts")
+          .insert({
 
-        estimate_id:
-          estimateId || null,
+            contract_number:
+              contractNumber,
 
-        job_id:
-          jobId || null,
+            title:
+              values.title,
 
-        status,
+            customer_id:
+              values.customer_id || null,
 
-        scope_of_work:
-          scopeOfWork,
+            estimate_id:
+              values.estimate_id || null,
 
-        payment_terms:
-          paymentTerms,
+            job_id:
+              values.job_id || null,
 
-        warranty,
+            status:
+              values.status,
 
-        notes,
+            scope_of_work:
+              values.scope_of_work,
 
-      });
+            payment_terms:
+              values.payment_terms,
 
-    setLoading(false);
+            warranty:
+              values.warranty,
 
-    if (error) {
+            notes:
+              values.notes,
 
-      alert(error.message);
+          });
 
-      return;
+      if (error) {
+        throw error;
+      }
+
+      router.push(
+        "/admin/contracts"
+      );
+
+      router.refresh();
+
+    } catch (err: any) {
+
+      console.error(
+        "Create Contract Error:",
+        err
+      );
+
+      setError(
+
+        err?.message ||
+
+        err?.details ||
+
+        err?.hint ||
+
+        "Unable to create contract."
+
+      );
+
+    } finally {
+
+      setLoading(false);
 
     }
 
-    router.push("/admin/contracts");
-
-    router.refresh();
-
   }
+    return (
 
-  return (
+    <ContractForm
 
-    <div className="mx-auto max-w-6xl px-6 py-8">
+      title="New Contract"
 
-      <PageHeader
-        title="New Contract"
-        description="Create a new customer contract."
-      />
+      description="Create a professional customer contract."
 
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-8"
-      >
-                <FormSection
-          title="Contract Information"
-          description="Basic information about this agreement."
-        >
+      submitText="Create Contract"
 
-          <div className="grid gap-6 md:grid-cols-2">
+      customers={customers}
 
-            <div>
+      estimates={estimates}
 
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Contract Title
-              </label>
+      jobs={jobs}
 
-              <input
-                type="text"
-                value={title}
-                onChange={(e) =>
-                  setTitle(e.target.value)
-                }
-                placeholder="Kitchen Renovation Agreement"
-                required
-                className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              />
+      initialValues={initialValues}
 
-            </div>
+      loading={loading}
 
-            <div>
+      error={error}
 
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Status
-              </label>
+      onSubmit={handleSubmit}
 
-              <select
-                value={status}
-                onChange={(e) =>
-                  setStatus(e.target.value)
-                }
-                className="w-full rounded-xl border border-slate-300 px-4 py-3"
-              >
-                <option>Draft</option>
-                <option>Sent</option>
-                <option>Signed</option>
-                <option>Cancelled</option>
-              </select>
-
-            </div>
-
-          </div>
-
-        </FormSection>
-
-        <FormSection
-          title="Customer Information"
-          description="Select the customer and related records."
-        >
-
-          <div className="grid gap-6 md:grid-cols-3">
-
-            <div>
-
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Customer
-              </label>
-
-              <select
-                value={customerId}
-                onChange={(e) =>
-                  setCustomerId(e.target.value)
-                }
-                className="w-full rounded-xl border border-slate-300 px-4 py-3"
-              >
-                <option value="">
-                  Select Customer
-                </option>
-
-                {customers.map((customer) => (
-
-                  <option
-                    key={customer.id}
-                    value={customer.id}
-                  >
-                    {customer.first_name}{" "}
-                    {customer.last_name}
-                  </option>
-
-                ))}
-
-              </select>
-
-            </div>
-                        <div>
-
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Estimate
-              </label>
-
-              <select
-                value={estimateId}
-                onChange={(e) =>
-                  setEstimateId(e.target.value)
-                }
-                className="w-full rounded-xl border border-slate-300 px-4 py-3"
-              >
-                <option value="">
-                  Select Estimate
-                </option>
-
-                {estimates.map((estimate) => (
-
-                  <option
-                    key={estimate.id}
-                    value={estimate.id}
-                  >
-                    {estimate.estimate_number}
-                  </option>
-
-                ))}
-
-              </select>
-
-            </div>
-
-            <div>
-
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Job
-              </label>
-
-              <select
-                value={jobId}
-                onChange={(e) =>
-                  setJobId(e.target.value)
-                }
-                className="w-full rounded-xl border border-slate-300 px-4 py-3"
-              >
-                <option value="">
-                  Select Job
-                </option>
-
-                {jobs.map((job) => (
-
-                  <option
-                    key={job.id}
-                    value={job.id}
-                  >
-                    {job.job_number}
-                  </option>
-
-                ))}
-
-              </select>
-
-            </div>
-
-          </div>
-
-        </FormSection>
-
-        <FormSection
-          title="Scope of Work"
-          description="Describe the work that will be performed for the customer."
-        >
-
-          <textarea
-            value={scopeOfWork}
-            onChange={(e) =>
-              setScopeOfWork(e.target.value)
-            }
-            rows={10}
-            placeholder="Describe the project, materials, labor, responsibilities, exclusions, schedule, and any special requirements..."
-            className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-          />
-
-        </FormSection>
-
-        <FormSection
-  title="Terms & Warranty"
-  description="Payment terms, warranty information, and additional notes."
->
-
-  <div className="grid gap-6">
-
-            <div>
-
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Payment Terms
-              </label>
-
-              <textarea
-                value={paymentTerms}
-                onChange={(e) =>
-                  setPaymentTerms(e.target.value)
-                }
-                rows={4}
-                placeholder="Example: 50% deposit due before work begins. Remaining balance due upon project completion."
-                className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              />
-
-            </div>
-
-            <div>
-
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Warranty
-              </label>
-
-              <textarea
-                value={warranty}
-                onChange={(e) =>
-                  setWarranty(e.target.value)
-                }
-                rows={4}
-                placeholder="Example: All workmanship is warranted for one year from the date of project completion."
-                className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              />
-
-            </div>
-
-            <div>
-
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Internal Notes
-              </label>
-
-              <textarea
-                value={notes}
-                onChange={(e) =>
-                  setNotes(e.target.value)
-                }
-                rows={5}
-                placeholder="Internal notes visible only to staff..."
-                className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              />
-
-            </div>
-
-          </div>
-
-        </FormSection>
-
-        <div className="flex flex-col-reverse gap-4 border-t border-slate-200 pt-8 sm:flex-row sm:justify-end">
-
-          <button
-            type="button"
-            onClick={() =>
-              router.push("/admin/contracts")
-            }
-            className="rounded-xl border border-slate-300 px-6 py-3 font-medium text-slate-700 transition hover:bg-slate-100"
-          >
-            Cancel
-          </button>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="rounded-xl bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {loading
-              ? "Creating Contract..."
-              : "Create Contract"}
-          </button>
-
-        </div>
-
-      </form>
-
-    </div>
+    />
 
   );
 

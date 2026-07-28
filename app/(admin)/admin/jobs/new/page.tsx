@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/client";
+import { getNextDocumentNumber } from "@/lib/documentNumbers";
 
 import JobForm, {
   JobFormValues,
@@ -14,32 +15,47 @@ interface Estimate {
   estimate_number: string;
 }
 
-export default function NewJobPage() {
-  const router = useRouter();
-  const supabase = createClient();
-
-  interface CustomerOption {
+interface CustomerOption {
   id: string;
   name: string;
 }
 
-const [customers, setCustomers] = useState<CustomerOption[]>([]);
-  const [estimates, setEstimates] = useState<Estimate[]>([]);
+interface EmployeeOption {
+  id: string;
+  full_name: string;
+}
 
-  const [loading, setLoading] = useState(false);
-  const [pageLoading, setPageLoading] = useState(true);
+export default function NewJobPage() {
+  const router = useRouter();
+  const supabase = createClient();
 
-  const [error, setError] = useState("");
+  const [customers, setCustomers] =
+    useState<CustomerOption[]>([]);
 
-    useEffect(() => {
+  const [estimates, setEstimates] =
+    useState<Estimate[]>([]);
+
+  const [employees, setEmployees] =
+    useState<EmployeeOption[]>([]);
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const [pageLoading, setPageLoading] =
+    useState(true);
+
+  const [error, setError] =
+    useState("");
+
+  useEffect(() => {
     async function loadData() {
       setPageLoading(true);
 
       const [
         customersResult,
         estimatesResult,
+        employeesResult,
       ] = await Promise.all([
-
         supabase
           .from("customers")
           .select("id, first_name, last_name")
@@ -50,24 +66,43 @@ const [customers, setCustomers] = useState<CustomerOption[]>([]);
           .select("id, estimate_number")
           .order("estimate_number"),
 
+        supabase
+          .from("employees")
+          .select("id, first_name, last_name")
+          .eq("status", "Active")
+          .order("first_name"),
       ]);
 
       if (customersResult.error) {
-  setError(customersResult.error.message);
-} else {
-  const customerOptions =
-    (customersResult.data ?? []).map((customer) => ({
-      id: customer.id,
-      name: `${customer.first_name} ${customer.last_name}`,
-    }));
-
-  setCustomers(customerOptions);
-}
+        setError(customersResult.error.message);
+      } else {
+        setCustomers(
+          (customersResult.data ?? []).map(
+            (customer) => ({
+              id: customer.id,
+              name: `${customer.first_name} ${customer.last_name}`,
+            })
+          )
+        );
+      }
 
       if (estimatesResult.error) {
         setError(estimatesResult.error.message);
       } else {
         setEstimates(estimatesResult.data ?? []);
+      }
+
+      if (employeesResult.error) {
+        setError(employeesResult.error.message);
+      } else {
+        setEmployees(
+  (employeesResult.data ?? []).map(
+    (employee) => ({
+      id: employee.id,
+      full_name: `${employee.first_name} ${employee.last_name}`,
+    })
+  )
+);
       }
 
       setPageLoading(false);
@@ -76,75 +111,68 @@ const [customers, setCustomers] = useState<CustomerOption[]>([]);
     void loadData();
   }, [supabase]);
 
-    async function handleSubmit(values: JobFormValues) {
+  async function handleSubmit(
+    values: JobFormValues
+  ) {
     setLoading(true);
     setError("");
 
-    const { data: jobNumber, error: numberError } =
-      await supabase.rpc("generate_job_number");
+    try {
+      const jobNumber =
+        await getNextDocumentNumber(
+          supabase,
+          "job"
+        );
 
-    if (numberError || !jobNumber) {
-      setLoading(false);
+      const { error } =
+        await supabase
+          .from("jobs")
+          .insert({
+            job_number: jobNumber,
+            customer_id: values.customer_id,
+            estimate_id:
+              values.estimate_id || null,
+            title: values.title,
+            description: values.description,
+            status: values.status,
+            priority: values.priority,
+            scheduled_date:
+  values.scheduled_date || null,
+assigned_employee_id:
+  values.assigned_employee_id || null,
+service_address:
+  values.service_address,
+            customer_phone:
+              values.customer_phone,
+            notes: values.notes,
+          });
+
+      if (error) throw error;
+
+      router.push("/admin/jobs");
+      router.refresh();
+    } catch (err: any) {
+      console.error(err);
+
       setError(
-        numberError?.message ??
-          "Unable to generate a job number."
+        err?.message ??
+          "Unable to create job."
       );
-      return;
+    } finally {
+      setLoading(false);
     }
-
-    const { error } = await supabase
-      .from("jobs")
-      .insert({
-        job_number: jobNumber,
-
-        customer_id: values.customer_id,
-
-        estimate_id:
-          values.estimate_id || null,
-
-        title: values.title,
-
-        description: values.description,
-
-        status: values.status,
-
-        priority: values.priority,
-
-        scheduled_date:
-          values.scheduled_date || null,
-
-        technician: values.technician,
-
-        service_address:
-          values.service_address,
-
-        customer_phone:
-          values.customer_phone,
-
-        notes: values.notes,
-      });
-
-    setLoading(false);
-
-    if (error) {
-      setError(error.message);
-      return;
-    }
-
-    router.push("/admin/jobs");
-    router.refresh();
   }
 
-    if (pageLoading) {
+  if (pageLoading) {
     return (
       <div className="mx-auto max-w-7xl px-6 py-8">
         <div className="rounded-xl border border-slate-200 bg-white p-12 text-center shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900">
+          <h2 className="text-lg font-semibold">
             Loading...
           </h2>
 
           <p className="mt-2 text-sm text-slate-500">
-            Fetching customers and estimates...
+            Fetching data...
           </p>
         </div>
       </div>
@@ -164,16 +192,17 @@ const [customers, setCustomers] = useState<CustomerOption[]>([]);
       </div>
 
       <JobForm
-  title="New Job"
-  description="Complete the information below to create a new work order."
-  submitText="Create Job"
-  initialValues={{}}
-  customers={customers}
-  estimates={estimates}
-  loading={loading}
-  error={error}
-  onSubmit={handleSubmit}
-/>
+        title="New Job"
+        description="Complete the information below to create a new work order."
+        submitText="Create Job"
+        initialValues={{}}
+        customers={customers}
+        estimates={estimates}
+        employees={employees}
+        loading={loading}
+        error={error}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 }

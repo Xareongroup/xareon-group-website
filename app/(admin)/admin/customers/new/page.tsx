@@ -1,127 +1,92 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/client";
-import EstimateForm, {
-  EstimateFormValues,
-} from "@/components/admin/EstimateForm.old";
+import { getNextDocumentNumber } from "@/lib/documentNumbers";
 
-interface Customer {
-  id: string;
-  first_name: string;
-  last_name: string;
-}
+import CustomerForm, {
+  CustomerFormValues,
+} from "@/components/admin/CustomerForm";
 
-export default function NewEstimatePage() {
+export default function NewCustomerPage() {
   const router = useRouter();
   const supabase = createClient();
 
-  const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(false);
-  const [pageLoading, setPageLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    async function loadCustomers() {
-      console.log("Loading customers...");
-
-      const { data, error } = await supabase
-        .from("customers")
-        .select("id, first_name, last_name")
-        .order("first_name");
-
-      console.log("Customers:", data);
-      console.log("Customer Error:", error);
-
-      if (error) {
-        setError(error.message);
-      } else {
-        setCustomers(data ?? []);
-      }
-
-      setPageLoading(false);
-    }
-
-    loadCustomers();
-  }, [supabase]);
-
-  async function handleSubmit(values: EstimateFormValues) {
-    alert("handleSubmit started");
-
-    console.log("VALUES:", values);
-
-    if (!values.customer_id) {
-      alert("No customer selected");
-      setError("Please select a customer.");
-      return;
-    }
-
+  async function handleSubmit(values: CustomerFormValues) {
     setLoading(true);
     setError("");
 
-    alert("About to insert into Supabase");
+    try {
+      // Generate the next customer number
+      const customerNumber = await getNextDocumentNumber(
+        supabase,
+        "customer"
+      );
 
-    const result = await supabase
-      .from("estimates")
-      .insert({
-        customer_id: values.customer_id,
-        status: "Draft",
-        notes: values.notes,
-      });
+      console.log("Generated Customer Number:", customerNumber);
 
-    console.log("Insert Result:", result);
+      // Insert the customer
+      const { data, error } = await supabase
+        .from("customers")
+        .insert({
+          customer_number: customerNumber,
 
-    alert("Insert completed");
+          first_name: values.first_name,
+          last_name: values.last_name,
 
-    setLoading(false);
+          email: values.email || null,
+          phone: values.phone || null,
 
-    if (result.error) {
-      alert(result.error.message);
-      setError(result.error.message);
-      return;
+          address: values.address || null,
+
+          notes: values.notes || null,
+        })
+        .select();
+
+      console.log("Insert Result:", data);
+      console.log("Insert Error:", error);
+
+      if (error) {
+        throw error;
+      }
+
+      router.push("/admin/customers");
+      router.refresh();
+    } catch (err: any) {
+      console.error("Create Customer Error:", err);
+
+      setError(
+        err?.message ||
+          err?.details ||
+          err?.hint ||
+          JSON.stringify(err, null, 2)
+      );
+    } finally {
+      setLoading(false);
     }
-
-    alert("Redirecting");
-
-    router.push("/admin/estimates");
-    router.refresh();
-  }
-
-  if (pageLoading) {
-    return (
-      <div className="mx-auto max-w-4xl rounded-xl bg-white p-8 shadow">
-        Loading customers...
-      </div>
-    );
   }
 
   return (
-    <div className="mx-auto max-w-4xl">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold">
-          New Estimate
-        </h1>
-
-        <p className="mt-2 text-slate-500">
-          Create a new estimate for a customer.
-        </p>
-      </div>
-
-      <div className="rounded-xl bg-white p-8 shadow">
-        <EstimateForm
-          customers={customers}
-          initialValues={{
-            customer_id: "",
-            notes: "",
-          }}
-          submitText="Save Estimate"
-          loading={loading}
-          error={error}
-          onSubmit={handleSubmit}
-        />
-      </div>
-    </div>
+    <CustomerForm
+      title="New Customer"
+      description="Create a new customer profile."
+      submitText="Save Customer"
+      loading={loading}
+      error={error}
+      initialValues={{
+        first_name: "",
+        last_name: "",
+        email: "",
+        phone: "",
+        address: "",
+        notes: "",
+      }}
+      onSubmit={handleSubmit}
+    />
   );
 }

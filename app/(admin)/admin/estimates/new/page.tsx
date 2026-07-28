@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/client";
+import { getNextDocumentNumber } from "@/lib/documentNumbers";
 
 import { Estimate } from "@/types/estimate";
 import { defaultEstimate } from "@/lib/estimates/defaults";
@@ -80,7 +81,8 @@ export default function NewEstimatePage() {
 
     if (
       estimate.items.some(
-        (item) => item.description.trim() === ""
+        (item) =>
+          item.description.trim() === ""
       )
     ) {
       setError(
@@ -92,27 +94,58 @@ export default function NewEstimatePage() {
     setSaving(true);
 
     try {
+
+      const estimateCode =
+        await getNextDocumentNumber(
+          supabase,
+          "estimate"
+        );
+
       const calculated =
         recalculateEstimate(estimate);
-
-      const {
+              const {
         data: estimateRecord,
         error: estimateError,
       } = await supabase
         .from("estimates")
         .insert({
-          customer_id: calculated.customerId,
-          status: calculated.status,
-          issue_date: calculated.issueDate,
+
+          estimate_code:
+            estimateCode,
+
+          customer_id:
+            calculated.customerId,
+
+          status:
+            calculated.status,
+
+          issue_date:
+            calculated.issueDate,
+
           expiration_date:
             calculated.expirationDate,
-          subtotal: calculated.subtotal,
-          tax_rate: calculated.taxRate,
-          tax: calculated.tax,
-          discount: calculated.discount,
-          total: calculated.total,
-          notes: calculated.notes,
-          terms: calculated.terms,
+
+          subtotal:
+            calculated.subtotal,
+
+          tax_rate:
+            calculated.taxRate,
+
+          tax:
+            calculated.tax,
+
+          discount:
+            calculated.discount,
+
+          total:
+            calculated.total,
+
+          notes:
+            calculated.notes,
+
+          terms:
+            calculated.terms,
+
         })
         .select("id")
         .single();
@@ -120,74 +153,124 @@ export default function NewEstimatePage() {
       if (estimateError) {
         throw estimateError;
       }
-    
-            const estimateId = estimateRecord.id;
 
-      const items = calculated.items.map(
-        (item, index) => ({
-          estimate_id: estimateId,
-          description: item.description,
-          quantity: item.quantity,
-          unit: item.unit,
-          unit_price: item.unitPrice,
-          discount: item.discount,
-          taxable: item.taxable,
-          total: item.total,
-          sort_order: index + 1,
-        })
-      );
+      const estimateId =
+        estimateRecord.id;
 
-      if (items.length > 0) {
-        const { error: itemError } =
-          await supabase
-            .from("estimate_items")
-            .insert(items);
+      const items =
+        calculated.items.map(
+          (item, index) => ({
+            estimate_id:
+              estimateId,
+
+            description:
+              item.description,
+
+            quantity:
+              item.quantity,
+
+            unit:
+              item.unit,
+
+            unit_price:
+              item.unitPrice,
+
+            discount:
+              item.discount,
+
+            taxable:
+              item.taxable,
+
+            total:
+              item.total,
+
+            sort_order:
+              index + 1,
+          })
+        );
+              if (items.length > 0) {
+
+        const {
+          error: itemError,
+        } = await supabase
+          .from("estimate_items")
+          .insert(items);
 
         if (itemError) {
           throw itemError;
         }
+
       }
 
-      router.push("/admin/estimates");
+      router.push(
+        "/admin/estimates"
+      );
+
       router.refresh();
 
-    } catch (err) {
+    } catch (err: any) {
 
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Unable to save estimate.";
+      console.error(
+        "Save Estimate Error:",
+        err
+      );
 
-      setError(message);
+      setError(
+
+        err?.message ||
+
+        err?.details ||
+
+        err?.hint ||
+
+        "Unable to save estimate."
+
+      );
 
     } finally {
 
       setSaving(false);
 
     }
+
   }
 
   function cancelEstimate() {
-    router.push("/admin/estimates");
+
+    router.push(
+      "/admin/estimates"
+    );
+
   }
 
   function previewEstimate() {
-    alert("PDF preview coming soon.");
+
+    alert(
+      "PDF preview coming soon."
+    );
+
   }
 
   function emailEstimate() {
-    alert("Email feature coming soon.");
+
+    alert(
+      "Email feature coming soon."
+    );
+
   }
 
-  const selectedCustomer = customers.find(
-    (customer) => customer.id === estimate.customerId
-  );
+  const selectedCustomer =
+    customers.find(
+      (customer) =>
+        customer.id ===
+        estimate.customerId
+    );
 
-  const customerName = selectedCustomer
-    ? `${selectedCustomer.first_name} ${selectedCustomer.last_name}`
-    : "";
-
-  return (
+  const customerName =
+    selectedCustomer
+      ? `${selectedCustomer.first_name} ${selectedCustomer.last_name}`
+      : "";
+      return (
     <div className="mx-auto max-w-7xl px-6 py-8">
 
       {/* ====================================================== */}
@@ -230,7 +313,7 @@ export default function NewEstimatePage() {
 
       )}
 
-            {/* ====================================================== */}
+      {/* ====================================================== */}
       {/* Main Workspace */}
       {/* ====================================================== */}
 
@@ -296,4 +379,4 @@ export default function NewEstimatePage() {
 
     </div>
   );
-}
+}  

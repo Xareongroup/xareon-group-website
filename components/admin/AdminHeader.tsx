@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -49,6 +50,7 @@ export default function AdminHeader() {
 
       {/* Right Side */}
       <div className="flex items-center gap-4">
+
         <button className="rounded-xl border border-slate-200 p-3 transition hover:bg-slate-100">
           <Search className="h-5 w-5 text-slate-600" />
         </button>
@@ -58,9 +60,12 @@ export default function AdminHeader() {
           <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500"></span>
         </button>
 
-        <button className="rounded-xl border border-slate-200 p-3 transition hover:bg-slate-100">
+        <Link
+          href="/admin/settings"
+          className="rounded-xl border border-slate-200 p-3 transition hover:bg-slate-100"
+        >
           <Settings className="h-5 w-5 text-slate-600" />
-        </button>
+        </Link>
 
         <div className="flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-2">
           <UserCircle2 className="h-10 w-10 text-slate-500" />
@@ -85,6 +90,7 @@ export default function AdminHeader() {
 
           {loading ? "Signing Out..." : "Sign Out"}
         </button>
+
       </div>
     </header>
   );

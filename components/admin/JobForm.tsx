@@ -15,7 +15,7 @@ export interface JobFormValues {
 
   scheduled_date: string;
 
-  technician: string;
+  assigned_employee_id: string;
 
   service_address: string;
 
@@ -34,14 +34,21 @@ interface EstimateOption {
   estimate_number: string;
 }
 
+interface EmployeeOption {
+  id: string;
+  full_name: string;
+}
+
 interface JobFormProps {
   title: string;
   description: string;
   submitText: string;
 
-initialValues?: Partial<JobFormValues>;
+  initialValues?: Partial<JobFormValues>;
+
   customers: CustomerOption[];
   estimates: EstimateOption[];
+  employees: EmployeeOption[];
 
   loading?: boolean;
   error?: string;
@@ -56,33 +63,34 @@ export default function JobForm({
   initialValues,
   customers,
   estimates,
+  employees,
   loading = false,
   error = "",
   onSubmit,
 }: JobFormProps) {
   const [values, setValues] = useState<JobFormValues>({
-  job_number: "",
-  customer_id: "",
-  estimate_id: "",
+    job_number: "",
+    customer_id: "",
+    estimate_id: "",
 
-  title: "",
-  description: "",
+    title: "",
+    description: "",
 
-  status: "Scheduled",
-  priority: "Normal",
+    status: "Scheduled",
+    priority: "Normal",
 
-  scheduled_date: "",
+    scheduled_date: "",
 
-  technician: "",
+    assigned_employee_id: "",
 
-  service_address: "",
+    service_address: "",
 
-  customer_phone: "",
+    customer_phone: "",
 
-  notes: "",
+    notes: "",
 
-  ...initialValues,
-});
+    ...initialValues,
+  });
 
   async function handleSubmit(
     e: React.FormEvent<HTMLFormElement>
@@ -124,7 +132,7 @@ export default function JobForm({
         onSubmit={handleSubmit}
         className="mt-8 space-y-8"
       >
-                {/* ====================================================== */}
+             {/* ====================================================== */}
         {/* Job Information */}
         {/* ====================================================== */}
 
@@ -249,7 +257,7 @@ export default function JobForm({
 
         </div>
 
-                {/* ====================================================== */}
+        {/* ====================================================== */}
         {/* Scheduling & Assignment */}
         {/* ====================================================== */}
 
@@ -260,7 +268,7 @@ export default function JobForm({
           </h2>
 
           <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-
+            
             {/* Status */}
 
             <div>
@@ -334,22 +342,38 @@ export default function JobForm({
 
             </div>
 
-            {/* Technician */}
+            {/* Assigned Employee */}
 
             <div>
 
               <label className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                Assigned Technician
+                Assigned Employee
               </label>
 
-              <input
-                value={values.technician}
+              <select
+                value={values.assigned_employee_id}
                 onChange={(e) =>
-                  update("technician", e.target.value)
+                  update("assigned_employee_id", e.target.value)
                 }
-                placeholder="Technician name"
                 className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 transition focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-100"
-              />
+              >
+
+                <option value="">
+                  Select Employee
+                </option>
+
+                {employees.map((employee) => (
+
+                  <option
+                    key={employee.id}
+                    value={employee.id}
+                  >
+                    {employee.full_name}
+                  </option>
+
+                ))}
+
+              </select>
 
             </div>
 
@@ -357,7 +381,7 @@ export default function JobForm({
 
         </div>
 
-                {/* ====================================================== */}
+        {/* ====================================================== */}
         {/* Service Details */}
         {/* ====================================================== */}
 
@@ -368,8 +392,7 @@ export default function JobForm({
           </h2>
 
           <div className="mt-6 space-y-6">
-
-            {/* Service Address */}
+                        {/* Service Address */}
 
             <div>
 
@@ -449,7 +472,7 @@ export default function JobForm({
 
         </div>
 
-                {error && (
+        {error && (
 
           <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
             {error}
