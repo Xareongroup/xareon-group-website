@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/client";
-import { getNextDocumentNumber } from "@/lib/documentNumbers";
 
 import { Estimate } from "@/types/estimate";
 import { defaultEstimate } from "@/lib/estimates/defaults";
@@ -95,12 +94,6 @@ export default function NewEstimatePage() {
 
     try {
 
-      const estimateNumber =
-        await getNextDocumentNumber(
-          supabase,
-          "estimate"
-        );
-
       const calculated =
         recalculateEstimate(estimate);
               const {
@@ -109,9 +102,6 @@ export default function NewEstimatePage() {
       } = await supabase
         .from("estimates")
         .insert({
-
-          estimate_number:
-            estimateNumber,
 
           customer_id:
             calculated.customerId,

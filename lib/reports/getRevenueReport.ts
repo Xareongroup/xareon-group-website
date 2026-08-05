@@ -74,6 +74,7 @@ export async function getRevenueReport(
   const monthMap = new Map<string, number>();
 
   rows.forEach((invoice) => {
+    if (!invoice.created_at) return;
     const date = new Date(invoice.created_at);
 
     const month = date.toLocaleString("en-US", {

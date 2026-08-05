@@ -24,9 +24,9 @@ interface Document {
   document_type: string;
   title: string;
   file_url: string;
-  status: string;
+  status: string | null;
   signed_date: string | null;
-  created_at: string;
+  created_at: string | null;
 }
 
 
@@ -199,7 +199,7 @@ export default function CustomerDocuments({
 
 
                         <Badge variant="success">
-                          {doc.status}
+                          {doc.status ?? "Unknown"}
                         </Badge>
 
                       </div>

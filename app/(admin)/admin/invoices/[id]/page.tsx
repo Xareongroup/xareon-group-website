@@ -134,7 +134,7 @@ export default async function InvoicePage({
 
 
 
-  const overdue = checkInvoiceOverdue(invoice.due_date ?? undefined, invoice.status ?? undefined);
+  const overdue = checkInvoiceOverdue(invoice.due_date ?? null, invoice.status ?? "Draft");
 
 
 

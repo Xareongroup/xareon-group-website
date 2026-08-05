@@ -157,8 +157,8 @@ export default function PaymentForm({
             </p>
 
             <p className="font-semibold">
-              {invoice.customer?.[0]
-  ? `${invoice.customer[0].first_name} ${invoice.customer[0].last_name}`
+              {invoice.customer
+  ? `${invoice.customer.first_name} ${invoice.customer.last_name}`
   : "Unknown"}
             </p>
           </div>

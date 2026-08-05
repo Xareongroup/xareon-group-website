@@ -126,6 +126,10 @@ export default function EstimateForm({
 
       if (isEditing) {
 
+        if (!estimate.id) {
+          throw new Error("Estimate ID is required for updates.");
+        }
+
 
         const {
           error
@@ -162,10 +166,10 @@ export default function EstimateForm({
                 estimate.total,
 
               notes:
-                estimate.notes,
+                estimate.notes ?? "",
 
               terms:
-                estimate.terms,
+                estimate.terms ?? "",
 
             })
             .eq(

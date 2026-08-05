@@ -5,8 +5,8 @@ import { createClient } from "@/lib/supabase/client";
 
 interface Job {
   id: string;
-  job_number: string;
-  title: string;
+  job_number: string | null;
+  title: string | null;
 }
 
 interface Employee {

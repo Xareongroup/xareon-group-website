@@ -276,9 +276,9 @@ export default async function CustomerTimeline({
 
 
                     {
-                      new Date(
-                        item.created_at
-                      ).toLocaleString()
+                      item.created_at
+                        ? new Date(item.created_at).toLocaleString()
+                        : "—"
                     }
 
 

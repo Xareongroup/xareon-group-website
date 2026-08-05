@@ -14,7 +14,7 @@ interface Photo {
   image_url: string;
   category: string;
   caption: string | null;
-  created_at: string;
+  created_at: string | null;
 }
 
 export default function JobPhotos({

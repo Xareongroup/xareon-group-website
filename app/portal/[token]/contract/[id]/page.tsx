@@ -362,9 +362,9 @@ export default async function PortalContractPage({
             <span>
 
               {
-                new Date(
-                  contract.created_at
-                ).toLocaleDateString()
+                contract.created_at
+                  ? new Date(contract.created_at).toLocaleDateString()
+                  : "—"
               }
 
             </span>

@@ -34,7 +34,7 @@ interface Estimate {
 
 interface Job {
   id: string;
-  job_number: string;
+  job_number: string | null;
 }
 
 
@@ -645,7 +645,10 @@ export default function NewInvoicePage() {
 
         estimates={estimates}
 
-        jobs={jobs}
+        jobs={jobs.map((job) => ({
+          ...job,
+          job_number: job.job_number ?? "Unnumbered job",
+        }))}
 
       />
 

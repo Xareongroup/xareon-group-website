@@ -238,7 +238,7 @@ console.log("Error:", error);
           <span
             className={`mt-2 inline-flex rounded-full px-3 py-1 text-sm font-semibold ${getStatusColor(job.status ?? "")}`}
           >
-            {job.status}
+            {job.status ?? "—"}
           </span>
 
         </div>
@@ -252,7 +252,7 @@ console.log("Error:", error);
           <span
             className={`mt-2 inline-flex rounded-full px-3 py-1 text-sm font-semibold ${getPriorityColor(job.priority ?? "")}`}
           >
-            {job.priority}
+            {job.priority ?? "—"}
           </span>
 
         </div>
@@ -353,7 +353,7 @@ console.log("Error:", error);
         <span className="text-slate-500">Job Number</span>
 
         <span className="font-semibold">
-          {job.job_number}
+          {job.job_number ?? "—"}
         </span>
       </div>
 
@@ -362,10 +362,10 @@ console.log("Error:", error);
 
         <span
           className={`rounded-full px-3 py-1 text-sm font-semibold ${getStatusColor(
-            job.status
+             job.status ?? ""
           )}`}
         >
-          {job.status}
+           {job.status ?? "—"}
         </span>
       </div>
 
@@ -374,10 +374,10 @@ console.log("Error:", error);
 
         <span
           className={`rounded-full px-3 py-1 text-sm font-semibold ${getPriorityColor(
-            job.priority
+             job.priority ?? ""
           )}`}
         >
-          {job.priority}
+           {job.priority ?? "—"}
         </span>
       </div>
 
@@ -385,7 +385,9 @@ console.log("Error:", error);
         <span className="text-slate-500">Technician</span>
 
         <span className="font-medium">
-          {job.technician || "Unassigned"}
+           {typeof job.technician === "object" && job.technician
+             ? `${job.technician.first_name} ${job.technician.last_name}`
+             : "Unassigned"}
         </span>
       </div>
 

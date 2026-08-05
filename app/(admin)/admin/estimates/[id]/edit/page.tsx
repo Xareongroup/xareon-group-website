@@ -66,7 +66,22 @@ export default async function EditEstimatePage({
       </div>
 
       <EstimateForm
-        estimate={estimate}
+        estimate={{
+          id: estimate.id,
+          customerId: estimate.customer_id,
+          estimateNumber: String(estimate.estimate_number),
+          issueDate: estimate.issue_date,
+          expirationDate: estimate.expiration_date ?? "",
+          status: estimate.status as any,
+          items: formattedItems,
+          subtotal: estimate.subtotal,
+          taxRate: estimate.tax_rate ?? 0,
+          tax: estimate.tax,
+          discount: estimate.discount ?? 0,
+          total: estimate.total,
+          notes: estimate.notes ?? "",
+          terms: estimate.terms ?? "",
+        }}
         items={formattedItems}
         isEditing
       />

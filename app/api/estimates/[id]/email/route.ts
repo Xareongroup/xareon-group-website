@@ -38,6 +38,9 @@ export async function GET(
         { status: 404 }
       );
     }
+    if (!estimate.customer?.email) {
+      return NextResponse.json({ success: false, message: "The estimate customer has no email address." }, { status: 422 });
+    }
 
     const { data: items } = await supabase
   .from("estimate_items")

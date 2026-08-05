@@ -5,19 +5,19 @@ export interface Customer {
 
   last_name: string;
 
-  email: string;
+  email: string | null;
 
-  phone: string;
+  phone: string | null;
 
-  address: string;
+  address: string | null;
 
-  city: string;
+  city: string | null;
 
-  state: string;
+  state: string | null;
 
   zip_code: string | null;
 
-  notes: string;
+  notes: string | null;
 
-  created_at: string;
+  created_at: string | null;
 }
