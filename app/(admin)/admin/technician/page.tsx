@@ -1,116 +1,13 @@
 import Link from "next/link";
-import {
-  Navigation,
-  Phone,
-  Camera,
-  ClipboardCheck,
-  CheckCircle2,
-  Clock,
-} from "lucide-react";
-
+import { Camera, ClipboardCheck, Navigation, Phone } from "lucide-react";
 import Card from "@/components/ui/Card";
-import Button from "@/components/ui/Button";
+import { createClient } from "@/lib/supabase/server";
 
-export default function TechnicianPage() {
-  return (
-    <div className="mx-auto max-w-3xl space-y-6 p-4">
-      <div>
-        <h1 className="text-3xl font-bold">
-          Technician Workspace
-        </h1>
+export default async function TechnicianPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const { data: role } = user ? await supabase.from("user_roles").select("employee_id").eq("user_id", user.id).maybeSingle() : { data: null };
+  const { data: job } = role?.employee_id ? await supabase.from("jobs").select("id,job_number,title,customer_phone,service_address,scheduled_date,start_time,customers(first_name,last_name)").eq("assigned_employee_id", role.employee_id).in("status", ["Scheduled", "In Progress"]).order("scheduled_date").limit(1).maybeSingle() : { data: null };
 
-        <p className="mt-2 text-slate-600">
-          Everything needed to complete today's jobs.
-        </p>
-      </div>
-
-      <Card title="Current Job">
-        <div className="space-y-4">
-          <div>
-            <p className="text-lg font-semibold">
-              TV Mount Installation
-            </p>
-
-            <p className="text-slate-500">
-              John Smith
-            </p>
-
-            <p className="text-sm text-slate-500">
-              123 Main Street
-            </p>
-
-            <div className="mt-2 flex items-center gap-2 text-amber-600">
-              <Clock className="h-4 w-4" />
-              Scheduled Today • 9:00 AM
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <Button className="justify-center">
-              <Navigation className="mr-2 h-4 w-4" />
-              Directions
-            </Button>
-
-            <Button variant="secondary" className="justify-center">
-              <Phone className="mr-2 h-4 w-4" />
-              Call
-            </Button>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <Link href="/admin/jobs/current/photos">
-              <Button
-                variant="outline"
-                className="w-full justify-center"
-              >
-                <Camera className="mr-2 h-4 w-4" />
-                Photos
-              </Button>
-            </Link>
-
-            <Link href="/admin/jobs/current/checklist">
-              <Button
-                variant="outline"
-                className="w-full justify-center"
-              >
-                <ClipboardCheck className="mr-2 h-4 w-4" />
-                Checklist
-              </Button>
-            </Link>
-          </div>
-
-          <Button
-            variant="success"
-            className="w-full justify-center"
-          >
-            <CheckCircle2 className="mr-2 h-5 w-5" />
-            Complete Job
-          </Button>
-        </div>
-      </Card>
-
-      <Card title="Today's Queue">
-        <div className="space-y-3">
-          {[
-            "TV Mount",
-            "Drywall Repair",
-            "Camera Installation",
-          ].map((job) => (
-            <div
-              key={job}
-              className="rounded-xl border border-slate-200 p-4"
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-medium">{job}</span>
-
-                <Button size="sm">
-                  Open
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
-    </div>
-  );
+  return <div className="mx-auto max-w-3xl space-y-6 p-4"><div><h1 className="text-3xl font-bold">Technician Workspace</h1><p className="mt-2 text-slate-600">Everything needed to complete today's jobs.</p></div><Card title="Current Job">{job ? <div className="space-y-4"><div><p className="text-lg font-semibold">{job.title ?? job.job_number ?? "Assigned job"}</p><p className="text-slate-500">{job.customers ? `${job.customers.first_name} ${job.customers.last_name}` : "Customer"}</p><p className="text-sm text-slate-500">{job.service_address ?? "Address not provided"}</p><p className="mt-2 text-sm text-amber-600">{job.scheduled_date ?? "Unscheduled"} {job.start_time ? `· ${job.start_time}` : ""}</p></div><div className="grid grid-cols-2 gap-3"><a href={job.service_address ? `https://maps.google.com/?q=${encodeURIComponent(job.service_address)}` : undefined} className="rounded-xl bg-blue-600 px-4 py-3 text-center font-medium text-white"><Navigation className="mr-2 inline h-4 w-4"/>Directions</a><a href={job.customer_phone ? `tel:${job.customer_phone}` : undefined} className="rounded-xl border px-4 py-3 text-center font-medium"><Phone className="mr-2 inline h-4 w-4"/>Call</a></div><div className="grid grid-cols-2 gap-3"><Link href={`/admin/jobs/${job.id}/photos`} className="rounded-xl border px-4 py-3 text-center font-medium"><Camera className="mr-2 inline h-4 w-4"/>Photos</Link><Link href={`/admin/jobs/${job.id}/checklist`} className="rounded-xl border px-4 py-3 text-center font-medium"><ClipboardCheck className="mr-2 inline h-4 w-4"/>Checklist</Link></div><Link href={`/admin/jobs/${job.id}`} className="block rounded-xl bg-green-600 px-4 py-3 text-center font-medium text-white">Open Job</Link></div> : <p className="text-slate-500">No scheduled job is currently assigned to you.</p>}</Card></div>;
 }

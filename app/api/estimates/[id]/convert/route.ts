@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { adminSupabase } from "@/lib/supabase/admin";
+import { requireApiRole } from "@/lib/auth/requireApiRole";
 
 interface RouteProps {
   params: Promise<{
@@ -12,6 +13,11 @@ export async function POST(
   { params }: RouteProps
 ) {
   const { id } = await params;
+
+  // This route uses the service-role client below, so page-level protection and
+  // RLS cannot authorize the mutation. Enforce the operational role here.
+  const access = await requireApiRole(["owner", "admin", "manager", "accounting"]);
+  if ("response" in access) return access.response;
 
   const supabase = adminSupabase;
 

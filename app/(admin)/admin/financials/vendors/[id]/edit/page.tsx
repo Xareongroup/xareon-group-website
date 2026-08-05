@@ -1,0 +1,14 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+
+export default function EditVendorPage() {
+  const { id } = useParams<{ id: string }>(); const router = useRouter(); const supabase = useMemo(() => createClient(), []);
+  const [form, setForm] = useState({ name:"", company:"", email:"", phone:"", address:"", category:"", notes:"" }); const [loading, setLoading] = useState(true); const [saving, setSaving] = useState(false); const [error, setError] = useState("");
+  useEffect(() => { void (async () => { const { data, error } = await supabase.from("vendors").select("*").eq("id", id).single(); if (error || !data) setError(error?.message ?? "Vendor not found."); else setForm({ name:data.name, company:data.company ?? "", email:data.email ?? "", phone:data.phone ?? "", address:data.address ?? "", category:data.category ?? "", notes:data.notes ?? "" }); setLoading(false); })(); }, [id, supabase]);
+  async function save(event: React.FormEvent) { event.preventDefault(); setSaving(true); const { error } = await supabase.from("vendors").update({ ...form, company:form.company || null, email:form.email || null, phone:form.phone || null, address:form.address || null, category:form.category || null, notes:form.notes || null }).eq("id", id); setSaving(false); if (error) return setError(error.message); router.push(`/admin/financials/vendors/${id}`); router.refresh(); }
+  if (loading) return <div className="p-8 text-slate-500">Loading vendor…</div>;
+  return <form onSubmit={save} className="mx-auto max-w-3xl space-y-6 px-6 py-8"><div className="flex justify-between"><div><h1 className="text-3xl font-bold">Edit Vendor</h1><p className="text-slate-500">Update vendor or payee information.</p></div><div className="flex gap-3"><button type="button" onClick={() => router.push(`/admin/financials/vendors/${id}`)} className="rounded-xl border px-4 py-2">Cancel</button><button disabled={saving} className="rounded-xl bg-blue-600 px-4 py-2 font-medium text-white">{saving ? "Saving…" : "Save Changes"}</button></div></div><div className="grid gap-4 rounded-2xl border bg-white p-6 shadow-sm md:grid-cols-2">{Object.entries(form).map(([field, value]) => <label key={field} className={`text-sm font-medium ${field === "notes" || field === "address" ? "md:col-span-2" : ""}`}>{field.replace(/_/g, " ").replace(/^./, (letter) => letter.toUpperCase())}{field === "notes" || field === "address" ? <textarea value={value} onChange={(event) => setForm({ ...form, [field]: event.target.value })} className="mt-2 w-full rounded-xl border p-3" rows={field === "notes" ? 4 : 2} /> : <input required={field === "name"} value={value} onChange={(event) => setForm({ ...form, [field]: event.target.value })} className="mt-2 w-full rounded-xl border p-3" />}</label>)}{error && <p className="text-red-600 md:col-span-2">{error}</p>}</div></form>;
+}

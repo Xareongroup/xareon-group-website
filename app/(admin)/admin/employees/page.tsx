@@ -1,16 +1,9 @@
 "use client";
 
-import { useState } from "react";
-
-import EmployeeForm, {
-  EmployeeFormData,
-} from "@/components/admin/employees/EmployeeForm";
+import EmployeeForm from "@/components/admin/employees/EmployeeForm";
 import EmployeeList from "@/components/admin/employees/EmployeeList";
 
 export default function EmployeesPage() {
-  const [selectedEmployee, setSelectedEmployee] =
-    useState<EmployeeFormData | null>(null);
-
   return (
     <div className="mx-auto max-w-7xl px-6 py-8">
       <div className="mb-8">
@@ -25,13 +18,11 @@ export default function EmployeesPage() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div>
-          <EmployeeForm employee={selectedEmployee} />
+          <EmployeeForm />
         </div>
 
         <div className="lg:col-span-2">
-          <EmployeeList
-            onEdit={(employee) => setSelectedEmployee(employee)}
-          />
+          <EmployeeList />
         </div>
       </div>
     </div>

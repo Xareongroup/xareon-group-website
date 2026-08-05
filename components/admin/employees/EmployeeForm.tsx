@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 export type EmployeeFormData = {
@@ -16,6 +17,7 @@ export type EmployeeFormData = {
 type Props = {
   employee?: EmployeeFormData | null;
   onSaved?: () => void;
+  redirectTo?: string;
 };
 
 const emptyForm: EmployeeFormData = {
@@ -30,7 +32,9 @@ const emptyForm: EmployeeFormData = {
 export default function EmployeeForm({
   employee,
   onSaved,
+  redirectTo,
 }: Props) {
+  const router = useRouter();
   const supabase = createClient();
 
   const [loading, setLoading] = useState(false);
@@ -103,6 +107,10 @@ export default function EmployeeForm({
     setForm(emptyForm);
 
     onSaved?.();
+    if (redirectTo) {
+      router.push(redirectTo);
+      router.refresh();
+    }
   }
 
   return (

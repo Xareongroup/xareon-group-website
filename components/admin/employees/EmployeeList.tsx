@@ -1,31 +1,26 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import type { EmployeeFormData } from "./EmployeeForm";
+import type { Database } from "@/lib/supabase/database.types";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 
-type Props = {
-  onEdit?: (employee: EmployeeFormData) => void;
-};
+type Employee = Database["public"]["Tables"]["employees"]["Row"];
+const managementRoles = new Set(["owner", "admin", "manager"]);
 
-type Employee = {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email: string | null;
-  phone: string | null;
-  role: string;
-  status: string;
-};
-
-export default function EmployeeList({ onEdit }: Props) {
+export default function EmployeeList() {
   const supabase = createClient();
 
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
+  const [canManage, setCanManage] = useState(false);
+  const [employeeToDeactivate, setEmployeeToDeactivate] =
+    useState<Employee | null>(null);
+  const [deactivating, setDeactivating] = useState(false);
 
   useEffect(() => {
-    loadEmployees();
+    void Promise.all([loadEmployees(), loadAccess()]);
   }, []);
 
   async function loadEmployees() {
@@ -43,17 +38,33 @@ export default function EmployeeList({ onEdit }: Props) {
     setLoading(false);
   }
 
-  async function handleDelete(id: string) {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this employee?"
-    );
+  async function loadAccess() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-    if (!confirmed) return;
+    if (!user) return;
+
+    const { data } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    setCanManage(managementRoles.has(data?.role ?? ""));
+  }
+
+  async function handleDeactivate() {
+    if (!employeeToDeactivate) return;
+
+    setDeactivating(true);
 
     const { error } = await supabase
       .from("employees")
-      .delete()
-      .eq("id", id);
+      .update({ status: "Inactive" })
+      .eq("id", employeeToDeactivate.id);
+
+    setDeactivating(false);
 
     if (error) {
       alert(error.message);
@@ -61,8 +72,13 @@ export default function EmployeeList({ onEdit }: Props) {
     }
 
     setEmployees((prev) =>
-      prev.filter((employee) => employee.id !== id)
+      prev.map((employee) =>
+        employee.id === employeeToDeactivate.id
+          ? { ...employee, status: "Inactive" }
+          : employee
+      )
     );
+    setEmployeeToDeactivate(null);
   }
 
   if (loading) {
@@ -119,34 +135,46 @@ export default function EmployeeList({ onEdit }: Props) {
                   {employee.status}
                 </span>
 
-                <button
-                  onClick={() =>
-                    onEdit?.({
-                      id: employee.id,
-                      first_name: employee.first_name,
-                      last_name: employee.last_name,
-                      email: employee.email ?? "",
-                      phone: employee.phone ?? "",
-                      role: employee.role,
-                      status: employee.status,
-                    })
-                  }
-                  className="rounded-lg bg-blue-50 px-3 py-1 text-sm font-medium text-blue-600 hover:bg-blue-100"
+                <Link
+                  href={`/admin/employees/${employee.id}`}
+                  className="rounded-lg bg-slate-100 px-3 py-1 text-sm font-medium text-slate-700 hover:bg-slate-200"
                 >
-                  Edit
-                </button>
+                  View
+                </Link>
 
-                <button
-                  onClick={() => handleDelete(employee.id)}
-                  className="rounded-lg bg-red-50 px-3 py-1 text-sm font-medium text-red-600 hover:bg-red-100"
-                >
-                  Delete
-                </button>
+                {canManage && (
+                  <>
+                    <Link
+                      href={`/admin/employees/${employee.id}/edit`}
+                      className="rounded-lg bg-blue-50 px-3 py-1 text-sm font-medium text-blue-600 hover:bg-blue-100"
+                    >
+                      Edit
+                    </Link>
+
+                    <button
+                      onClick={() => setEmployeeToDeactivate(employee)}
+                      disabled={employee.status === "Inactive"}
+                      className="rounded-lg bg-red-50 px-3 py-1 text-sm font-medium text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      Deactivate
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={Boolean(employeeToDeactivate)}
+        title="Deactivate employee"
+        description="Are you sure you want to remove this employee?"
+        confirmText="Deactivate"
+        loading={deactivating}
+        onConfirm={handleDeactivate}
+        onCancel={() => setEmployeeToDeactivate(null)}
+      />
     </div>
   );
 }

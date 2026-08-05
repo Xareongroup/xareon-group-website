@@ -946,7 +946,8 @@ export default async function InvoicePage({
 
 
 
-        <button
+        <Link
+          href={`/admin/invoices/${invoice.id}/edit`}
 
           className="
           rounded-lg
@@ -963,7 +964,7 @@ export default async function InvoicePage({
 
           Edit Invoice
 
-        </button>
+        </Link>
 
 
 
@@ -996,6 +997,7 @@ export default async function InvoicePage({
 
 
         <button
+          onClick={() => window.print()}
 
           className="
           rounded-lg

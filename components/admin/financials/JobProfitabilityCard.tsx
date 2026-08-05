@@ -1,4 +1,3 @@
-// @ts-nocheck -- This module targets the approved but not-yet-staged financial schema.
 import { createClient } from "@/lib/supabase/server";
 
 const money = (value: number) => new Intl.NumberFormat("en-US", { style:"currency", currency:"USD" }).format(value);
