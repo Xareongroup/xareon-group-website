@@ -26,6 +26,7 @@ export default async function InvoicePreviewPage({
   if (error || !invoice) {
     notFound();
   }
+  if (!invoice.customer_id) notFound();
 
   // Load customer
   const { data: customer } = await supabase

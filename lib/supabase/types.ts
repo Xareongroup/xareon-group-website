@@ -15,7 +15,7 @@ export interface Customer {
 
   state: string;
 
-  zip: string;
+  zip_code: string | null;
 
   notes: string;
 

@@ -134,11 +134,7 @@ export default async function InvoicePage({
 
 
 
-  const overdue =
-    checkInvoiceOverdue(
-      invoice.due_date,
-      invoice.status
-    );
+  const overdue = checkInvoiceOverdue(invoice.due_date ?? undefined, invoice.status ?? undefined);
 
 
 
@@ -575,7 +571,7 @@ export default async function InvoicePage({
 
           <p className="whitespace-pre-line text-slate-600">
 
-            {invoice.notes || "No notes provided."}
+            {invoice.payment_notes || "No payment notes provided."}
 
           </p>
 

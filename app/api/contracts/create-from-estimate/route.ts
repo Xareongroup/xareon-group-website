@@ -139,11 +139,6 @@ export async function POST(
 
 
 
-        title:
-          `${estimate.customer?.first_name ?? ""} ${estimate.customer?.last_name ?? ""} Service Agreement`,
-
-
-
         customer_id:
           estimate.customer_id,
 
@@ -154,8 +149,7 @@ export async function POST(
 
 
 
-        job_id:
-          estimate.jobs?.id ?? null,
+        job_id: estimate.jobs[0]?.id ?? null,
 
 
 
@@ -171,27 +165,8 @@ export async function POST(
 
 
 
-        scope_of_work:
-          estimate.notes
-            ??
-          "Scope of work transferred from approved estimate.",
-
-
-
-        payment_terms:
-          estimate.terms
-            ??
-          "Payment terms transferred from approved estimate.",
-
-
-
-        warranty:
-          "XAREON GROUP warrants workmanship according to the terms agreed upon in this service contract.",
-
-
-
         terms:
-          estimate.terms,
+          estimate.terms ?? estimate.notes ?? "",
 
 
 

@@ -98,7 +98,7 @@ export default async function PortalInvoicePage({
         balance_due,
         payment_method,
         payment_date,
-        notes
+        notes:payment_notes
       `)
 
       .eq(

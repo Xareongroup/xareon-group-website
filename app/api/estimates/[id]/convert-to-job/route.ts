@@ -63,11 +63,9 @@ export async function POST(
       customer_id: estimate.customer_id,
       estimate_id: estimate.id,
 
-      title:
-        estimate.title ??
-        `Job for ${estimate.estimate_number}`,
+      title: `Job for estimate ${estimate.estimate_number}`,
 
-      description: estimate.description ?? "",
+      description: estimate.notes ?? "",
 
       status: "Scheduled",
       priority: "Normal",

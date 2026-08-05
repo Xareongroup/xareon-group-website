@@ -16,7 +16,7 @@ interface Contract {
 
   contract_number: string | null;
 
-  status: string;
+  status: string | null;
 
   terms: string | null;
 
@@ -24,7 +24,7 @@ interface Contract {
 
   issue_date: string | null;
 
-  created_at: string;
+  created_at: string | null;
 
 sent_at: string | null;
 
@@ -52,16 +52,16 @@ signed_by_name: string | null;
 
   estimate: {
 
-    estimate_number: string;
+    estimate_number: number;
 
-    total?: number;
+    total: number;
 
   } | null;
 
 
   job: {
 
-    job_number: string;
+    job_number: string | null;
 
   } | null;
 
@@ -73,6 +73,7 @@ export default function ContractDetailsPage() {
 
 
   const params = useParams();
+  const contractId = typeof params.id === "string" ? params.id : "";
 
 
   const supabase = createClient();
@@ -127,7 +128,7 @@ export default function ContractDetailsPage() {
 
         .eq(
           "id",
-          params.id
+          contractId
         )
 
         .single();
@@ -341,7 +342,7 @@ export default function ContractDetailsPage() {
 
 
           <StatusBadge
-            status={contract.status}
+            status={contract.status ?? "Draft"}
           />
 
 
@@ -623,9 +624,9 @@ export default function ContractDetailsPage() {
                 <p className="mt-1 font-medium">
 
                   {
-                    new Date(
-                      contract.created_at
-                    ).toLocaleDateString()
+                    contract.created_at
+                      ? new Date(contract.created_at).toLocaleDateString()
+                      : "—"
                   }
 
                 </p>

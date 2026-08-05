@@ -12,19 +12,17 @@ export interface CustomerOption {
 
 export interface EstimateOption {
   id: string;
-  estimate_number: string;
+  estimate_number: number;
 }
 
 
 export interface JobOption {
   id: string;
-  job_number: string;
+  job_number: string | null;
 }
 
 
 export interface ContractFormValues {
-
-  title: string;
 
   customer_id: string;
 
@@ -33,12 +31,6 @@ export interface ContractFormValues {
   job_id: string;
 
   status: string;
-
-  scope_of_work: string;
-
-  payment_terms: string;
-
-  warranty: string;
 
   terms: string;
 

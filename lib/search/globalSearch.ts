@@ -82,9 +82,9 @@ export async function globalSearch(
 
     supabase
       .from("payments")
-      .select("id,amount,reference")
+      .select("id,amount,reference:reference_number")
       .or(
-        `reference.ilike.%${search}%`
+        `reference_number.ilike.%${search}%`
       )
       .limit(5),
   ]);

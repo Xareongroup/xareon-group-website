@@ -42,6 +42,9 @@ export default async function ContractSigningPage({
       .select(`
 
         *,
+        scope_of_work:terms,
+        payment_terms:terms,
+        warranty:terms,
 
         customer:customers(
 

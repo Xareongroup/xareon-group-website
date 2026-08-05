@@ -43,6 +43,9 @@ export default async function ContractPreviewPage({
       .select(`
 
         *,
+        scope_of_work:terms,
+        payment_terms:terms,
+        warranty:terms,
 
         customer:customers(
 

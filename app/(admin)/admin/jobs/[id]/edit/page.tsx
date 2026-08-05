@@ -17,7 +17,7 @@ interface CustomerOption {
 
 interface EstimateOption {
   id: string;
-  estimate_number: string;
+  estimate_number: number;
 }
 
 interface EmployeeOption {

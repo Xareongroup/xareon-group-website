@@ -5,14 +5,14 @@ import { useState } from "react";
 interface PaymentFormProps {
   invoice: {
     id: string;
-    invoice_number: string;
+    invoice_number: string | null;
     total: number | null;
     balance_due: number | null;
     customer:
       | {
           first_name: string;
           last_name: string;
-        }[]
+        }
       | null;
   };
 

@@ -31,6 +31,9 @@ export async function GET(
       { status: 404 }
     );
   }
+  if (!invoice.customer_id) {
+    return NextResponse.json({ error: "Invoice is not linked to a customer." }, { status: 422 });
+  }
 
   // Load customer
   const { data: customer } = await supabase
@@ -57,7 +60,7 @@ export async function GET(
   return new NextResponse(new Uint8Array(pdfBuffer), {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `inline; filename="${invoice.invoice_number}.pdf"`,
+      "Content-Disposition": `inline; filename="${invoice.invoice_number ?? invoice.id}.pdf"`,
     },
   });
 }

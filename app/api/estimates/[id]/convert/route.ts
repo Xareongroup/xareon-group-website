@@ -85,7 +85,7 @@ export async function POST(
       total: estimate.total,
       balance_due: estimate.total,
       status: "Draft",
-      issued_at: new Date().toISOString(),
+      issue_date: new Date().toISOString().slice(0, 10),
       paid_at: null,
     })
     .select()

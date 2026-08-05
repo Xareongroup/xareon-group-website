@@ -77,6 +77,9 @@ export async function POST(
       );
 
     }
+    if (!contract.customer_id) {
+      throw new Error("Contract is not linked to a customer.");
+    }
 
 
 

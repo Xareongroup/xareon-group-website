@@ -50,8 +50,6 @@ export default function NewContractPage() {
   const initialValues: ContractFormValues = {
 
 
-    title: "",
-
     customer_id: "",
 
     estimate_id: "",
@@ -59,12 +57,6 @@ export default function NewContractPage() {
     job_id: "",
 
     status: "Draft",
-
-    scope_of_work: "",
-
-    payment_terms: "",
-
-    warranty: "",
 
     terms: "",
 
@@ -225,11 +217,6 @@ export default function NewContractPage() {
             contract_number:
               contractNumber,
 
-            title:
-              values.title || null,
-
-
-
             customer_id:
               values.customer_id || null,
 
@@ -247,17 +234,6 @@ export default function NewContractPage() {
 
             status:
               values.status,
-
-            scope_of_work:
-              values.scope_of_work,
-
-            payment_terms:
-              values.payment_terms,
-
-            warranty:
-              values.warranty,
-
-
 
             terms:
               values.terms,

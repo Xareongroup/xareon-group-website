@@ -551,7 +551,7 @@ export default async function CustomerDetailsPage({
             <CustomerPortalButtons
 
               portalToken={
-                customer.portal_token
+                customer.portal_token ?? ""
               }
 
             />
@@ -826,7 +826,7 @@ export default async function CustomerDetailsPage({
       <CustomerPortalCard
 
         portalToken={
-          customer.portal_token
+          customer.portal_token ?? ""
         }
 
         portalCreatedAt={

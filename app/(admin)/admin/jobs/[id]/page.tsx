@@ -72,6 +72,10 @@ export default async function JobDetailsPage({
     estimate:estimates(
       id,
       estimate_number
+    ),
+    technician:employees(
+      first_name,
+      last_name
     )
   `)
   .eq("id", id)
@@ -232,7 +236,7 @@ console.log("Error:", error);
           </p>
 
           <span
-            className={`mt-2 inline-flex rounded-full px-3 py-1 text-sm font-semibold ${getStatusColor(job.status)}`}
+            className={`mt-2 inline-flex rounded-full px-3 py-1 text-sm font-semibold ${getStatusColor(job.status ?? "")}`}
           >
             {job.status}
           </span>
@@ -246,7 +250,7 @@ console.log("Error:", error);
           </p>
 
           <span
-            className={`mt-2 inline-flex rounded-full px-3 py-1 text-sm font-semibold ${getPriorityColor(job.priority)}`}
+            className={`mt-2 inline-flex rounded-full px-3 py-1 text-sm font-semibold ${getPriorityColor(job.priority ?? "")}`}
           >
             {job.priority}
           </span>
@@ -260,7 +264,9 @@ console.log("Error:", error);
           </p>
 
           <p className="mt-1">
-            {job.technician || "Not Assigned"}
+            {typeof job.technician === "object" && job.technician
+              ? `${job.technician.first_name} ${job.technician.last_name}`
+              : "Not Assigned"}
           </p>
 
         </div>

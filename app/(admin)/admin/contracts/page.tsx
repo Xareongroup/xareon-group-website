@@ -44,7 +44,7 @@ interface Contract {
 
   estimate: {
 
-    estimate_number: string;
+    estimate_number: number;
 
   } | null;
 

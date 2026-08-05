@@ -20,6 +20,7 @@ export default function EditContractPage() {
   const router = useRouter();
 
   const supabase = createClient();
+  const contractId = typeof params.id === "string" ? params.id : "";
 
   const [loading, setLoading] =
     useState(true);
@@ -62,7 +63,7 @@ export default function EditContractPage() {
 
         .select("*")
 
-        .eq("id", params.id)
+        .eq("id", contractId)
 
         .single(),
 
@@ -105,9 +106,6 @@ export default function EditContractPage() {
 
       setValues({
 
-        title:
-          contractResult.data.title ?? "",
-
         customer_id:
           contractResult.data.customer_id ?? "",
 
@@ -119,15 +117,6 @@ export default function EditContractPage() {
 
         status:
           contractResult.data.status ?? "Draft",
-
-        scope_of_work:
-          contractResult.data.scope_of_work ?? "",
-
-        payment_terms:
-          contractResult.data.payment_terms ?? "",
-
-        warranty:
-          contractResult.data.warranty ?? "",
 
         terms:
           contractResult.data.terms ?? "",
@@ -162,8 +151,6 @@ export default function EditContractPage() {
 
       .update({
 
-        title: updatedValues.title,
-
         customer_id:
           updatedValues.customer_id || null,
 
@@ -176,21 +163,12 @@ export default function EditContractPage() {
         status:
           updatedValues.status,
 
-        scope_of_work:
-          updatedValues.scope_of_work,
-
-        payment_terms:
-          updatedValues.payment_terms,
-
-        warranty:
-          updatedValues.warranty,
-
         notes:
           updatedValues.notes,
 
       })
 
-      .eq("id", params.id);
+      .eq("id", contractId);
 
     setSaving(false);
 
@@ -202,7 +180,7 @@ export default function EditContractPage() {
 
     }
 
-    router.push(`/admin/contracts/${params.id}`);
+    router.push(`/admin/contracts/${contractId}`);
 
     router.refresh();
 

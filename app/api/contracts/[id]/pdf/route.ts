@@ -69,6 +69,7 @@ export async function POST(
       throw new Error(
         "Contract not found."
       );
+    if (!contract.customer_id) throw new Error("Contract is not linked to a customer.");
 
 
 

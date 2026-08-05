@@ -95,7 +95,7 @@ export default async function PortalContractPage({
         created_at,
         signed_at,
         signed_by_name,
-        signature_status,
+        signature_status:signed,
         signature_token
       `)
 

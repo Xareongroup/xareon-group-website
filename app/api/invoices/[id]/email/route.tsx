@@ -85,6 +85,7 @@ export async function POST(
       );
 
     }
+    if (!invoice.customer_id) throw new Error("Invoice is not linked to a customer.");
 
 
 

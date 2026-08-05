@@ -12,7 +12,7 @@ import JobForm, {
 
 interface Estimate {
   id: string;
-  estimate_number: string;
+  estimate_number: number;
 }
 
 interface CustomerOption {
