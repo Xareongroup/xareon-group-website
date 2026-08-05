@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { adminSupabase } from "@/lib/supabase/admin";
 import { recalculateInvoice } from "@/lib/invoices/recalculateInvoice";
+import { requireApiRole } from "@/lib/auth/requireApiRole";
 
 interface RouteProps {
   params: Promise<{
@@ -13,6 +14,8 @@ export async function PUT(
   request: Request,
   { params }: RouteProps
 ) {
+  const access = await requireApiRole(["owner", "admin", "accounting"]);
+  if ("response" in access) return access.response;
   try {
     const { id } = await params;
 
@@ -79,6 +82,8 @@ export async function DELETE(
   request: Request,
   { params }: RouteProps
 ) {
+  const access = await requireApiRole(["owner"]);
+  if ("response" in access) return access.response;
   try {
     const { id } = await params;
 

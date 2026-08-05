@@ -70,9 +70,5 @@ create trigger expense_categories_set_updated_at before update on public.expense
 alter table public.expense_categories enable row level security;
 alter table public.vendors enable row level security;
 alter table public.expenses enable row level security;
-create policy "authenticated financial access" on public.expense_categories for all to authenticated using (true) with check (true);
-create policy "authenticated financial access" on public.vendors for all to authenticated using (true) with check (true);
-create policy "authenticated financial access" on public.expenses for all to authenticated using (true) with check (true);
 
 insert into storage.buckets (id, name, public) values ('expense-receipts','expense-receipts',false) on conflict (id) do nothing;
-create policy "authenticated expense receipt access" on storage.objects for all to authenticated using (bucket_id = 'expense-receipts') with check (bucket_id = 'expense-receipts');
