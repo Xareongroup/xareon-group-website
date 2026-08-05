@@ -1,4 +1,5 @@
 import { adminSupabase } from "@/lib/supabase/admin";
+import { getReportStartDate } from "./dateRange";
 
 export interface PaymentReport {
   totalPayments: number;
@@ -9,36 +10,12 @@ export interface PaymentReport {
   collectionRate: number;
 }
 
-function getStartDate(range: string): string | null {
-  const now = new Date();
-
-  switch (range) {
-    case "today":
-      now.setHours(0, 0, 0, 0);
-      return now.toISOString();
-
-    case "30d":
-      now.setDate(now.getDate() - 30);
-      return now.toISOString();
-
-    case "90d":
-      now.setDate(now.getDate() - 90);
-      return now.toISOString();
-
-    case "year":
-      return new Date(now.getFullYear(), 0, 1).toISOString();
-
-    default:
-      return null;
-  }
-}
-
 export async function getPaymentReport(
   range: string = "30d"
 ): Promise<PaymentReport> {
   const supabase = adminSupabase;
 
-  const startDate = getStartDate(range);
+  const startDate = getReportStartDate(range);
 
   let paymentsQuery = supabase
     .from("payments")

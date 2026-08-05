@@ -65,19 +65,17 @@ export async function POST(
     });
   }
 
-  // Generate next invoice number
-  const { count: invoiceCount } = await supabase
-    .from("invoices")
-    .select("id", {
-      count: "exact",
-      head: true,
-    });
+  // Keep estimate conversion aligned with the production invoice convention:
+  // INV-YYYY-##### generated from the authoritative database function.
+  const { data: invoiceNumber, error: invoiceNumberError } =
+    await supabase.rpc("generate_invoice_number");
 
-  const invoiceNumber = `INV-${String(
-    (invoiceCount ?? 0) + 1
-  ).padStart(6, "0")}`;
-
-  console.log("Generated Invoice Number:", invoiceNumber);
+  if (invoiceNumberError || !invoiceNumber) {
+    return NextResponse.json({
+      success: false,
+      error: invoiceNumberError?.message ?? "Unable to generate invoice number.",
+    }, { status: 500 });
+  }
 
   // Create invoice
   const { data: invoice, error: invoiceError } = await supabase

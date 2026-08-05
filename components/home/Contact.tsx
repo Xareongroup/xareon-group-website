@@ -2,6 +2,7 @@
 
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import QuoteForm from "@/components/QuoteForm";
+import { trackConversion } from "@/lib/utils/conversions";
 
 export default function Contact() {
   return (
@@ -44,6 +45,7 @@ export default function Contact() {
         <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           <a
             href="tel:+12022868497"
+            onClick={() => trackConversion("phone_click", { placement: "contact_card" })}
             className="rounded-3xl bg-slate-800 p-6 transition-all duration-300 hover:-translate-y-2 hover:bg-blue-600"
           >
             <Phone className="mb-5 h-10 w-10 text-blue-400" />
@@ -59,6 +61,7 @@ export default function Contact() {
 
           <a
             href="mailto:info@xareongroup.com"
+            onClick={() => trackConversion("email_click", { placement: "contact_card" })}
             className="rounded-3xl bg-slate-800 p-6 transition-all duration-300 hover:-translate-y-2 hover:bg-blue-600"
           >
             <Mail className="mb-5 h-10 w-10 text-blue-400" />
@@ -123,6 +126,7 @@ export default function Contact() {
 
             <a
               href="tel:+12022868497"
+              onClick={() => trackConversion("phone_click", { placement: "contact_cta" })}
               className="w-full rounded-2xl bg-white px-8 py-4 text-lg font-semibold text-blue-700 transition hover:bg-slate-100 sm:w-auto"
             >
               📞 Call Now
@@ -130,6 +134,7 @@ export default function Contact() {
 
             <a
               href="mailto:info@xareongroup.com"
+              onClick={() => trackConversion("email_click", { placement: "contact_cta" })}
               className="w-full rounded-2xl border border-white px-8 py-4 text-lg font-semibold text-white transition hover:bg-white hover:text-blue-700 sm:w-auto"
             >
               ✉ Email Us

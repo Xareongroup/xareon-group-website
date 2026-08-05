@@ -37,7 +37,10 @@ test.describe("staging authenticated CRM, financials, and RBAC smoke", () => {
 
     const job = await owner.from("jobs").insert({ customer_id: customer.data!.id, estimate_id: estimate.data!.id, title: `Job ${suffix}`, status: "Scheduled" }).select("id").single();
     expect(job.error).toBeNull();
-    const invoice = await owner.from("invoices").insert({ customer_id: customer.data!.id, estimate_id: estimate.data!.id, job_id: job.data!.id, invoice_number: suffix, status: "Sent", subtotal: 1000, tax: 0, total: 1000, amount_paid: 0, balance_due: 1000 }).select("id").single();
+    const generatedInvoiceNumber = await owner.rpc("generate_invoice_number");
+    expect(generatedInvoiceNumber.error).toBeNull();
+    expect(generatedInvoiceNumber.data).toMatch(/^INV-\d{4}-\d{5}$/);
+    const invoice = await owner.from("invoices").insert({ customer_id: customer.data!.id, estimate_id: estimate.data!.id, job_id: job.data!.id, invoice_number: generatedInvoiceNumber.data!, status: "Sent", subtotal: 1000, tax: 0, total: 1000, amount_paid: 0, balance_due: 1000 }).select("id").single();
     expect(invoice.error).toBeNull();
     const payment = await owner.from("payments").insert({ invoice_id: invoice.data!.id, amount: 100, payment_method: "Check", reference_number: suffix }).select("id").single();
     expect(payment.error).toBeNull();

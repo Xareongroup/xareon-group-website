@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { trackConversion } from "@/lib/utils/conversions";
 
 const quoteSchema = z.object({
   name: z.string().min(2, "Please enter your full name."),
@@ -82,6 +83,8 @@ const response = await fetch("/api/contact", {
     if (!response.ok) {
       throw new Error(result.error || "Something went wrong.");
     }
+
+    trackConversion("generate_lead", { lead_source: "quote_form" });
 
     alert("✅ Thank you! Your free estimate request has been sent successfully.");
 

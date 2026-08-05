@@ -9,8 +9,6 @@ import { Invoice } from "@/types/invoice";
 
 import { defaultInvoice } from "@/lib/invoices/defaults";
 
-import { getNextDocumentNumber } from "@/lib/documentNumbers";
-
 import InvoiceHeader from "@/components/admin/invoices/InvoiceHeader";
 import InvoiceItems from "@/components/admin/invoices/InvoiceItems";
 import InvoiceSummary from "@/components/admin/invoices/InvoiceSummary";
@@ -95,11 +93,14 @@ export default function NewInvoicePage() {
 
 
 
-      const invoiceNumber =
-        await getNextDocumentNumber(
-          supabase,
-          "invoice"
-        );
+      // Invoices use the production generate_invoice_number() function, not
+      // the legacy generic sequences table. It preserves INV-YYYY-#####.
+      const { data: invoiceNumber, error: invoiceNumberError } =
+        await supabase.rpc("generate_invoice_number");
+
+      if (invoiceNumberError || !invoiceNumber) {
+        throw invoiceNumberError ?? new Error("Unable to generate invoice number.");
+      }
 
 
 

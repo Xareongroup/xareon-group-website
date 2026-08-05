@@ -102,6 +102,7 @@ export default async function AdminDashboard() {
   icon={DollarSign}
   color="green"
   change="Business Lifetime"
+  href="/admin/reports?range=365d"
 />
 
             <StatCard
@@ -111,6 +112,7 @@ export default async function AdminDashboard() {
   color="red"
   change="Awaiting payment"
   changeType="negative"
+  href="/admin/invoices?status=Sent"
 />
 
             <StatCard
@@ -120,6 +122,7 @@ export default async function AdminDashboard() {
   color="blue"
   change="Current month"
   changeType="positive"
+  href="/admin/payments?range=month"
 />
 
             <StatCard
@@ -128,6 +131,7 @@ export default async function AdminDashboard() {
   icon={Briefcase}
   color="orange"
   change="In progress"
+  href="/admin/jobs?status=In%20Progress"
 />
 
             <StatCard
@@ -136,6 +140,7 @@ export default async function AdminDashboard() {
   icon={Users}
   color="blue"
   change="Total customers"
+  href="/admin/customers"
 />
 
             <StatCard
@@ -144,6 +149,7 @@ export default async function AdminDashboard() {
   icon={FileText}
   color="purple"
   change="Waiting approval"
+  href="/admin/estimates?status=Draft"
 />
 
           </div>

@@ -72,6 +72,7 @@ export default async function CustomerDetailsPage({
     jobsResponse,
     invoicesResponse,
     paymentsResponse,
+    contractsResponse,
   ] = await Promise.all([
 
 
@@ -121,6 +122,12 @@ export default async function CustomerDetailsPage({
         ascending: false,
       }),
 
+    supabase
+      .from("contracts")
+      .select("id,contract_number,status,created_at,estimate:estimates(estimate_number,total),job:jobs(job_number)")
+      .eq("customer_id", id)
+      .order("created_at", { ascending: false }),
+
 
   ]);
 
@@ -140,6 +147,9 @@ export default async function CustomerDetailsPage({
 
   const payments =
     paymentsResponse.data ?? [];
+
+  const contracts =
+    contractsResponse.data ?? [];
 
 
 
@@ -894,9 +904,11 @@ export default async function CustomerDetailsPage({
                 .map((estimate)=>(
 
 
-                  <div
+                  <Link
 
                     key={estimate.id}
+
+                    href={`/admin/estimates/${estimate.id}`}
 
                     className="
                       flex
@@ -968,7 +980,7 @@ export default async function CustomerDetailsPage({
                     </div>
 
 
-                  </div>
+                  </Link>
 
 
                 ))
@@ -1026,9 +1038,11 @@ export default async function CustomerDetailsPage({
                 .map((job)=>(
 
 
-                  <div
+                  <Link
 
                     key={job.id}
+
+                    href={`/admin/jobs/${job.id}`}
 
                     className="
                       flex
@@ -1094,7 +1108,7 @@ export default async function CustomerDetailsPage({
                     </Badge>
 
 
-                  </div>
+                  </Link>
 
 
                 ))
@@ -1160,7 +1174,7 @@ export default async function CustomerDetailsPage({
 
                     key={invoice.id}
 
-                    href={`/portal/${customer.portal_token}/invoice/${invoice.id}`}
+                    href={`/admin/invoices/${invoice.id}`}
 
                     className="
                       flex
@@ -1291,9 +1305,11 @@ export default async function CustomerDetailsPage({
                 .map((payment)=>(
 
 
-                  <div
+                  <Link
 
                     key={payment.id}
+
+                    href={`/admin/payments/${payment.id}`}
 
                     className="
                       flex
@@ -1373,7 +1389,7 @@ export default async function CustomerDetailsPage({
 
 
 
-                  </div>
+                  </Link>
 
 
                 ))
@@ -1412,13 +1428,24 @@ export default async function CustomerDetailsPage({
 
         title="Contracts"
 
-        description="Linked through customer jobs"
+        description={`${contracts.length} contract${contracts.length === 1 ? "" : "s"}`}
 
       >
 
 
 
-        <div className="
+        {contracts.length > 0 && <div className="space-y-3">
+          {contracts.slice(0, 5).map((contract) => {
+            const estimate = Array.isArray(contract.estimate) ? contract.estimate[0] : contract.estimate;
+            const job = Array.isArray(contract.job) ? contract.job[0] : contract.job;
+            return <Link key={contract.id} href={`/admin/contracts/${contract.id}`} className="flex items-center justify-between rounded-xl border border-slate-200 p-4 transition hover:bg-slate-50">
+              <div><p className="font-semibold">Contract #{contract.contract_number ?? "—"}</p><p className="text-sm text-slate-500">{job?.job_number ? `Job #${job.job_number}` : estimate?.estimate_number ? `Estimate #${estimate.estimate_number}` : "No related job or estimate"}</p><p className="text-xs text-slate-400">Created {contract.created_at ? new Date(contract.created_at).toLocaleDateString() : "—"}</p></div>
+              <div className="text-right"><p className="font-semibold">{estimate?.total != null ? `$${Number(estimate.total).toFixed(2)}` : "—"}</p><Badge variant="info">{contract.status ?? "Draft"}</Badge></div>
+            </Link>;
+          })}
+        </div>}
+
+        {contracts.length === 0 && <div className="
           flex
           flex-col
           items-center
@@ -1509,7 +1536,7 @@ export default async function CustomerDetailsPage({
 
 
 
-        </div>
+        </div>}
 
 
 
