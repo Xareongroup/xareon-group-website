@@ -58,9 +58,9 @@ export async function globalSearch(
   ] = await Promise.all([
     supabase
       .from("customers")
-      .select("id,name,email,phone")
+      .select("id,first_name,last_name,email,phone")
       .or(
-        `name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`
+        `first_name.ilike.%${search}%,last_name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`
       )
       .limit(5),
 
@@ -90,7 +90,12 @@ export async function globalSearch(
   ]);
 
   return {
-    customers: customersResult.data ?? [],
+    customers: (customersResult.data ?? []).map((customer) => ({
+      id: customer.id,
+      name: `${customer.first_name ?? ""} ${customer.last_name ?? ""}`.trim(),
+      email: customer.email,
+      phone: customer.phone,
+    })),
     jobs: jobsResult.data ?? [],
     invoices: invoicesResult.data ?? [],
     payments: paymentsResult.data ?? [],

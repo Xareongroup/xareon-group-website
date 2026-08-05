@@ -4,139 +4,261 @@ import {
   StyleSheet,
 } from "@react-pdf/renderer";
 
+
+import {
+  InvoicePdfData,
+} from "@/types/invoicePdf";
+
+
+
 const styles = StyleSheet.create({
-  container: {
+
+
+  totalsBox: {
+
     marginTop: 24,
-    alignItems: "flex-end",
-  },
 
-  box: {
-    width: 230,
-    borderWidth: 1,
-    borderColor: "#CBD5E1",
+    marginLeft: "55%",
+
+    border: 1,
+
+    borderColor: "#d1d5db",
+
+    borderRadius: 6,
+
     padding: 12,
+
   },
 
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 8,
-  },
 
-  label: {
-    fontSize: 10,
-    color: "#475569",
-  },
-
-  value: {
-    fontSize: 10,
-    fontWeight: "bold",
-    color: "#0F172A",
-  },
 
   totalRow: {
+
     flexDirection: "row",
+
     justifyContent: "space-between",
-    borderTopWidth: 1,
-    borderTopColor: "#CBD5E1",
-    paddingTop: 10,
-    marginTop: 8,
+
+    marginBottom: 6,
+
   },
+
+
+
+  label: {
+
+    fontSize: 11,
+
+  },
+
+
+
+  value: {
+
+    fontSize: 11,
+
+    fontWeight: "bold",
+
+  },
+
+
 
   grandTotal: {
-    fontSize: 12,
-    fontWeight: "bold",
-    color: "#0F172A",
-  },
 
-  balanceRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
     marginTop: 10,
+
     paddingTop: 10,
-    borderTopWidth: 1,
-    borderTopColor: "#CBD5E1",
+
+    borderTop: 1,
+
+    borderTopColor: "#d1d5db",
+
+    fontSize: 15,
+
+    fontWeight: "bold",
+
+    color: "#2563eb",
+
   },
 
-  balanceLabel: {
-    fontSize: 11,
+
+  balance: {
+
+    marginTop: 10,
+
+    paddingTop: 10,
+
+    borderTop: 1,
+
+    borderTopColor: "#d1d5db",
+
+    fontSize: 12,
+
     fontWeight: "bold",
-    color: "#1D4ED8",
+
+    color: "#2563eb",
+
   },
 
-  balanceValue: {
-    fontSize: 11,
-    fontWeight: "bold",
-    color: "#1D4ED8",
-  },
+
 });
 
-import { InvoicePdfData } from "@/types/invoicePdf";
+
+
+
 
 interface Props {
+
   invoice: InvoicePdfData;
+
 }
 
+
+
+
+
+function currency(value:number){
+
+  return new Intl.NumberFormat(
+    "en-US",
+    {
+      style:"currency",
+      currency:"USD",
+    }
+  ).format(value ?? 0);
+
+}
+
+
+
+
+
+
+
 export default function InvoicePDFTotals({
+
   invoice,
-}: Props) {
-  return (
-    <View style={styles.container}>
 
-      <View style={styles.box}>
+}:Props){
 
-        <View style={styles.row}>
-          <Text style={styles.label}>
-            Subtotal
-          </Text>
 
-          <Text style={styles.value}>
-            ${Number(invoice.subtotal).toFixed(2)}
-          </Text>
-        </View>
+return (
 
-        <View style={styles.row}>
-          <Text style={styles.label}>
-            Tax
-          </Text>
 
-          <Text style={styles.value}>
-            ${Number(invoice.tax).toFixed(2)}
-          </Text>
-        </View>
+<View style={styles.totalsBox}>
 
-        <View style={styles.row}>
-          <Text style={styles.label}>
-            Discount
-          </Text>
 
-          <Text style={styles.value}>
-            $0.00
-          </Text>
-        </View>
 
-        <View style={styles.totalRow}>
-          <Text style={styles.grandTotal}>
-            Total
-          </Text>
 
-          <Text style={styles.grandTotal}>
-            ${Number(invoice.total).toFixed(2)}
-          </Text>
-        </View>
+<View style={styles.totalRow}>
 
-        <View style={styles.balanceRow}>
-          <Text style={styles.balanceLabel}>
-            Balance Due
-          </Text>
+<Text style={styles.label}>
+Subtotal
+</Text>
 
-          <Text style={styles.balanceValue}>
-            ${Number(invoice.balance_due).toFixed(2)}
-          </Text>
-        </View>
 
-      </View>
+<Text style={styles.value}>
+{currency(invoice.subtotal)}
+</Text>
 
-    </View>
-  );
+</View>
+
+
+
+
+
+
+<View style={styles.totalRow}>
+
+<Text style={styles.label}>
+Tax
+</Text>
+
+
+<Text style={styles.value}>
+{currency(invoice.tax)}
+</Text>
+
+</View>
+
+
+
+
+
+
+<View style={styles.totalRow}>
+
+<Text style={styles.label}>
+Discount
+</Text>
+
+
+<Text style={styles.value}>
+$0.00
+</Text>
+
+</View>
+
+
+
+
+
+
+
+<View style={[
+  styles.totalRow,
+  styles.grandTotal,
+]}>
+
+
+
+<Text>
+Total
+</Text>
+
+
+<Text>
+{currency(invoice.total)}
+</Text>
+
+
+
+</View>
+
+
+
+
+
+
+
+<View style={[
+  styles.totalRow,
+  styles.balance,
+]}>
+
+
+
+<Text>
+Balance Due
+</Text>
+
+
+<Text>
+{currency(invoice.balance_due)}
+</Text>
+
+
+
+</View>
+
+
+
+
+
+
+</View>
+
+
+);
+
+
 }

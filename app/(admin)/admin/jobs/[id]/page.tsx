@@ -4,6 +4,7 @@ import CompleteJobButton from "@/components/admin/jobs/CompleteJobButton";
 import { createClient } from "@/lib/supabase/server";
 import CreateInvoiceButton from "@/components/admin/jobs/CreateInvoiceButton";
 import JobPhotos from "@/components/admin/jobs/JobPhotos";
+import JobProfitabilityCard from "@/components/admin/financials/JobProfitabilityCard";
 
 interface PageProps {
   params: Promise<{
@@ -413,6 +414,8 @@ console.log("Error:", error);
     </p>
 
   </div>
+
+  <JobProfitabilityCard jobId={job.id} />
 
   {/* Quick Actions */}
 

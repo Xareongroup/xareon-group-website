@@ -1,0 +1,3 @@
+import { describe, expect, it } from "vitest";
+import { recalculateEstimate } from "@/lib/estimates/calculations";
+describe("estimate workflow calculations", () => { it("persists correct totals before an estimate is saved", () => { const estimate=recalculateEstimate({customerId:"c",estimateNumber:"EST-1",issueDate:"2026-01-01",expirationDate:"2026-02-01",status:"Draft",items:[{id:"i",description:"Material",quantity:3,unit:"Each",unitPrice:50,discount:0,taxable:true,total:0}],subtotal:0,taxRate:8,tax:0,discount:0,total:0,notes:"",terms:""}); expect(estimate.subtotal).toBe(150); expect(estimate.tax).toBe(12); expect(estimate.total).toBe(162); }); });

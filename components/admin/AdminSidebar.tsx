@@ -15,6 +15,9 @@ import {
   CreditCard,
   BarChart3,
   Settings,
+  Landmark,
+  Tags,
+  Building2,
 } from "lucide-react";
 
 const sections = [
@@ -76,6 +79,16 @@ const sections = [
         label: "Reports",
         icon: BarChart3,
       },
+    ],
+  },
+  {
+    title: "FINANCIALS",
+    links: [
+      { href: "/admin/financials", label: "Financial Dashboard", icon: Landmark },
+      { href: "/admin/financials/expenses", label: "Expenses", icon: Receipt },
+      { href: "/admin/financials/categories", label: "Expense Categories", icon: Tags },
+      { href: "/admin/financials/vendors", label: "Vendors / Payees", icon: Building2 },
+      { href: "/admin/financials/reports", label: "Financial Reports", icon: BarChart3 },
     ],
   },
   {

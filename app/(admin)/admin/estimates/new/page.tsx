@@ -95,7 +95,7 @@ export default function NewEstimatePage() {
 
     try {
 
-      const estimateCode =
+      const estimateNumber =
         await getNextDocumentNumber(
           supabase,
           "estimate"
@@ -110,8 +110,8 @@ export default function NewEstimatePage() {
         .from("estimates")
         .insert({
 
-          estimate_code:
-            estimateCode,
+          estimate_number:
+            estimateNumber,
 
           customer_id:
             calculated.customerId,
@@ -370,7 +370,7 @@ export default function NewEstimatePage() {
             onSave={saveEstimate}
             onCancel={cancelEstimate}
             onPreview={previewEstimate}
-            onEmail={emailEstimate}
+            onSend={emailEstimate}
           />
 
         </div>

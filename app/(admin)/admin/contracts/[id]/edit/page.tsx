@@ -129,6 +129,9 @@ export default function EditContractPage() {
         warranty:
           contractResult.data.warranty ?? "",
 
+        terms:
+          contractResult.data.terms ?? "",
+
         notes:
           contractResult.data.notes ?? "",
 

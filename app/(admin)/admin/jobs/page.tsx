@@ -11,12 +11,18 @@ interface Job {
   title: string;
   status: string;
   priority: string;
-  technician: string | null;
   scheduled_date: string | null;
-  customer: {
-    first_name: string;
-    last_name: string;
-  } | null;
+
+  customer?: {
+  first_name: string;
+  last_name: string;
+  phone?: string | null;
+} | null;
+
+employee?: {
+  first_name: string;
+  last_name: string;
+} | null;
 }
 
 function getStatusColor(status: string) {
@@ -74,18 +80,23 @@ export default function JobsPage() {
     const { data, error } = await supabase
       .from("jobs")
       .select(`
-        id,
-        job_number,
-        title,
-        status,
-        priority,
-        technician,
-        scheduled_date,
-        customer:customers(
-          first_name,
-          last_name
-        )
-      `)
+  id,
+  job_number,
+  title,
+  status,
+  priority,
+  scheduled_date,
+
+  customer:customers(
+    first_name,
+    last_name
+  ),
+
+  employee:employees(
+    first_name,
+    last_name
+  )
+`)
       .order("scheduled_date", {
         ascending: true,
       });
@@ -95,12 +106,17 @@ export default function JobsPage() {
       setError(error.message);
     } else {
       const formatted: Job[] =
-        (data ?? []).map((job: any) => ({
-          ...job,
-          customer: Array.isArray(job.customer)
-            ? job.customer[0] ?? null
-            : job.customer,
-        }));
+  (data ?? []).map((job: any) => ({
+    ...job,
+
+    customer: Array.isArray(job.customer)
+      ? job.customer[0] ?? null
+      : job.customer,
+
+    employee: Array.isArray(job.employee)
+      ? job.employee[0] ?? null
+      : job.employee,
+  }));
 
       setJobs(formatted);
     }

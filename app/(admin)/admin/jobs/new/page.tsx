@@ -17,7 +17,8 @@ interface Estimate {
 
 interface CustomerOption {
   id: string;
-  name: string;
+  first_name: string;
+  last_name: string;
 }
 
 interface EmployeeOption {
@@ -76,14 +77,7 @@ export default function NewJobPage() {
       if (customersResult.error) {
         setError(customersResult.error.message);
       } else {
-        setCustomers(
-          (customersResult.data ?? []).map(
-            (customer) => ({
-              id: customer.id,
-              name: `${customer.first_name} ${customer.last_name}`,
-            })
-          )
-        );
+        setCustomers(customersResult.data ?? []);
       }
 
       if (estimatesResult.error) {

@@ -11,7 +11,8 @@ import JobForm, {
 
 interface CustomerOption {
   id: string;
-  name: string;
+  first_name: string;
+  last_name: string;
 }
 
 interface EstimateOption {
@@ -98,12 +99,7 @@ export default function EditJobPage() {
         return;
       }
 
-      setCustomers(
-        (customersResult.data ?? []).map((customer) => ({
-          id: customer.id,
-          name: `${customer.first_name} ${customer.last_name}`,
-        }))
-      );
+      setCustomers(customersResult.data ?? []);
 
       setEstimates(estimatesResult.data ?? []);
 

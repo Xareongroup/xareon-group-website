@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import { formatCurrency } from "@/lib/utils/currency";
+import CreateContractButton from "@/components/admin/contracts/CreateContractButton";
 
 interface PageProps {
   params: Promise<{
@@ -97,6 +98,15 @@ export default async function EstimateDetailsPage({
   estimateId={estimate.id}
 />
 
+<CreateContractButton
+
+  estimateId={estimate.id}
+
+  signed={
+    estimate.signature_status === "Signed"
+  }
+
+/>
       
         </div>
 

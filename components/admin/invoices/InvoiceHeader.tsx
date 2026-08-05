@@ -4,12 +4,13 @@ import { Invoice } from "@/types/invoice";
 
 interface CustomerOption {
   id: string;
-  name: string;
+  first_name: string;
+  last_name: string;
 }
 
 interface EstimateOption {
   id: string;
-  estimate_code: string;
+  estimate_number: number;
 }
 
 interface JobOption {
@@ -80,7 +81,7 @@ export default function InvoiceHeader({
                 key={customer.id}
                 value={customer.id}
               >
-                {customer.name}
+                {customer.first_name} {customer.last_name}
               </option>
             ))}
           </select>
@@ -142,7 +143,7 @@ export default function InvoiceHeader({
                 key={estimate.id}
                 value={estimate.id}
               >
-                {estimate.estimate_code}
+                {estimate.estimate_number}
               </option>
             ))}
 

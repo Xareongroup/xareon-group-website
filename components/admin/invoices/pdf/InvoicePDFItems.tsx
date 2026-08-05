@@ -1,152 +1,267 @@
 import {
   View,
- Text,
+  Text,
   StyleSheet,
 } from "@react-pdf/renderer";
 
+
+import {
+  InvoicePdfItem,
+} from "@/types/invoicePdf";
+
+
+
 const styles = StyleSheet.create({
-  table: {
-    marginTop: 15,
-    borderWidth: 1,
-    borderColor: "#CBD5E1",
+
+
+  tableHeader: {
+
+    flexDirection: "row",
+
+    backgroundColor: "#2563eb",
+
+    color: "white",
+
+    paddingVertical: 8,
+
+    fontWeight: "bold",
+
   },
 
-  header: {
-    flexDirection: "row",
-    backgroundColor: "#E2E8F0",
-    borderBottomWidth: 1,
-    borderBottomColor: "#CBD5E1",
-    paddingVertical: 8,
-    alignItems: "center",
-  },
+
 
   row: {
+
     flexDirection: "row",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E2E8F0",
+
+    borderBottom: 1,
+
+    borderBottomColor: "#e5e7eb",
+
     paddingVertical: 8,
-    alignItems: "center",
+
   },
 
-  description: {
-    flex: 3,
-    paddingHorizontal: 8,
-    fontSize: 10,
+
+
+  desc: {
+
+    width: "42%",
+
+    paddingHorizontal: 6,
+
   },
+
+
 
   qty: {
-    width: 50,
+
+    width: "12%",
+
     textAlign: "center",
-    fontSize: 10,
+
   },
+
+
 
   unit: {
-    width: 60,
+
+    width: "12%",
+
     textAlign: "center",
-    fontSize: 10,
+
   },
+
+
 
   price: {
-    width: 80,
+
+    width: "17%",
+
     textAlign: "right",
-    paddingRight: 8,
-    fontSize: 10,
+
+    paddingRight: 6,
+
   },
 
-  discount: {
-    width: 80,
-    textAlign: "right",
-    paddingRight: 8,
-    fontSize: 10,
-  },
+
 
   total: {
-    width: 90,
+
+    width: "17%",
+
     textAlign: "right",
-    paddingRight: 8,
-    fontSize: 10,
-    fontWeight: "bold",
+
+    paddingRight: 6,
+
   },
 
-  headerText: {
-    fontSize: 10,
-    fontWeight: "bold",
-  },
+
 });
 
-import { InvoicePdfItem } from "@/types/invoicePdf";
+
+
+
 
 interface Props {
+
   items: InvoicePdfItem[];
+
 }
 
+
+
+
+
+function currency(value:number){
+
+  return new Intl.NumberFormat(
+    "en-US",
+    {
+      style:"currency",
+      currency:"USD",
+    }
+  ).format(value ?? 0);
+
+}
+
+
+
+
+
+
 export default function InvoicePDFItems({
+
   items,
-}: Props) {
-  return (
-    <View style={styles.table}>
 
-      <View style={styles.header}>
+}:Props){
 
-        <Text style={[styles.description, styles.headerText]}>
-          Description
-        </Text>
 
-        <Text style={[styles.qty, styles.headerText]}>
-          Qty
-        </Text>
+return (
 
-        <Text style={[styles.unit, styles.headerText]}>
-          Unit
-        </Text>
 
-        <Text style={[styles.price, styles.headerText]}>
-          Price
-        </Text>
+<View>
 
-        <Text style={[styles.discount, styles.headerText]}>
-          Discount
-        </Text>
 
-        <Text style={[styles.total, styles.headerText]}>
-          Total
-        </Text>
 
-      </View>
+<View style={styles.tableHeader}>
 
-      {items.map((item) => (
-        <View
-          key={item.id}
-          style={styles.row}
-        >
 
-          <Text style={styles.description}>
-            {item.description}
-          </Text>
+<Text style={styles.desc}>
+Description
+</Text>
 
-          <Text style={styles.qty}>
-            {item.quantity}
-          </Text>
 
-          <Text style={styles.unit}>
-            {item.unit}
-          </Text>
 
-          <Text style={styles.price}>
-            ${Number(item.unit_price).toFixed(2)}
-          </Text>
+<Text style={styles.qty}>
+Qty
+</Text>
 
-          <Text style={styles.discount}>
-            ${Number(item.discount).toFixed(2)}
-          </Text>
 
-          <Text style={styles.total}>
-            ${Number(item.total).toFixed(2)}
-          </Text>
 
-        </View>
-      ))}
+<Text style={styles.unit}>
+Unit
+</Text>
 
-    </View>
-  );
+
+
+<Text style={styles.price}>
+Price
+</Text>
+
+
+
+<Text style={styles.total}>
+Total
+</Text>
+
+
+</View>
+
+
+
+
+
+
+{
+items.map((item)=>(
+
+
+<View
+
+key={item.id}
+
+style={styles.row}
+
+>
+
+
+
+<Text style={styles.desc}>
+
+{item.description}
+
+</Text>
+
+
+
+
+<Text style={styles.qty}>
+
+{item.quantity}
+
+</Text>
+
+
+
+
+<Text style={styles.unit}>
+
+{item.unit}
+
+</Text>
+
+
+
+
+
+<Text style={styles.price}>
+
+{currency(
+  Number(item.unit_price)
+)}
+
+</Text>
+
+
+
+
+
+<Text style={styles.total}>
+
+{currency(
+  Number(item.total)
+)}
+
+</Text>
+
+
+
+
+
+</View>
+
+
+))
+
+}
+
+
+
+</View>
+
+
+);
+
+
 }

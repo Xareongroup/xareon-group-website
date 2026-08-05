@@ -26,7 +26,8 @@ export interface JobFormValues {
 
 interface CustomerOption {
   id: string;
-  name: string;
+  first_name: string;
+  last_name: string;
 }
 
 interface EstimateOption {
@@ -209,7 +210,7 @@ export default function JobForm({
                     key={customer.id}
                     value={customer.id}
                   >
-                    {customer.name}
+                    {customer.first_name} {customer.last_name}
                   </option>
 
                 ))}

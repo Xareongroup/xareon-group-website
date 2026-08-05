@@ -15,49 +15,85 @@ import InvoiceHeader from "@/components/admin/invoices/InvoiceHeader";
 import InvoiceItems from "@/components/admin/invoices/InvoiceItems";
 import InvoiceSummary from "@/components/admin/invoices/InvoiceSummary";
 
+
 const supabase = createClient();
+
 
 interface Customer {
   id: string;
-  name: string;
+  first_name: string;
+  last_name: string;
 }
+
 
 interface Estimate {
   id: string;
-  estimate_code: string;
+  estimate_number: number;
 }
+
 
 interface Job {
   id: string;
   job_number: string;
 }
 
+
+
 export default function NewInvoicePage() {
+
 
   const router = useRouter();
 
-  const [loading, setLoading] = useState(true);
 
-  const [saving, setSaving] = useState(false);
+  const [loading, setLoading] =
+    useState(true);
+
+
+  const [saving, setSaving] =
+    useState(false);
+
+
 
   const [invoice, setInvoice] =
     useState<Invoice>(defaultInvoice);
 
+
+
   const [customers, setCustomers] =
     useState<Customer[]>([]);
+
+
 
   const [estimates, setEstimates] =
     useState<Estimate[]>([]);
 
+
+
   const [jobs, setJobs] =
     useState<Job[]>([]);
-    useEffect(() => {
+
+
+
+
+  useEffect(() => {
+
     loadData();
+
   }, []);
 
+
+
+
+
   async function loadData() {
+
+
     try {
+
+
       setLoading(true);
+
+
 
       const invoiceNumber =
         await getNextDocumentNumber(
@@ -65,223 +101,584 @@ export default function NewInvoicePage() {
           "invoice"
         );
 
+
+
+
+
       const [
         customersResult,
         estimatesResult,
         jobsResult,
       ] = await Promise.all([
+
+
+
         supabase
           .from("customers")
-          .select("id,name")
-          .order("name"),
+          .select(`
+            id,
+            first_name,
+            last_name
+          `)
+          .order(
+            "first_name"
+          ),
+
+
+
+
 
         supabase
           .from("estimates")
-          .select("id,estimate_code")
-          .order("created_at", {
-            ascending: false,
-          }),
+          .select(`
+            id,
+            estimate_number
+          `)
+          .order(
+            "created_at",
+            {
+              ascending:false,
+            }
+          ),
+
+
+
+
 
         supabase
           .from("jobs")
-          .select("id,job_number")
-          .order("created_at", {
-            ascending: false,
-          }),
+          .select(`
+            id,
+            job_number
+          `)
+          .order(
+            "created_at",
+            {
+              ascending:false,
+            }
+          ),
+
+
+
       ]);
 
-      if (customersResult.error)
+
+
+
+
+      if(customersResult.error)
         throw customersResult.error;
 
-      if (estimatesResult.error)
+
+
+      if(estimatesResult.error)
         throw estimatesResult.error;
 
-      if (jobsResult.error)
+
+
+      if(jobsResult.error)
         throw jobsResult.error;
+
+
+
+
 
       setCustomers(
         customersResult.data ?? []
       );
 
+
+
       setEstimates(
         estimatesResult.data ?? []
       );
+
+
 
       setJobs(
         jobsResult.data ?? []
       );
 
-      setInvoice((prev) => ({
+
+
+
+
+      setInvoice((prev)=>({
+
         ...prev,
+
         invoiceNumber,
+
       }));
-    } catch (error) {
+
+
+
+    } catch(error) {
+
+
       console.error(
         "Failed loading invoice data:",
-        error
+        JSON.stringify(
+          error,
+          null,
+          2
+        )
       );
+
 
       alert(
         "Unable to load invoice data."
       );
+
+
     } finally {
+
+
       setLoading(false);
+
+
     }
+
+
   }
-    async function saveInvoice() {
+
+
+
+
+
+
+
+  async function saveInvoice() {
+
+
     try {
+
+
       setSaving(true);
+
+
+
 
       const {
         data: invoiceRecord,
         error: invoiceError,
-      } = await supabase
-        .from("invoices")
-        .insert({
-          customer_id: invoice.customerId || null,
+      } =
+        await supabase
 
-          estimate_id: invoice.estimateId || null,
+          .from("invoices")
 
-          job_id: invoice.jobId || null,
+          .insert({
 
-          invoice_number: invoice.invoiceNumber,
+            customer_id:
+              invoice.customerId || null,
 
-          subtotal: invoice.subtotal,
 
-          tax: invoice.tax,
+            estimate_id:
+              invoice.estimateId || null,
 
-          total: invoice.total,
 
-          balance_due: invoice.balanceDue,
+            job_id:
+              invoice.jobId || null,
 
-          status: invoice.status,
 
-          issue_date: invoice.issueDate,
+            invoice_number:
+              invoice.invoiceNumber,
 
-          due_date: invoice.dueDate,
-        })
-        .select("id")
-        .single();
 
-      if (invoiceError) throw invoiceError;
+            subtotal:
+              invoice.subtotal,
 
-      if (invoice.items.length > 0) {
-        const items = invoice.items.map(
-          (item, index) => ({
-            invoice_id: invoiceRecord.id,
 
-            description: item.description,
+            tax:
+              invoice.tax,
 
-            quantity: item.quantity,
 
-            unit: item.unit,
+            total:
+              invoice.total,
 
-            unit_price: item.unitPrice,
 
-            discount: item.discount,
+            balance_due:
+              invoice.balanceDue,
 
-            taxable: item.taxable,
 
-            total: item.total,
+            status:
+              invoice.status,
 
-            sort_order: index + 1,
+
+            issue_date:
+              invoice.issueDate,
+
+
+            due_date:
+              invoice.dueDate,
+
+
           })
-        );
 
-        const { error: itemsError } =
+          .select("id")
+
+          .single();
+
+
+
+
+
+      if(invoiceError)
+        throw invoiceError;
+
+
+
+
+
+      if(invoice.items.length > 0) {
+
+
+        const items =
+          invoice.items.map(
+            (item,index)=>({
+
+
+              invoice_id:
+                invoiceRecord.id,
+
+
+              description:
+                item.description,
+
+
+              quantity:
+                item.quantity,
+
+
+              unit:
+                item.unit,
+
+
+              unit_price:
+                item.unitPrice,
+
+
+              discount:
+                item.discount,
+
+
+              taxable:
+                item.taxable,
+
+
+              total:
+                item.total,
+
+
+              sort_order:
+                index + 1,
+
+
+            })
+          );
+
+
+
+
+
+        const {
+          error: itemsError,
+        } =
           await supabase
+
             .from("invoice_items")
+
             .insert(items);
 
-        if (itemsError) throw itemsError;
+
+
+
+
+        if(itemsError)
+          throw itemsError;
+
+
       }
 
-      alert("Invoice created successfully.");
 
-      router.push("/admin/invoices");
-    } catch (error) {
-      console.error(error);
+
+
+
+
+      alert(
+        "Invoice created successfully."
+      );
+
+
+
+      router.push(
+        "/admin/invoices"
+      );
+
+
+
+
+    } catch(error) {
+
+
+      console.error(
+        "Invoice creation error:",
+        error
+      );
+
 
       alert(
         "Unable to create invoice."
       );
+
+
+
     } finally {
+
+
       setSaving(false);
+
+
     }
+
+
   }
-    if (loading) {
+
+
+
+
+
+
+
+  if(loading) {
+
+
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
+
+      <div className="
+        flex
+        min-h-[60vh]
+        items-center
+        justify-center
+      ">
+
         <div className="text-center">
-          <div className="text-lg font-semibold text-slate-700">
+
+          <div className="
+            text-lg
+            font-semibold
+            text-slate-700
+          ">
+
             Loading invoice...
+
           </div>
-          <p className="mt-2 text-slate-500">
+
+
+          <p className="
+            mt-2
+            text-slate-500
+          ">
+
             Please wait while we prepare the form.
+
           </p>
+
+
         </div>
+
+
       </div>
+
     );
+
+
   }
+
+
+
+
+
+
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6 p-6">
 
-      <div className="flex items-center justify-between">
+    <div className="
+      mx-auto
+      max-w-7xl
+      space-y-6
+      p-6
+    ">
+
+
+
+      <div className="
+        flex
+        items-center
+        justify-between
+      ">
+
 
         <div>
 
-          <h1 className="text-3xl font-bold text-slate-900">
+
+          <h1 className="
+            text-3xl
+            font-bold
+            text-slate-900
+          ">
+
             New Invoice
+
           </h1>
 
-          <p className="mt-1 text-slate-500">
+
+
+          <p className="
+            mt-1
+            text-slate-500
+          ">
+
             Create a professional invoice for your customer.
+
           </p>
 
+
         </div>
 
-        <div className="flex gap-3">
+
+
+
+
+        <div className="
+          flex
+          gap-3
+        ">
+
 
           <button
+
             type="button"
-            onClick={() => router.push("/admin/invoices")}
-            className="rounded-lg border border-slate-300 bg-white px-5 py-2.5 font-medium text-slate-700 hover:bg-slate-50"
+
+            onClick={() =>
+              router.push(
+                "/admin/invoices"
+              )
+            }
+
+            className="
+              rounded-lg
+              border
+              border-slate-300
+              bg-white
+              px-5
+              py-2.5
+              font-medium
+              text-slate-700
+              hover:bg-slate-50
+            "
+
           >
+
             Cancel
+
           </button>
+
+
+
+
 
           <button
+
             type="button"
+
             onClick={saveInvoice}
+
             disabled={saving}
-            className="rounded-lg bg-blue-600 px-5 py-2.5 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+
+            className="
+              rounded-lg
+              bg-blue-600
+              px-5
+              py-2.5
+              font-medium
+              text-white
+              transition
+              hover:bg-blue-700
+              disabled:cursor-not-allowed
+              disabled:opacity-60
+            "
+
           >
-            {saving ? "Saving..." : "Save Invoice"}
+
+            {
+              saving
+              ?
+              "Saving..."
+              :
+              "Save Invoice"
+            }
+
+
           </button>
 
+
+
         </div>
+
 
       </div>
 
+
+
+
+
+
+
       <InvoiceHeader
+
         invoice={invoice}
+
         setInvoice={setInvoice}
+
         customers={customers}
+
         estimates={estimates}
+
         jobs={jobs}
+
       />
+
+
+
+
 
       <InvoiceItems
+
         invoice={invoice}
+
         setInvoice={setInvoice}
+
       />
+
+
+
+
 
       <InvoiceSummary
+
         invoice={invoice}
+
         setInvoice={setInvoice}
+
       />
 
+
+
+
     </div>
+
   );
+
+
 }

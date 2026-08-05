@@ -41,8 +41,11 @@ export function mapInvoiceToPdf(
       ? {
           id: invoice.customers.id,
 
-          name:
-            invoice.customers.name,
+          first_name:
+            invoice.customers.first_name,
+
+          last_name:
+            invoice.customers.last_name,
 
           email:
             invoice.customers.email,

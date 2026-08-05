@@ -4,149 +4,130 @@ import {
   StyleSheet,
 } from "@react-pdf/renderer";
 
+import {
+  InvoicePdfData,
+} from "@/types/invoicePdf";
+
+
+
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 28,
+
+  customer: {
+
+    marginBottom: 25,
+
   },
 
-  left: {
-    flex: 1,
-    paddingRight: 30,
-  },
 
-  right: {
-    width: 220,
-  },
+  sectionTitle: {
 
-  heading: {
-    fontSize: 11,
+    fontSize: 13,
+
     fontWeight: "bold",
-    marginBottom: 8,
-    color: "#0F172A",
+
+    marginBottom: 6,
+
   },
+
 
   text: {
-    fontSize: 10,
-    marginBottom: 4,
-    color: "#475569",
+
+    fontSize: 11,
+
+    marginBottom: 3,
+
   },
 
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 6,
-  },
 
-  label: {
-    color: "#64748B",
-  },
-
-  value: {
-    fontWeight: "bold",
-    color: "#0F172A",
-  },
 });
 
-import { InvoicePdfData } from "@/types/invoicePdf";
+
+
 
 interface Props {
+
   invoice: InvoicePdfData;
+
 }
 
+
+
+
 export default function InvoicePDFCustomer({
+
   invoice,
+
 }: Props) {
+
+
   return (
-    <View style={styles.container}>
 
-      <View style={styles.left}>
+    <View style={styles.customer}>
 
-        <Text style={styles.heading}>
-          Bill To
-        </Text>
 
-        <Text style={styles.text}>
-          {invoice.customers?.name ?? ""}
-        </Text>
+      <Text style={styles.sectionTitle}>
 
-        {invoice.customers?.email && (
+        Bill To
+
+      </Text>
+
+
+
+      <Text style={styles.text}>
+
+        {invoice.customers
+          ? `${invoice.customers.first_name ?? ""} ${invoice.customers.last_name ?? ""}`.trim()
+          : ""}
+
+      </Text>
+
+
+
+      {
+        invoice.customers?.email && (
+
           <Text style={styles.text}>
+
             {invoice.customers.email}
-          </Text>
-        )}
 
-        {invoice.customers?.phone && (
+          </Text>
+
+        )
+      }
+
+
+
+      {
+        invoice.customers?.phone && (
+
           <Text style={styles.text}>
+
             {invoice.customers.phone}
-          </Text>
-        )}
 
-      </View>
-
-      <View style={styles.right}>
-
-        <Text style={styles.heading}>
-          Invoice Details
-        </Text>
-
-        <View style={styles.row}>
-          <Text style={styles.label}>
-            Issue Date
           </Text>
 
-          <Text style={styles.value}>
-            {invoice.issue_date}
-          </Text>
-        </View>
+        )
+      }
 
-        <View style={styles.row}>
-          <Text style={styles.label}>
-            Due Date
-          </Text>
 
-          <Text style={styles.value}>
-            {invoice.due_date}
-          </Text>
-        </View>
 
-        <View style={styles.row}>
-          <Text style={styles.label}>
-            Status
+
+      {
+        invoice.customers?.address && (
+
+          <Text style={styles.text}>
+
+            {invoice.customers.address}
+
           </Text>
 
-          <Text style={styles.value}>
-            {invoice.status}
-          </Text>
-        </View>
+        )
+      }
 
-        {invoice.estimate_id && (
-          <View style={styles.row}>
-            <Text style={styles.label}>
-              Estimate
-            </Text>
 
-            <Text style={styles.value}>
-              {invoice.estimate_id}
-            </Text>
-          </View>
-        )}
-
-        {invoice.job_id && (
-          <View style={styles.row}>
-            <Text style={styles.label}>
-              Job
-            </Text>
-
-            <Text style={styles.value}>
-              {invoice.job_id}
-            </Text>
-          </View>
-        )}
-
-      </View>
 
     </View>
+
   );
+
 }

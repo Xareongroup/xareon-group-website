@@ -13,28 +13,42 @@ import ContractForm, {
   JobOption,
 } from "@/components/admin/ContractForm";
 
+
 export default function NewContractPage() {
+
 
   const router = useRouter();
 
   const supabase = createClient();
 
+
+
   const [loading, setLoading] =
     useState(false);
+
 
   const [error, setError] =
     useState("");
 
+
+
   const [customers, setCustomers] =
     useState<CustomerOption[]>([]);
+
 
   const [estimates, setEstimates] =
     useState<EstimateOption[]>([]);
 
+
   const [jobs, setJobs] =
     useState<JobOption[]>([]);
 
+
+
+
+
   const initialValues: ContractFormValues = {
+
 
     title: "",
 
@@ -52,11 +66,20 @@ export default function NewContractPage() {
 
     warranty: "",
 
+    terms: "",
+
     notes: "",
+
 
   };
 
+
+
+
+
+
   async function loadData() {
+
 
     const [
 
@@ -68,48 +91,118 @@ export default function NewContractPage() {
 
     ] = await Promise.all([
 
+
       supabase
+
         .from("customers")
-        .select("id, first_name, last_name")
-        .order("first_name"),
+
+        .select(
+          "id, first_name, last_name"
+        )
+
+        .order(
+          "first_name"
+        ),
+
+
 
       supabase
+
         .from("estimates")
-        .select("id, estimate_number")
-        .order("estimate_number"),
+
+        .select(
+          "id, estimate_number"
+        )
+
+        .order(
+          "estimate_number"
+        ),
+
+
+
 
       supabase
+
         .from("jobs")
-        .select("id, job_number")
-        .order("job_number"),
+
+        .select(
+          "id, job_number"
+        )
+
+        .order(
+          "job_number"
+        ),
+
 
     ]);
 
-    if (customersResult.data)
-      setCustomers(customersResult.data);
 
-    if (estimatesResult.data)
-      setEstimates(estimatesResult.data);
 
-    if (jobsResult.data)
-      setJobs(jobsResult.data);
+
+    if(customersResult.data)
+
+      setCustomers(
+        customersResult.data
+      );
+
+
+
+
+    if(estimatesResult.data)
+
+      setEstimates(
+        estimatesResult.data
+      );
+
+
+
+
+    if(jobsResult.data)
+
+      setJobs(
+        jobsResult.data
+      );
+
 
   }
+
+
+
+
+
 
   useEffect(() => {
 
     void loadData();
 
   }, []);
-    async function handleSubmit(
+
+
+
+
+
+
+
+
+  async function handleSubmit(
     values: ContractFormValues
   ) {
+
+    console.log(
+  "SUBMIT CONTRACT VALUES:",
+  values
+);
+
 
     setLoading(true);
 
     setError("");
 
+
+
     try {
+
+
 
       const contractNumber =
         await getNextDocumentNumber(
@@ -117,30 +210,40 @@ export default function NewContractPage() {
           "contract"
         );
 
-      console.log(
-        "Generated Contract Number:",
-        contractNumber
-      );
+
+
+
 
       const { error } =
         await supabase
+
           .from("contracts")
+
           .insert({
+
 
             contract_number:
               contractNumber,
 
             title:
-              values.title,
+              values.title || null,
+
+
 
             customer_id:
               values.customer_id || null,
 
+
+
             estimate_id:
               values.estimate_id || null,
 
+
+
             job_id:
               values.job_id || null,
+
+
 
             status:
               values.status,
@@ -154,27 +257,70 @@ export default function NewContractPage() {
             warranty:
               values.warranty,
 
+
+
+            terms:
+              values.terms,
+
+
+
             notes:
               values.notes,
 
+
+
+            signature_token:
+              crypto.randomUUID(),
+
+
           });
 
-      if (error) {
-        throw error;
-      }
+
+
+
+
+      if(error) {
+
+  console.error(
+    "INSERT CONTRACT ERROR:",
+    error
+  );
+
+  throw error;
+
+}
+
+
+console.log(
+  "CONTRACT CREATED SUCCESSFULLY"
+);
+
+
+
+
+
 
       router.push(
         "/admin/contracts"
       );
 
+
       router.refresh();
 
-    } catch (err: any) {
+
+
+
+    }
+    catch(err:any){
+
+
 
       console.error(
-        "Create Contract Error:",
+        "CREATE CONTRACT ERROR:",
         err
       );
+
+
 
       setError(
 
@@ -188,39 +334,68 @@ export default function NewContractPage() {
 
       );
 
-    } finally {
+
+
+    }
+    finally {
+
 
       setLoading(false);
 
+
     }
 
+
   }
-    return (
+
+
+
+
+
+
+
+  return (
 
     <ContractForm
 
+
       title="New Contract"
+
 
       description="Create a professional customer contract."
 
+
       submitText="Create Contract"
+
+
 
       customers={customers}
 
+
       estimates={estimates}
+
 
       jobs={jobs}
 
+
+
       initialValues={initialValues}
+
+
 
       loading={loading}
 
+
       error={error}
 
+
+
       onSubmit={handleSubmit}
+
 
     />
 
   );
+
 
 }
