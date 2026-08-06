@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { useForm } from "react-hook-form";
 import { Turnstile } from "@marsidev/react-turnstile";
@@ -21,11 +21,18 @@ const quoteSchema = z.object({
 });
 
 type QuoteFormData = z.infer<typeof quoteSchema>;
+const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
 export default function QuoteForm() {
   const [loading, setLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [files, setFiles] = useState<File[]>([]);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === "development") {
+      console.info("Turnstile configured:", Boolean(turnstileSiteKey));
+    }
+  }, []);
 
   const {
     register,
@@ -332,13 +339,32 @@ const response = await fetch("/api/contact", {
   )}
 </div>
       </div>
-<div className="flex justify-center">
-  <Turnstile
-    siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-    onSuccess={(token) => setTurnstileToken(token)}
-    onExpire={() => setTurnstileToken("")}
-    onError={() => setTurnstileToken("")}
-  />
+<div className="flex min-h-16 justify-center">
+  {turnstileSiteKey ? (
+    <Turnstile
+      siteKey={turnstileSiteKey}
+      options={{ theme: "light", size: "normal" }}
+      onLoadScript={() => console.info("Turnstile script loaded.")}
+      onWidgetLoad={() => console.info("Turnstile widget rendered.")}
+      onSuccess={(token) => {
+        console.info("Turnstile verification completed.");
+        setTurnstileToken(token);
+      }}
+      onExpire={() => {
+        console.warn("Turnstile verification expired.");
+        setTurnstileToken("");
+      }}
+      onError={(code) => {
+        console.error("Turnstile widget error:", code);
+        setTurnstileToken("");
+      }}
+      onUnsupported={() => console.error("Turnstile is unsupported by this browser.")}
+    />
+  ) : (
+    <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+      Security verification is unavailable. Please try again later.
+    </p>
+  )}
 </div>
       <button
         type="submit"
