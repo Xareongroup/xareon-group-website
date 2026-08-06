@@ -42,6 +42,8 @@ export default function CustomerDocuments({
   const [documents,setDocuments] =
     useState<Document[]>([]);
 
+  const [photos, setPhotos] = useState<JobPhoto[]>([]);
+
 
   const [loading,setLoading] =
     useState(true);
@@ -50,30 +52,17 @@ export default function CustomerDocuments({
 
   async function loadDocuments(){
 
-    const {
-      data,
-      error,
-    } =
-    await supabase
-      .from("customer_documents")
-      .select("*")
-      .eq(
-        "customer_id",
-        customerId
-      )
-      .order(
-        "created_at",
-        {
-          ascending:false,
-        }
-      );
+    const [documentsResult, photosResult] = await Promise.all([
+      supabase.from("customer_documents").select("*").eq("customer_id", customerId).order("created_at", { ascending:false }),
+      supabase.from("job_photos").select("id,image_url,caption,job:jobs!inner(job_number,customer_id)").eq("jobs.customer_id", customerId).order("created_at", { ascending:false }),
+    ]);
 
 
-    if(error){
+    if(documentsResult.error || photosResult.error){
 
       console.error(
         "Documents error:",
-        error
+        documentsResult.error ?? photosResult.error
       );
 
       return;
@@ -81,8 +70,10 @@ export default function CustomerDocuments({
 
 
     setDocuments(
-      data ?? []
+      documentsResult.data ?? []
     );
+
+    setPhotos(photosResult.data ?? []);
 
     setLoading(false);
 
@@ -244,8 +235,23 @@ export default function CustomerDocuments({
       }
 
 
+      {photos.length > 0 && <div className="mt-8 border-t border-slate-200 pt-6">
+        <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Job Photos</h3>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{photos.map((photo) => {
+          const job = Array.isArray(photo.job) ? photo.job[0] : photo.job;
+          return <a key={photo.id} href={photo.image_url} target="_blank" className="overflow-hidden rounded-xl border border-slate-200 hover:border-blue-300"><img src={photo.image_url} alt={photo.caption ?? "Job photo"} className="h-40 w-full object-cover"/><div className="p-3 text-sm"><p className="font-medium">{photo.caption ?? "Job photo"}</p><p className="mt-1 text-slate-500">{job?.job_number ? `Job #${job.job_number}` : "Job photo"}</p></div></a>;
+        })}</div>
+      </div>}
+
     </Card>
 
   );
 
+}
+
+interface JobPhoto {
+  id: string;
+  image_url: string;
+  caption: string | null;
+  job: { job_number: string | null } | { job_number: string | null }[] | null;
 }

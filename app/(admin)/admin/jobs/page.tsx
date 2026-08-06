@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import CancelJobButton from "@/components/admin/jobs/CancelJobButton";
 
 import { createClient } from "@/lib/supabase/client";
 
@@ -440,6 +441,10 @@ export default function JobsPage() {
                       >
                         Edit
                       </Link>
+
+                      {job.status !== "Completed" && job.status !== "Cancelled" && (
+                        <CancelJobButton jobId={job.id} />
+                      )}
 
                     </div>
 

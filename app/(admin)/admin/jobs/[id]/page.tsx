@@ -6,6 +6,7 @@ import CreateInvoiceButton from "@/components/admin/jobs/CreateInvoiceButton";
 import JobPhotos from "@/components/admin/jobs/JobPhotos";
 import JobProfitabilityCard from "@/components/admin/financials/JobProfitabilityCard";
 import CancelJobButton from "@/components/admin/jobs/CancelJobButton";
+import CustomerTimeline from "@/components/admin/customers/CustomerTimeline";
 
 interface PageProps {
   params: Promise<{
@@ -93,6 +94,17 @@ console.log("Error:", error);
     error?.message ?? "Job not found."
   );
 }
+
+  const [contractsResult, invoicesResult, paymentsResult] = await Promise.all([
+    supabase.from("contracts").select("id,contract_number,status").eq("job_id", id).order("created_at", { ascending: false }),
+    supabase.from("invoices").select("id,invoice_number,total,balance_due,status").eq("job_id", id).order("created_at", { ascending: false }),
+    supabase.from("payments").select("id,amount,payment_date,payment_method,invoice:invoices!inner(job_id)").eq("invoices.job_id", id).order("payment_date", { ascending: false }),
+  ]);
+  const contracts = contractsResult.data ?? [];
+  const invoices = invoicesResult.data ?? [];
+  const payments = paymentsResult.data ?? [];
+  const paymentsReceived = payments.reduce((total, payment) => total + Number(payment.amount ?? 0), 0);
+  const balanceRemaining = invoices.reduce((total, invoice) => total + Number(invoice.balance_due ?? 0), 0);
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-8">
@@ -338,6 +350,17 @@ console.log("Error:", error);
 
 <JobPhotos jobId={job.id} />
 
+<div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+  <h2 className="mb-5 text-lg font-semibold text-slate-900">Related Documents &amp; Payments</h2>
+  <div className="space-y-3 text-sm">
+    {job.estimate && <Link href={`/admin/estimates/${job.estimate.id}`} className="flex items-center justify-between rounded-lg border border-slate-200 p-3 hover:bg-slate-50"><span>Estimate #{job.estimate.estimate_number}</span><span className="text-blue-600">View</span></Link>}
+    {contracts.map((contract) => <Link key={contract.id} href={`/admin/contracts/${contract.id}`} className="flex items-center justify-between rounded-lg border border-slate-200 p-3 hover:bg-slate-50"><span>Contract #{contract.contract_number ?? contract.id}</span><span className="text-blue-600">{contract.status ?? "Draft"}</span></Link>)}
+    {invoices.map((invoice) => <Link key={invoice.id} href={`/admin/invoices/${invoice.id}`} className="flex items-center justify-between rounded-lg border border-slate-200 p-3 hover:bg-slate-50"><span>Invoice #{invoice.invoice_number ?? invoice.id}</span><span className="text-blue-600">Balance ${Number(invoice.balance_due ?? 0).toFixed(2)}</span></Link>)}
+    {payments.length === 0 && contracts.length === 0 && invoices.length === 0 && <p className="text-slate-500">No related documents or payments yet.</p>}
+  </div>
+  <div className="mt-5 grid gap-3 border-t border-slate-100 pt-4 sm:grid-cols-2"><div><p className="text-xs uppercase tracking-wide text-slate-500">Payments received</p><p className="mt-1 text-lg font-semibold text-emerald-600">${paymentsReceived.toFixed(2)}</p></div><div><p className="text-xs uppercase tracking-wide text-slate-500">Balance remaining</p><p className="mt-1 text-lg font-semibold text-slate-900">${balanceRemaining.toFixed(2)}</p></div></div>
+</div>
+
 </div>
 
   {/* Right Sidebar */}
@@ -485,6 +508,8 @@ console.log("Error:", error);
 </div>
       {/* End Grid */}
       </div>
+
+      {job.customer_id && <div className="mt-8"><CustomerTimeline customerId={job.customer_id} /></div>}
 
     </div>
   );

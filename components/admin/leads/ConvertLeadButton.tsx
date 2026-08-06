@@ -10,8 +10,21 @@ export default function ConvertLeadButton({ leadId, convertedCustomerId }: { lea
   async function convert() {
     if (!window.confirm("Convert this lead into a customer?")) return;
     setLoading(true);
-    const response = await fetch(`/api/leads/${leadId}/convert`, { method: "POST" });
-    const result = await response.json();
+    let response = await fetch(`/api/leads/${leadId}/convert`, { method: "POST" });
+    let result = await response.json();
+    if (response.status === 409 && result.code === "existing_customer") {
+      const customerName = `${result.customer.first_name} ${result.customer.last_name}`.trim();
+      if (!window.confirm(`Existing customer found: ${customerName}. Link this lead to that customer instead?`)) {
+        setLoading(false);
+        return;
+      }
+      response = await fetch(`/api/leads/${leadId}/convert`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ linkExistingCustomer: true }),
+      });
+      result = await response.json();
+    }
     setLoading(false);
     if (!response.ok) return window.alert(result.error ?? "Unable to convert lead.");
     router.push(`/admin/customers/${result.customerId}`);

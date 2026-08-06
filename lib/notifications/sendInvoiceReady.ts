@@ -1,0 +1,2 @@
+import { sendCustomerNotification, type CustomerNotificationInput } from "@/lib/notifications/sendCustomerNotification";
+export const sendInvoiceReady = (input: Omit<CustomerNotificationInput, "type" | "subject" | "message" | "actionLabel">) => sendCustomerNotification({ ...input, type: "invoice_ready", subject: "Your XAREON GROUP invoice is available", message: "Your invoice is available for review.", actionLabel: "View Invoice" });

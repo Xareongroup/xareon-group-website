@@ -113,22 +113,18 @@ export default function JobSchedulerForm() {
     try {
       setLoading(true);
 
-      const { error } = await supabase
-        .from("jobs")
-        .update({
-          assigned_employee_id:
-            form.assigned_employee_id,
-          scheduled_date:
-            form.scheduled_date,
-          start_time:
-            form.start_time,
-          end_time:
-            form.end_time || null,
-          status: "Scheduled",
-        })
-        .eq("id", form.job_id);
-
-      if (error) throw error;
+      const response = await fetch(`/api/jobs/${form.job_id}/schedule`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          assigned_employee_id: form.assigned_employee_id,
+          scheduled_date: form.scheduled_date,
+          start_time: form.start_time,
+          end_time: form.end_time || null,
+        }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error ?? "Unable to schedule job.");
 
       setMessage({
         type: "success",

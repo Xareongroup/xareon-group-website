@@ -502,30 +502,16 @@ setSaving(true);
 
 
 
-const {error}=await supabase
-
-.from("jobs")
-
-.update({
-
-scheduled_date:
-formatDate(start),
-
-
-start_time:
-formatTime(start),
-
-
-end_time:
-formatTime(end)
-
+const response = await fetch(`/api/jobs/${jobId}/schedule`, {
+method: "PUT",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({
+scheduled_date: formatDate(start),
+start_time: formatTime(start),
+end_time: formatTime(end),
 })
-
-
-.eq(
-"id",
-jobId
-);
+});
+const result = await response.json();
 
 
 
@@ -534,9 +520,9 @@ setSaving(false);
 
 
 
-if(error){
+if(!response.ok){
 
-console.error(error);
+console.error(result.error);
 
 return false;
 

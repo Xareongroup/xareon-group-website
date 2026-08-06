@@ -2,6 +2,13 @@
 
 import { useState } from "react";
 
+const contractTemplates = {
+  "General Home Repair Agreement": `Scope of Work\nThe Contractor will perform the scope of work described in the related job and accepted estimate.\n\nPayment Terms\nA 25% deposit is due before work begins, 50% after material delivery, and the remaining 25% upon completion.\n\nCustomer Responsibilities\nThe Customer will provide safe access to the work area and timely approvals.\n\nCancellation Policy\nCancellation after materials are ordered may require reimbursement of non-refundable costs.\n\nWarranty Information\nWorkmanship is warranted for one year, excluding normal wear, misuse, and manufacturer defects.\n\nChange Orders\nWork outside the accepted scope requires written approval before it begins.\n\nScheduling Policy\nScheduled dates are subject to weather, material availability, and safe site access.`,
+  "Installation Agreement": `Scope of Work\nThe Contractor will install the equipment or materials described in the related job and accepted estimate.\n\nPayment Terms\nA 25% deposit is due before work begins, 50% after material delivery, and the remaining 25% upon completion.\n\nCustomer Responsibilities\nThe Customer confirms that required approvals, utilities, and access are available.\n\nWarranty Information\nWorkmanship is warranted for one year. Manufacturer warranties remain subject to their individual terms.\n\nChange Orders\nAny changed installation requirements require written approval.\n\nScheduling Policy\nInstallation dates may change for safety, weather, or material availability.`,
+  "Smart Home Installation Agreement": `Scope of Work\nThe Contractor will install and configure the smart-home equipment listed in the related job and accepted estimate.\n\nPayment Terms\nA 25% deposit is due before work begins, 50% after equipment delivery, and the remaining 25% upon completion.\n\nCustomer Responsibilities\nThe Customer is responsible for providing network access, account credentials where required, and compatible equipment.\n\nWarranty Information\nWorkmanship is warranted for one year. Product warranties are provided by the manufacturer.\n\nChange Orders\nAdditional devices, wiring, or configuration are subject to written approval.\n\nScheduling Policy\nAppointments require safe access to the installation location.`,
+  "Furniture Assembly Agreement": `Scope of Work\nThe Contractor will assemble the furniture and fixtures identified in the related job and accepted estimate.\n\nPayment Terms\nPayment is due according to the accepted estimate and any approved change orders.\n\nCustomer Responsibilities\nThe Customer will provide all components, assembly instructions, and adequate workspace.\n\nWarranty Information\nWorkmanship is warranted for 30 days. Product defects remain the responsibility of the manufacturer or retailer.\n\nCancellation Policy\nLate cancellations may be subject to a service charge.\n\nChange Orders\nAdditional assembly or installation work requires written approval.`,
+} as const;
+
 
 export interface CustomerOption {
   id: string;
@@ -547,8 +554,20 @@ These terms will appear on the customer contract.
 
 </div>
 
-
-
+<div>
+<label className="mb-2 block text-sm font-medium">Professional Template</label>
+<select
+defaultValue=""
+onChange={(event) => {
+  const template = contractTemplates[event.target.value as keyof typeof contractTemplates];
+  if (template) update("terms", template);
+}}
+className="w-full rounded-xl border border-slate-300 px-4 py-3"
+>
+<option value="">Choose a template (optional)</option>
+{Object.keys(contractTemplates).map((name) => <option key={name} value={name}>{name}</option>)}
+</select>
+</div>
 
 <textarea
 

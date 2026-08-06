@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { renderToBuffer } from "@react-pdf/renderer";
 
 import { adminSupabase } from "@/lib/supabase/admin";
+import { recordCustomerDocument } from "@/lib/documents/recordCustomerDocument";
 import InvoicePDF from "@/components/pdf/InvoicePDF";
 
 interface RouteProps {
@@ -34,6 +35,14 @@ export async function GET(
   if (!invoice.customer_id) {
     return NextResponse.json({ error: "Invoice is not linked to a customer." }, { status: 422 });
   }
+
+  await recordCustomerDocument(supabase, {
+    customerId: invoice.customer_id,
+    documentType: "Invoice",
+    title: `Invoice #${invoice.invoice_number ?? id}`,
+    fileUrl: `/api/invoices/${id}/pdf`,
+    status: invoice.status,
+  });
 
   // Load customer
   const { data: customer } = await supabase

@@ -22,6 +22,19 @@ export default async function EmployeeDetailsPage({ params }: Props) {
 
   if (error || !employee) notFound();
 
+  const { data: assignedJobs } = await supabase
+    .from("jobs")
+    .select("id,status,invoice_id")
+    .eq("assigned_employee_id", id);
+  const jobs = assignedJobs ?? [];
+  const invoiceIds = jobs.map((job) => job.invoice_id).filter((invoiceId): invoiceId is string => Boolean(invoiceId));
+  const { data: invoices } = invoiceIds.length
+    ? await supabase.from("invoices").select("id,total").in("id", invoiceIds)
+    : { data: [] };
+  const activeJobs = jobs.filter((job) => ["Scheduled", "Confirmed", "In Progress"].includes(job.status ?? "")).length;
+  const completedJobs = jobs.filter((job) => job.status === "Completed").length;
+  const revenue = (invoices ?? []).reduce((total, invoice) => total + Number(invoice.total ?? 0), 0);
+
   const canManage = ["owner", "admin", "manager"].includes(role);
 
   return (
@@ -51,6 +64,19 @@ export default async function EmployeeDetailsPage({ params }: Props) {
         <div><dt className="text-sm text-slate-500">Hourly rate</dt><dd className="mt-1 font-medium text-slate-900">{employee.hourly_rate == null ? "—" : `$${employee.hourly_rate.toFixed(2)}`}</dd></div>
         <div className="sm:col-span-2"><dt className="text-sm text-slate-500">Notes</dt><dd className="mt-1 whitespace-pre-wrap font-medium text-slate-900">{employee.notes ?? "—"}</dd></div>
       </dl>
+
+      <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 className="text-lg font-semibold text-slate-900">Job Performance</h2>
+        <div className="mt-4 grid gap-4 sm:grid-cols-3"><Metric label="Active jobs" value={String(activeJobs)} /><Metric label="Completed jobs" value={String(completedJobs)} /><Metric label="Assigned revenue" value={`$${revenue.toFixed(2)}`} /></div>
+      </section>
+      <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 className="text-lg font-semibold text-slate-900">Assigned Job History</h2>
+        {jobs.length ? <p className="mt-3 text-sm text-slate-600">{jobs.length} assigned job{jobs.length === 1 ? "" : "s"} recorded. Customer ratings remain ready for a future review integration.</p> : <p className="mt-3 text-sm text-slate-500">No assigned jobs yet.</p>}
+      </section>
     </div>
   );
+}
+
+function Metric({ label, value }: { label: string; value: string }) {
+  return <div className="rounded-xl bg-slate-50 p-4"><p className="text-sm text-slate-500">{label}</p><p className="mt-1 text-xl font-semibold text-slate-900">{value}</p></div>;
 }

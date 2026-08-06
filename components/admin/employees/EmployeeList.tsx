@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/supabase/database.types";
@@ -18,6 +18,10 @@ export default function EmployeeList() {
   const [employeeToDeactivate, setEmployeeToDeactivate] =
     useState<Employee | null>(null);
   const [deactivating, setDeactivating] = useState(false);
+  const [skillsByEmployee, setSkillsByEmployee] = useState<Record<string, string[]>>({});
+  const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("All");
 
   useEffect(() => {
     void Promise.all([loadEmployees(), loadAccess()]);
@@ -26,17 +30,33 @@ export default function EmployeeList() {
   async function loadEmployees() {
     setLoading(true);
 
-    const { data, error } = await supabase
+    const [{ data, error }, { data: skills }] = await Promise.all([
+      supabase
       .from("employees")
       .select("*")
-      .order("first_name");
+      .order("first_name"),
+      supabase.from("employee_skills").select("employee_id,skill"),
+    ]);
 
     if (!error && data) {
       setEmployees(data);
+      setSkillsByEmployee((skills ?? []).reduce<Record<string, string[]>>((result, item) => {
+        (result[item.employee_id] ??= []).push(item.skill);
+        return result;
+      }, {}));
     }
 
     setLoading(false);
   }
+
+  const filteredEmployees = useMemo(() => employees.filter((employee) => {
+    const skills = skillsByEmployee[employee.id] ?? [];
+    const term = search.trim().toLowerCase();
+    const matchesSearch = !term || `${employee.first_name} ${employee.last_name} ${skills.join(" ")}`.toLowerCase().includes(term);
+    return matchesSearch && (roleFilter === "All" || employee.role === roleFilter) && (statusFilter === "All" || employee.status === statusFilter);
+  }), [employees, skillsByEmployee, search, roleFilter, statusFilter]);
+  const roles = Array.from(new Set(employees.map((employee) => employee.role))).sort();
+  const statuses = Array.from(new Set(employees.map((employee) => employee.status))).sort();
 
   async function loadAccess() {
     const {
@@ -95,15 +115,16 @@ export default function EmployeeList() {
         <h2 className="text-xl font-semibold">
           Team Members
         </h2>
+        <div className="mt-4 grid gap-3 sm:grid-cols-3"><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search name or skill…" className="rounded-lg border p-2.5"/><select value={roleFilter} onChange={(event) => setRoleFilter(event.target.value)} className="rounded-lg border p-2.5"><option>All</option>{roles.map((role) => <option key={role}>{role}</option>)}</select><select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="rounded-lg border p-2.5"><option>All</option>{statuses.map((status) => <option key={status}>{status}</option>)}</select></div>
       </div>
 
-      {employees.length === 0 ? (
+      {filteredEmployees.length === 0 ? (
         <div className="p-8 text-center text-slate-500">
           No employees found.
         </div>
       ) : (
         <div className="divide-y divide-slate-200">
-          {employees.map((employee) => (
+          {filteredEmployees.map((employee) => (
             <div
               key={employee.id}
               className="flex items-center justify-between p-5"
@@ -160,6 +181,7 @@ export default function EmployeeList() {
                     </button>
                   </>
                 )}
+                {(skillsByEmployee[employee.id] ?? []).length > 0 && <p className="mt-1 text-xs text-blue-600">{skillsByEmployee[employee.id].join(" · ")}</p>}
               </div>
             </div>
           ))}

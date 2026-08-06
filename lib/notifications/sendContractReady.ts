@@ -1,0 +1,2 @@
+import { sendCustomerNotification, type CustomerNotificationInput } from "@/lib/notifications/sendCustomerNotification";
+export const sendContractReady = (input: Omit<CustomerNotificationInput, "type" | "subject" | "message" | "actionLabel">) => sendCustomerNotification({ ...input, type: "contract_ready", subject: "Your XAREON GROUP service agreement is ready", message: "Your service agreement is ready for signature.", actionLabel: "Review & Sign Contract" });

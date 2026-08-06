@@ -25,12 +25,24 @@ import { getDashboardStats } from "@/lib/dashboard/getDashboardStats";
 import { getDashboardActivity } from "@/lib/dashboard/getDashboardActivity";
 
 import { formatCurrency } from "@/lib/utils/currency";
+import { adminSupabase } from "@/lib/supabase/admin";
 
 export default async function AdminDashboard() {
   const [stats, activity] = await Promise.all([
     getDashboardStats(),
     getDashboardActivity(),
   ]);
+  const today = new Date().toISOString().slice(0, 10);
+  const weekday = new Date(`${today}T12:00:00`).getDay();
+  const [todayJobsResult, availabilityResult, upcomingResult] = await Promise.all([
+    adminSupabase.from("jobs").select("id,status,assigned_employee_id,job_number,title,start_time,scheduled_date,employee:employees(first_name,last_name)").eq("scheduled_date", today).neq("status", "Cancelled"),
+    adminSupabase.from("employee_availability").select("employee_id,is_available,employee:employees(first_name,last_name,status)").eq("weekday", weekday).eq("is_available", true),
+    adminSupabase.from("jobs").select("id,job_number,title,scheduled_date,start_time,employee:employees(first_name,last_name)").gte("scheduled_date", today).neq("status", "Cancelled").order("scheduled_date").order("start_time").limit(5),
+  ]);
+  const todayJobs = todayJobsResult.data ?? [];
+  const busyEmployeeIds = new Set(todayJobs.map((job) => job.assigned_employee_id).filter(Boolean));
+  const availableTechnicians = (availabilityResult.data ?? []).filter((row) => row.employee && !busyEmployeeIds.has(row.employee_id));
+  const upcomingDispatchJobs = upcomingResult.data ?? [];
 
   const upcomingJobs = activity.upcomingJobs.map((job: any) => ({
     id: job.id,
@@ -160,6 +172,8 @@ export default async function AdminDashboard() {
 
           <div className="space-y-6">
 
+            <Card title="Today’s Operations" description="Live dispatch status for today."><div className="grid gap-3 sm:grid-cols-2"><div><p className="text-sm text-slate-500">Jobs today</p><p className="text-2xl font-bold">{todayJobs.length}</p></div><div><p className="text-sm text-slate-500">Completed</p><p className="text-2xl font-bold text-emerald-600">{todayJobs.filter((job) => job.status === "Completed").length}</p></div><div><p className="text-sm text-slate-500">In progress</p><p className="text-2xl font-bold text-amber-600">{todayJobs.filter((job) => job.status === "In Progress").length}</p></div><div><p className="text-sm text-slate-500">Unassigned</p><p className="text-2xl font-bold text-red-600">{todayJobs.filter((job) => !job.assigned_employee_id).length}</p></div></div><div className="mt-5 border-t pt-4"><p className="text-sm font-semibold">Available technicians</p><p className="mt-1 text-sm text-slate-600">{availableTechnicians.length ? availableTechnicians.map((row) => { const employee = Array.isArray(row.employee) ? row.employee[0] : row.employee; return employee ? `${employee.first_name} ${employee.last_name}` : null; }).filter(Boolean).join(" · ") : "No availability records for today."}</p></div></Card>
+
             <RevenueChart
   monthlyRevenue={stats.monthlyRevenue}
   monthlyInvoices={stats.monthlyInvoices}
@@ -286,6 +300,8 @@ export default async function AdminDashboard() {
             <UpcomingJobs
               jobs={upcomingJobs}
             />
+
+            <Card title="Upcoming Schedule" description="Next scheduled jobs.">{upcomingDispatchJobs.length ? <div className="space-y-3">{upcomingDispatchJobs.map((job) => { const employee = Array.isArray(job.employee) ? job.employee[0] : job.employee; return <Link key={job.id} href={`/admin/jobs/${job.id}`} className="block rounded-lg border p-3 hover:bg-slate-50"><p className="font-medium">{job.job_number} · {job.title}</p><p className="text-sm text-slate-500">{job.scheduled_date} {job.start_time?.slice(0, 5) ?? ""} · {employee ? `${employee.first_name} ${employee.last_name}` : "Unassigned"}</p></Link>; })}</div> : <p className="text-sm text-slate-500">No upcoming jobs.</p>}</Card>
 
             <RecentActivity
               activities={activities}

@@ -19,8 +19,13 @@ export async function getNextDocumentNumber(
     return data as string;
   }
 
-  if (sequence === "contract") {
-    const { data, error } = await supabase.rpc("generate_contract_number");
+  if (sequence === "contract" || sequence === "job" || sequence === "invoice") {
+    const rpc = sequence === "contract"
+      ? "generate_contract_number"
+      : sequence === "job"
+        ? "generate_job_number"
+        : "generate_invoice_number";
+    const { data, error } = await supabase.rpc(rpc);
     if (error) throw error;
     return data as string;
   }

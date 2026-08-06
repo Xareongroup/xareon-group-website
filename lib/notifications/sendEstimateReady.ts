@@ -1,0 +1,2 @@
+import { sendCustomerNotification, type CustomerNotificationInput } from "@/lib/notifications/sendCustomerNotification";
+export const sendEstimateReady = (input: Omit<CustomerNotificationInput, "type" | "subject" | "message" | "actionLabel">) => sendCustomerNotification({ ...input, type: "estimate_ready", subject: "Your XAREON GROUP estimate is ready", message: "Your XAREON GROUP estimate is ready for review.", actionLabel: "View Estimate" });

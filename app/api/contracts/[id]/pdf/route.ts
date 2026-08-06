@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
+import { recordCustomerDocument } from "@/lib/documents/recordCustomerDocument";
 
 import {
   pdf,
@@ -222,6 +223,15 @@ export async function POST(
         "id",
         id
       );
+
+    await recordCustomerDocument(supabase, {
+      customerId: contract.customer_id,
+      documentType: contract.signed ? "Signed Contract" : "Contract",
+      title: `${contract.signed ? "Signed contract" : "Contract"} #${contract.contract_number ?? id}`,
+      fileUrl: urlData.publicUrl,
+      status: contract.status,
+      signedDate: contract.signed_at,
+    });
 
 
 

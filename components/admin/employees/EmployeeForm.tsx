@@ -12,6 +12,12 @@ export type EmployeeFormData = {
   phone: string;
   role: string;
   status: string;
+  address: string;
+  emergency_contact_name: string;
+  emergency_contact_phone: string;
+  profile_photo_url: string;
+  hire_date: string;
+  notes: string;
 };
 
 type Props = {
@@ -27,6 +33,12 @@ const emptyForm: EmployeeFormData = {
   phone: "",
   role: "Technician",
   status: "Active",
+  address: "",
+  emergency_contact_name: "",
+  emergency_contact_phone: "",
+  profile_photo_url: "",
+  hire_date: "",
+  notes: "",
 };
 
 export default function EmployeeForm({
@@ -76,6 +88,12 @@ export default function EmployeeForm({
           phone: form.phone,
           role: form.role,
           status: form.status,
+          address: form.address || null,
+          emergency_contact_name: form.emergency_contact_name || null,
+          emergency_contact_phone: form.emergency_contact_phone || null,
+          profile_photo_url: form.profile_photo_url || null,
+          hire_date: form.hire_date || null,
+          notes: form.notes || null,
         })
         .eq("id", form.id));
     } else {
@@ -88,6 +106,12 @@ export default function EmployeeForm({
           phone: form.phone,
           role: form.role,
           status: form.status,
+          address: form.address || null,
+          emergency_contact_name: form.emergency_contact_name || null,
+          emergency_contact_phone: form.emergency_contact_phone || null,
+          profile_photo_url: form.profile_photo_url || null,
+          hire_date: form.hire_date || null,
+          notes: form.notes || null,
         }));
     }
 
@@ -161,6 +185,9 @@ export default function EmployeeForm({
         }
       />
 
+      <input className="w-full rounded-xl border p-3" placeholder="Profile photo URL (optional)" value={form.profile_photo_url} onChange={(e) => update("profile_photo_url", e.target.value)} />
+      <textarea className="w-full rounded-xl border p-3" placeholder="Address" value={form.address} onChange={(e) => update("address", e.target.value)} />
+
       <select
         className="w-full rounded-xl border p-3"
         value={form.role}
@@ -168,8 +195,11 @@ export default function EmployeeForm({
           update("role", e.target.value)
         }
       >
-        <option>Technician</option>
+        <option>Owner</option>
         <option>Manager</option>
+        <option>Technician</option>
+        <option>Helper</option>
+        <option>Contractor</option>
         <option>Office Staff</option>
       </select>
 
@@ -182,7 +212,13 @@ export default function EmployeeForm({
       >
         <option>Active</option>
         <option>Inactive</option>
+        <option>On Leave</option>
       </select>
+
+      <input type="date" className="w-full rounded-xl border p-3" value={form.hire_date} onChange={(e) => update("hire_date", e.target.value)} />
+      <input className="w-full rounded-xl border p-3" placeholder="Emergency contact name" value={form.emergency_contact_name} onChange={(e) => update("emergency_contact_name", e.target.value)} />
+      <input className="w-full rounded-xl border p-3" placeholder="Emergency contact phone" value={form.emergency_contact_phone} onChange={(e) => update("emergency_contact_phone", e.target.value)} />
+      <textarea className="w-full rounded-xl border p-3" placeholder="Employment notes" value={form.notes} onChange={(e) => update("notes", e.target.value)} />
 
       <button
         disabled={loading}

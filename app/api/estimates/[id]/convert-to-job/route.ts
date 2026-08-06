@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logCustomerActivity } from "@/lib/activity/logActivity";
 import { createClient } from "@/lib/supabase/server";
 
 export async function POST(
@@ -54,7 +55,17 @@ export async function POST(
     );
   }
 
-  // 4. Create job
+  const { data: estimateItems } = await supabase
+    .from("estimate_items")
+    .select("description")
+    .eq("estimate_id", estimate.id)
+    .order("sort_order")
+    .limit(1);
+
+  const firstItem = estimateItems?.[0]?.description?.trim();
+
+  // 4. Create job. The estimate remains the source of truth for line items,
+  // pricing, and attached documents; the job keeps a durable relationship to it.
   const { data: newJob, error: insertError } = await supabase
     .from("jobs")
     .insert({
@@ -63,7 +74,7 @@ export async function POST(
       customer_id: estimate.customer_id,
       estimate_id: estimate.id,
 
-      title: `Job for estimate ${estimate.estimate_number}`,
+      title: firstItem || `Job for estimate ${estimate.estimate_number}`,
 
       description: estimate.notes ?? "",
 
@@ -89,6 +100,15 @@ export async function POST(
       { status: 500 }
     );
   }
+
+  await logCustomerActivity(
+    supabase,
+    estimate.customer_id,
+    "job_created",
+    "Job created from estimate",
+    `Job ${jobNumber} was created from estimate ${estimate.estimate_number}.`,
+    { type: "job", id: newJob.id },
+  );
 
   return NextResponse.json({
     success: true,
