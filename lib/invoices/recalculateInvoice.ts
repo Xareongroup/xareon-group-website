@@ -17,7 +17,7 @@ export async function recalculateInvoice(invoiceId: string) {
   // Load all payments
   const { data: payments, error: paymentsError } = await supabase
     .from("payments")
-    .select("amount")
+    .select("amount, payment_provider, provider_status, refunded_amount")
     .eq("invoice_id", invoiceId);
 
   if (paymentsError) {
@@ -25,7 +25,7 @@ export async function recalculateInvoice(invoiceId: string) {
   }
 
   const totalPaid = payments.reduce(
-    (sum, payment) => sum + Number(payment.amount),
+    (sum, payment) => sum + Math.max(Number(payment.amount) - (payment.payment_provider === "stripe" ? Number(payment.refunded_amount ?? 0) : 0), 0),
     0
   );
 

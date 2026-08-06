@@ -1180,6 +1180,50 @@ export type Database = {
           },
         ]
       }
+      payment_provider_events: {
+        Row: {
+          details: Json
+          event_type: string
+          id: string
+          payment_id: string | null
+          processed_at: string | null
+          provider: string
+          provider_event_id: string
+          received_at: string
+          status: string
+        }
+        Insert: {
+          details?: Json
+          event_type: string
+          id?: string
+          payment_id?: string | null
+          processed_at?: string | null
+          provider: string
+          provider_event_id: string
+          received_at?: string
+          status?: string
+        }
+        Update: {
+          details?: Json
+          event_type?: string
+          id?: string
+          payment_id?: string | null
+          processed_at?: string | null
+          provider?: string
+          provider_event_id?: string
+          received_at?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_provider_events_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
@@ -1189,7 +1233,14 @@ export type Database = {
           notes: string | null
           payment_date: string
           payment_method: string
+          payment_provider: string | null
+          provider_checkout_session_id: string | null
+          provider_metadata: Json
+          provider_status: string | null
+          provider_transaction_id: string | null
           reference_number: string | null
+          refunded_amount: number
+          refunded_at: string | null
           updated_at: string
         }
         Insert: {
@@ -1200,7 +1251,14 @@ export type Database = {
           notes?: string | null
           payment_date?: string
           payment_method: string
+          payment_provider?: string | null
+          provider_checkout_session_id?: string | null
+          provider_metadata?: Json
+          provider_status?: string | null
+          provider_transaction_id?: string | null
           reference_number?: string | null
+          refunded_amount?: number
+          refunded_at?: string | null
           updated_at?: string
         }
         Update: {
@@ -1211,7 +1269,14 @@ export type Database = {
           notes?: string | null
           payment_date?: string
           payment_method?: string
+          payment_provider?: string | null
+          provider_checkout_session_id?: string | null
+          provider_metadata?: Json
+          provider_status?: string | null
+          provider_transaction_id?: string | null
           reference_number?: string | null
+          refunded_amount?: number
+          refunded_at?: string | null
           updated_at?: string
         }
         Relationships: [
