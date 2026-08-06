@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { logCustomerActivity } from "@/lib/activity/logActivity";
 import { createClient } from "@/lib/supabase/server";
+import { triggerAutomation } from "@/lib/automation/automationEngine";
 
 export async function POST(
   request: Request,
@@ -145,6 +146,7 @@ export async function POST(
     `Invoice ${invoiceNumber} was created from job ${job.job_number ?? ""}.`.trim(),
     { type: "invoice", id: invoice.id },
   );
+  await triggerAutomation({ event: "invoice_created", entityType: "invoice", entityId: invoice.id, customerId: job.customer_id, title: `Invoice #${invoiceNumber} was created for job ${job.job_number ?? ""}.`.trim() });
 
   return NextResponse.json({
     success: true,

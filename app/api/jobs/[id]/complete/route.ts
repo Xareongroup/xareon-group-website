@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { logCustomerActivity } from "@/lib/activity/logActivity";
+import { triggerAutomation } from "@/lib/automation/automationEngine";
 
 export async function POST(
   request: Request,
@@ -12,7 +14,7 @@ export async function POST(
   // Verify the job exists
   const { data: job, error: jobError } = await supabase
     .from("jobs")
-    .select("id, status")
+    .select("id, status, customer_id, job_number")
     .eq("id", id)
     .single();
 
@@ -47,6 +49,8 @@ export async function POST(
       { status: 500 }
     );
   }
+  await logCustomerActivity(supabase, job.customer_id, "job_completed", "Job completed", `Job #${job.job_number ?? id} was marked completed.`, { type: "job", id });
+  await triggerAutomation({ event: "job_completed", entityType: "job", entityId: id, customerId: job.customer_id, title: `Job #${job.job_number ?? id} has been completed.` });
 
   return NextResponse.json({
     success: true,

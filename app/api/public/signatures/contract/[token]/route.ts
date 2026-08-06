@@ -6,6 +6,7 @@ import { logCustomerActivity } from "@/lib/activity/logActivity";
 import { recordCustomerDocument } from "@/lib/documents/recordCustomerDocument";
 import { getRequestMetadata, isSignatureData } from "@/lib/portal/request";
 import { adminSupabase } from "@/lib/supabase/admin";
+import { triggerAutomation } from "@/lib/automation/automationEngine";
 
 export async function POST(request: Request, { params }: { params: Promise<{ token: string }> }) {
   try {
@@ -35,6 +36,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tok
     if (pdfUpdateError) throw pdfUpdateError;
     await recordCustomerDocument(adminSupabase, { customerId: customer.id, documentType: "Signed Contract", title: `Contract #${contract.contract_number ?? contract.id} - Signed`, fileUrl: filePath, status: "Signed", signedDate: signedAt });
     await logCustomerActivity(adminSupabase, customer.id, "contract_signed", "Contract signed", `Contract #${contract.contract_number ?? contract.id} was signed by ${signerName}.`, { type: "contract", id: contract.id });
+    await triggerAutomation({ event: "contract_signed", entityType: "contract", entityId: contract.id, customerId: customer.id, title: `Contract #${contract.contract_number ?? contract.id} was signed by ${signerName}.` });
     return NextResponse.json({ success: true, signedAt, filePath });
   } catch (error) {
     console.error("Portal contract signing failed", error);

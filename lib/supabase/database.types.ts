@@ -58,6 +58,50 @@ export type Database = {
           },
         ]
       }
+      automation_logs: {
+        Row: {
+          action_type: string
+          created_at: string
+          customer_id: string | null
+          details: Json
+          entity_id: string | null
+          entity_type: string | null
+          event_type: string
+          id: string
+          status: string
+        }
+        Insert: {
+          action_type: string
+          created_at?: string
+          customer_id?: string | null
+          details?: Json
+          entity_id?: string | null
+          entity_type?: string | null
+          event_type: string
+          id?: string
+          status: string
+        }
+        Update: {
+          action_type?: string
+          created_at?: string
+          customer_id?: string | null
+          details?: Json
+          entity_id?: string | null
+          entity_type?: string | null
+          event_type?: string
+          id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_logs_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contracts: {
         Row: {
           contract_number: string | null
@@ -1236,6 +1280,59 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      tasks: {
+        Row: {
+          assigned_user: string | null
+          created_at: string
+          customer_id: string | null
+          description: string | null
+          due_date: string | null
+          id: string
+          priority: string
+          related_id: string | null
+          related_type: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_user?: string | null
+          created_at?: string
+          customer_id?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          priority?: string
+          related_id?: string | null
+          related_type?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_user?: string | null
+          created_at?: string
+          customer_id?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          priority?: string
+          related_id?: string | null
+          related_type?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {

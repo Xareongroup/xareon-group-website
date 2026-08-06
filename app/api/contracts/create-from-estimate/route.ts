@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 import { getNextDocumentNumber } from "@/lib/documentNumbers";
+import { triggerAutomation } from "@/lib/automation/automationEngine";
 
 
 export async function POST(
@@ -194,6 +195,8 @@ export async function POST(
 
     if (contractError)
       throw contractError;
+
+    await triggerAutomation({ event: "contract_created", entityType: "contract", entityId: contract.id, customerId: estimate.customer_id, title: `Contract #${contractNumber} was created.` });
 
 
 

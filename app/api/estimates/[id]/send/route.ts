@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { resend } from "@/lib/resend";
 import { renderEstimatePdf } from "@/lib/pdf/renderEstimatePdf";
 import { logCustomerActivity } from "@/lib/activity/logActivity";
+import { triggerAutomation } from "@/lib/automation/automationEngine";
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -45,6 +46,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       `Estimate #${estimate.estimate_number ?? id} was emailed to ${customer.email}.`,
       { type: "estimate", id },
     );
+    // The established send path already delivers the customer email and PDF.
+    // Record the shared event without sending a second customer message.
+    await triggerAutomation({ event: "estimate_sent", entityType: "estimate", entityId: id, customerId: customer.id, title: `Estimate #${estimate.estimate_number ?? id} was sent to ${customer.email}.` });
     return NextResponse.json({ success: true, signingLink });
   } catch (error) {
     console.error("SEND ESTIMATE ERROR:", error);

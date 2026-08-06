@@ -19,6 +19,8 @@ import {
   Landmark,
   Tags,
   Building2,
+  ListTodo,
+  Workflow,
 } from "lucide-react";
 
 const sections = [
@@ -105,6 +107,13 @@ const sections = [
         label: "Employees",
         icon: UserCog,
       },
+    ],
+  },
+  {
+    title: "AUTOMATION",
+    links: [
+      { href: "/admin/tasks", label: "Tasks", icon: ListTodo },
+      { href: "/admin/automation", label: "Automation History", icon: Workflow },
     ],
   },
   {

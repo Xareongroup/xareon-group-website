@@ -5,6 +5,7 @@ import { renderToBuffer } from "@react-pdf/renderer";
 import { Resend } from "resend";
 
 import { adminSupabase } from "@/lib/supabase/admin";
+import { requireApiRole } from "@/lib/auth/requireApiRole";
 
 import InvoicePDF from "@/components/pdf/InvoicePDF";
 import { logCustomerActivity } from "@/lib/activity/logActivity";
@@ -39,6 +40,8 @@ export async function POST(
 
 
   try {
+    const access = await requireApiRole(["owner", "admin", "manager", "accounting"]);
+    if ("response" in access) return access.response;
 
 
     const { id } =

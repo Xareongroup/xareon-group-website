@@ -4,6 +4,7 @@ import { logCustomerActivity } from "@/lib/activity/logActivity";
 import { recordCustomerDocument } from "@/lib/documents/recordCustomerDocument";
 import { getRequestMetadata, isSignatureData } from "@/lib/portal/request";
 import { adminSupabase } from "@/lib/supabase/admin";
+import { triggerAutomation } from "@/lib/automation/automationEngine";
 
 export async function POST(request: Request, { params }: { params: Promise<{ token: string }> }) {
   try {
@@ -34,6 +35,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tok
     if (pdfUpdateError) throw pdfUpdateError;
     await recordCustomerDocument(adminSupabase, { customerId: customer.id, documentType: "Signed Estimate", title: `Estimate #${estimate.estimate_number} - Signed`, fileUrl: filePath, status: "Signed", signedDate: signedAt });
     await logCustomerActivity(adminSupabase, customer.id, "estimate_approved", "Estimate approved", `Estimate #${estimate.estimate_number} was approved and signed by ${signerName}.`, { type: "estimate", id: estimate.id });
+    await triggerAutomation({ event: "estimate_approved", entityType: "estimate", entityId: estimate.id, customerId: customer.id, title: `Estimate #${estimate.estimate_number} was approved by ${signerName}.` });
     return NextResponse.json({ success: true, signedAt, filePath });
   } catch (error) {
     console.error("Portal estimate signing failed", error);

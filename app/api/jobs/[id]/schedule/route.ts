@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { logCustomerActivity } from "@/lib/activity/logActivity";
 import { requireApiRole } from "@/lib/auth/requireApiRole";
 import { createClient } from "@/lib/supabase/server";
+import { triggerAutomation } from "@/lib/automation/automationEngine";
 
 type ScheduleRequest = {
   assigned_employee_id?: string | null;
@@ -76,6 +77,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   const changedSchedule = job.scheduled_date !== body.scheduled_date || job.start_time !== startTime || job.end_time !== endTime;
   if (changedEmployee) await logCustomerActivity(supabase, job.customer_id, "job_assigned", "Technician assignment updated", `Job #${job.job_number ?? id} was assigned to a different technician.`, { type: "job", id });
   if (changedSchedule) await logCustomerActivity(supabase, job.customer_id, "job_assigned", "Job schedule updated", `Job #${job.job_number ?? id} was scheduled for ${body.scheduled_date}${startTime ? ` at ${startTime}` : ""}.`, { type: "job", id });
+  if (changedEmployee || changedSchedule) await triggerAutomation({ event: "job_scheduled", entityType: "job", entityId: id, customerId: job.customer_id, title: `Job #${job.job_number ?? id} is scheduled for ${body.scheduled_date}${startTime ? ` at ${startTime}` : ""}.` });
 
   return NextResponse.json({ success: true });
 }

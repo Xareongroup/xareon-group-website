@@ -1,0 +1,2 @@
+export type AutomationEvent = "lead_created" | "estimate_created" | "estimate_sent" | "estimate_pending" | "estimate_approved" | "contract_created" | "contract_signed" | "job_scheduled" | "appointment_reminder" | "job_completed" | "invoice_created" | "invoice_due" | "payment_received";
+export type AutomationContext = { event: AutomationEvent; entityId: string; entityType: "lead" | "estimate" | "contract" | "job" | "invoice" | "payment"; customerId?: string | null; title?: string; recipientEmail?: string; recipientName?: string; portalUrl?: string };

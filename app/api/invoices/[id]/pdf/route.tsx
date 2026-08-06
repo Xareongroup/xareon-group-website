@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { renderToBuffer } from "@react-pdf/renderer";
 
 import { adminSupabase } from "@/lib/supabase/admin";
+import { requireApiRole } from "@/lib/auth/requireApiRole";
 import { recordCustomerDocument } from "@/lib/documents/recordCustomerDocument";
 import InvoicePDF from "@/components/pdf/InvoicePDF";
 
@@ -15,6 +16,8 @@ export async function GET(
   request: Request,
   { params }: RouteProps
 ) {
+  const access = await requireApiRole(["owner", "admin", "manager", "accounting"]);
+  if ("response" in access) return access.response;
   const { id } = await params;
 
   const supabase = adminSupabase;

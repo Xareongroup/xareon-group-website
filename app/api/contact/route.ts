@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { resend } from "@/lib/resend";
 import { adminSupabase } from "@/lib/supabase/admin";
+import { triggerAutomation } from "@/lib/automation/automationEngine";
 
 export async function POST(request: Request) {
   try {
@@ -90,6 +91,7 @@ export async function POST(request: Request) {
       description: "Lead submitted through the website quote form.",
     });
     if (createdActivityError) console.error("Lead created activity insert failed:", createdActivityError);
+    await triggerAutomation({ event: "lead_created", entityId: lead.id, entityType: "lead", title: `${name} requested ${service}. Phone: ${phone}.`, recipientEmail: email, recipientName: name });
 
     const attachments = await Promise.all(photos.map(async (photo) => ({
       filename: photo.name,

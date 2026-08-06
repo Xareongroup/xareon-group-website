@@ -3,6 +3,7 @@ import { adminSupabase } from "@/lib/supabase/admin";
 import { recalculateInvoice } from "@/lib/invoices/recalculateInvoice";
 import { requireApiRole } from "@/lib/auth/requireApiRole";
 import { logCustomerActivity } from "@/lib/activity/logActivity";
+import { triggerAutomation } from "@/lib/automation/automationEngine";
 
 export async function POST(request: Request) {
   const access = await requireApiRole(["owner", "admin", "accounting"]);
@@ -81,6 +82,7 @@ export async function POST(request: Request) {
       });
       if (documentError) console.error("Payment receipt document logging failed", documentError);
     }
+    await triggerAutomation({ event: "payment_received", entityType: "payment", entityId: payment?.id ?? invoice.id, customerId: invoice.customer_id, title: `Payment of $${Number(amount).toFixed(2)} was received for invoice #${invoice.invoice_number ?? invoice.id}.` });
 
     return NextResponse.json({
       success: true,
