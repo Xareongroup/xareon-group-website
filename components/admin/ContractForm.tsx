@@ -7,6 +7,7 @@ export interface CustomerOption {
   id: string;
   first_name: string;
   last_name: string;
+  address?: string | null;
 }
 
 
@@ -19,6 +20,10 @@ export interface EstimateOption {
 export interface JobOption {
   id: string;
   job_number: string | null;
+  customer_id?: string | null;
+  estimate_id?: string | null;
+  title?: string | null;
+  description?: string | null;
 }
 
 
@@ -127,6 +132,15 @@ export default function ContractForm({
 
     }));
 
+  }
+
+  function selectJob(jobId: string) {
+    const job = jobs.find((item) => item.id === jobId);
+    setValues((previous) => {
+      const scope = job?.description?.trim() || job?.title?.trim() || "";
+      const generatedTerms = scope ? `Scope of Work:\n${scope}\n\nTerms & Payment Conditions\nCustomer agrees to a 25% deposit before starting, 50% after material delivery, and 25% after completion.` : previous.terms;
+      return { ...previous, job_id: jobId, customer_id: job?.customer_id ?? previous.customer_id, estimate_id: job?.estimate_id ?? previous.estimate_id, terms: previous.terms.trim() ? previous.terms : generatedTerms };
+    });
   }
 
 
@@ -458,14 +472,7 @@ Job
 
 value={values.job_id}
 
-onChange={(e)=>
-
-update(
-"job_id",
-e.target.value
-)
-
-}
+onChange={(e)=> selectJob(e.target.value)}
 
 className="w-full rounded-xl border border-slate-300 px-4 py-3"
 

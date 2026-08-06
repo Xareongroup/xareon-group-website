@@ -9,6 +9,7 @@ import {
   FileText,
   Briefcase,
   CalendarDays,
+  Target,
   UserCog,
   FileSignature,
   Receipt,
@@ -32,8 +33,13 @@ const sections = [
     ],
   },
   {
-    title: "CUSTOMERS",
+    title: "SALES",
     links: [
+      {
+        href: "/admin/leads",
+        label: "Leads",
+        icon: Target,
+      },
       {
         href: "/admin/customers",
         label: "Customers",

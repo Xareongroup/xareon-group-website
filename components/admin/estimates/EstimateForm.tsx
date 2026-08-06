@@ -520,6 +520,23 @@ export default function EstimateForm({
 
   }
 
+  async function copySigningLink() {
+    if (!estimate.id) {
+      alert("Please save the estimate first.");
+      return;
+    }
+    try {
+      const response = await fetch(`/api/estimates/${estimate.id}/signing-link`, { method: "POST" });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error ?? "Unable to create signing link.");
+      await navigator.clipboard.writeText(result.signingLink);
+      alert("Signing link copied successfully.");
+      router.refresh();
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "Unable to copy signing link.");
+    }
+  }
+
 
 
 
@@ -596,7 +613,8 @@ export default function EstimateForm({
 
         onPreview={previewEstimate}
 
-        onSend={sendEstimate}
+         onSend={sendEstimate}
+         onCopyLink={copySigningLink}
 
         onCancel={cancel}
 

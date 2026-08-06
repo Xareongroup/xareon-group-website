@@ -28,8 +28,12 @@ test.describe("staging authenticated CRM, financials, and RBAC smoke", () => {
   test("owner completes CRM and financial workflow", async () => {
     const owner = await as("owner");
     const suffix = `STG-E2E-${Date.now()}`;
-    const customer = await owner.from("customers").insert({ first_name: "E2E", last_name: suffix, email: `${suffix.toLowerCase()}@xareon.test`, status: "Active", portal_token: suffix }).select("id, portal_token").single();
+    const generatedCustomerNumber = await owner.rpc("generate_customer_number");
+    expect(generatedCustomerNumber.error).toBeNull();
+    expect(generatedCustomerNumber.data).toMatch(/^CUS-\d{4}-\d{5}$/);
+    const customer = await owner.from("customers").insert({ customer_number: generatedCustomerNumber.data!, first_name: "E2E", last_name: suffix, email: `${suffix.toLowerCase()}@xareon.test`, status: "Active", portal_token: suffix }).select("id, portal_token, customer_number").single();
     expect(customer.error).toBeNull();
+    expect(customer.data!.customer_number).toBe(generatedCustomerNumber.data);
 
     const estimate = await owner.from("estimates").insert({ customer_id: customer.data!.id, estimate_code: suffix, status: "Approved", subtotal: 1000, tax: 0, total: 1000 }).select("id, estimate_number").single();
     expect(estimate.error).toBeNull();

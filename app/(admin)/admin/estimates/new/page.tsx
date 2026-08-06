@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/client";
 
@@ -25,6 +25,7 @@ interface Customer {
 
 export default function NewEstimatePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
 
   const [estimate, setEstimate] =
@@ -45,6 +46,24 @@ export default function NewEstimatePage() {
   useEffect(() => {
     void loadCustomers();
   }, []);
+
+  useEffect(() => {
+    const customerId = searchParams.get("customer");
+    const service = searchParams.get("service");
+    const description = searchParams.get("description");
+    const photos = searchParams.get("photos");
+    if (!customerId) return;
+    setEstimate((current) => {
+      if (current.customerId) return current;
+      const notes = [description, photos ? `Lead photos: ${photos}` : ""].filter(Boolean).join("\n\n");
+      return {
+        ...current,
+        customerId,
+        notes,
+        items: service ? [{ id: crypto.randomUUID(), description: service, quantity: 1, unit: "each", unitPrice: 0, discount: 0, taxable: true, total: 0 }] : current.items,
+      };
+    });
+  }, [searchParams]);
 
   async function loadCustomers() {
     setLoadingCustomers(true);
@@ -361,6 +380,7 @@ export default function NewEstimatePage() {
             onCancel={cancelEstimate}
             onPreview={previewEstimate}
             onSend={emailEstimate}
+            onCopyLink={() => alert("Save the estimate before copying its signing link.")}
           />
 
         </div>

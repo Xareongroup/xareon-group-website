@@ -1,5 +1,6 @@
 import { resend } from "@/lib/resend";
 import { NextResponse } from "next/server";
+import { adminSupabase } from "@/lib/supabase/admin";
 
 export async function POST(req: Request) {
   try {
@@ -30,6 +31,40 @@ console.log("Number of uploaded photos:", photos.length);
 photos.forEach((photo) => {
   console.log(photo.name, photo.size, photo.type);
 });
+
+    const [firstName, ...lastNameParts] = name.trim().split(/\s+/);
+    const lastName = lastNameParts.join(" ") || "Customer";
+    const { data: leadNumber, error: leadNumberError } = await adminSupabase.rpc("generate_lead_number");
+    if (leadNumberError) throw leadNumberError;
+
+    const photoRecords = await Promise.all(photos.filter((photo) => photo.size > 0).map(async (photo) => {
+      const safeName = photo.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const path = `website/${crypto.randomUUID()}-${safeName}`;
+      const { error: uploadError } = await adminSupabase.storage.from("lead-photos").upload(path, photo, { contentType: photo.type, upsert: false });
+      if (uploadError) throw uploadError;
+      return { path, name: photo.name, type: photo.type, size: photo.size };
+    }));
+
+    const { data: lead, error: leadError } = await adminSupabase
+      .from("leads")
+      .insert({
+        lead_number: leadNumber,
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        phone,
+        address: city,
+        service_type: service,
+        message: `${propertyType} property in ${city}\n\n${description}`,
+        photos: photoRecords,
+        source: "Website",
+        status: "New",
+      })
+      .select("id")
+      .single();
+    if (leadError || !lead) throw leadError ?? new Error("Unable to create lead.");
+
+    await adminSupabase.from("lead_activities").insert({ lead_id: lead.id, activity_type: "lead_created", description: "Lead submitted through the website quote form." });
 
     // Validate required fields
     if (
@@ -166,6 +201,8 @@ const attachments = await Promise.all(
         { status: 500 }
       );
     }
+
+    await adminSupabase.from("lead_activities").insert({ lead_id: lead.id, activity_type: "email_sent", description: "New lead email notification sent to info@xareongroup.com." });
 
     console.log("Email sent:", data);
 

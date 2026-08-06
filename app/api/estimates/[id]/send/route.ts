@@ -1,133 +1,53 @@
 import { NextResponse } from "next/server";
-
 import { createClient } from "@/lib/supabase/server";
+import { resend } from "@/lib/resend";
+import { renderEstimatePdf } from "@/lib/pdf/renderEstimatePdf";
+import { logCustomerActivity } from "@/lib/activity/logActivity";
 
-
-export async function POST(
-  request: Request,
-  {
-    params,
-  }: {
-    params: Promise<{ id: string }>;
-  }
-) {
-
+export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-
     const { id } = await params;
-
     const supabase = await createClient();
+    const { data: estimate, error } = await supabase.from("estimates").select("*,customer:customers(*)").eq("id", id).single();
+    if (error || !estimate) return NextResponse.json({ error: "Estimate not found." }, { status: 404 });
+    const customer = Array.isArray(estimate.customer) ? estimate.customer[0] : estimate.customer;
+    if (!customer?.email) return NextResponse.json({ error: "The estimate customer has no email address." }, { status: 422 });
 
+    const signatureToken = estimate.signature_token ?? crypto.randomUUID();
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? new URL(request.url).origin;
+    const signingLink = `${siteUrl}/sign/estimate/${signatureToken}`;
+    const { data: items, error: itemsError } = await supabase.from("estimate_items").select("*").eq("estimate_id", id).order("sort_order");
+    if (itemsError) throw itemsError;
+    const pdfBuffer = await renderEstimatePdf({ estimate, customer, items: items ?? [] });
+    const documentUrl = `/api/estimates/${id}/pdf`;
 
-    // Get estimate
-
-    const {
-      data: estimate,
-      error: estimateError,
-    } =
-      await supabase
-        .from("estimates")
-        .select(`
-          *,
-          customers(
-            first_name,
-            last_name,
-            email
-          )
-        `)
-        .eq("id", id)
-        .single();
-
-
-
-    if (estimateError)
-      throw estimateError;
-
-
-
-    if (!estimate.customers?.email) {
-      throw new Error(
-        "Customer email not found."
-      );
-    }
-
-
-
-    // Update sending status
-
-    const {
-      error: updateError
-    } =
-      await supabase
-        .from("estimates")
-        .update({
-
-          sent_at:
-            new Date().toISOString(),
-
-          signature_status:
-            "Pending"
-
-        })
-        .eq(
-          "id",
-          id
-        );
-
-
-    if(updateError)
-      throw updateError;
-
-
-
-    const signingLink =
-      `${process.env.NEXT_PUBLIC_SITE_URL}/sign/estimate/${estimate.signature_token}`;
-
-
-
-
-    /*
-      Email will be connected next
-      using Resend
-
-      For now return the link
-    */
-
-
-    return NextResponse.json({
-
-      success:true,
-
-      signingLink,
-
-      customer:
-      estimate.customers.email
-
+    const { error: emailError } = await resend.emails.send({
+      from: "XAREON GROUP <info@xareongroup.com>",
+      to: customer.email,
+      subject: `XAREON Group Estimate #${estimate.estimate_number ?? ""}`,
+      html: `<div style="font-family:Arial,sans-serif;line-height:1.6"><p>Dear ${customer.first_name},</p><p>Please review your estimate.</p><p><a href="${signingLink}">Review and approve your estimate</a></p><p>Thank you.<br/>XAREON Group</p></div>`,
+      attachments: [{ filename: `Estimate-${estimate.estimate_number ?? id}.pdf`, content: pdfBuffer.toString("base64") }],
     });
+    if (emailError) throw emailError;
 
-
-
-  }
-  catch(error:any){
-
-
-    console.error(
-      "SEND ESTIMATE ERROR:",
-      error
+    const sentAt = new Date().toISOString();
+    const { error: updateError } = await supabase.from("estimates").update({ sent_at: sentAt, signature_status: "Pending", signature_token: signatureToken, status: "Sent" }).eq("id", id);
+    if (updateError) throw updateError;
+    const { data: existingDocument } = await supabase.from("customer_documents").select("id").eq("customer_id", customer.id).eq("document_type", "estimate").eq("title", `Estimate #${estimate.estimate_number ?? id}`).maybeSingle();
+    const document = { customer_id: customer.id, document_type: "estimate", title: `Estimate #${estimate.estimate_number ?? id}`, file_url: documentUrl, status: "Sent" };
+    const documentResult = existingDocument ? await supabase.from("customer_documents").update(document).eq("id", existingDocument.id) : await supabase.from("customer_documents").insert(document);
+    if (documentResult.error) throw documentResult.error;
+    await logCustomerActivity(
+      supabase,
+      customer.id,
+      "estimate_sent",
+      "Estimate sent",
+      `Estimate #${estimate.estimate_number ?? id} was emailed to ${customer.email}.`,
+      { type: "estimate", id },
     );
-
-
-    return NextResponse.json(
-      {
-        error:
-        error.message ??
-        "Failed sending estimate"
-      },
-      {
-        status:500
-      }
-    );
-
+    return NextResponse.json({ success: true, signingLink });
+  } catch (error) {
+    console.error("SEND ESTIMATE ERROR:", error);
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Failed to send estimate." }, { status: 500 });
   }
-
 }

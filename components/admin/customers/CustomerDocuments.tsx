@@ -98,6 +98,11 @@ export default function CustomerDocuments({
 
   },[customerId]);
 
+  function documentUrl(fileUrl: string) {
+    if (fileUrl.startsWith("http") || fileUrl.startsWith("/")) return fileUrl;
+    return supabase.storage.from("customer-documents").getPublicUrl(fileUrl).data.publicUrl;
+  }
+
 
 
 
@@ -213,7 +218,7 @@ export default function CustomerDocuments({
 
 
                   <a
-                    href={doc.file_url}
+                    href={documentUrl(doc.file_url)}
                     target="_blank"
                     className="inline-flex items-center gap-2 text-sm text-blue-600 hover:underline"
                   >

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 import { resend } from "@/lib/resend";
+import { logCustomerActivity } from "@/lib/activity/logActivity";
 
 
 
@@ -257,6 +258,36 @@ export async function POST(
         "id",
         id
       );
+
+    if (contract.customer_id) {
+      const document = {
+        customer_id: contract.customer_id,
+        document_type: "contract",
+        title: `Contract #${contract.contract_number ?? id}`,
+        file_url: `/admin/contracts/${id}/preview`,
+        status: "Sent",
+      };
+      const { data: existingDocument } = await supabase
+        .from("customer_documents")
+        .select("id")
+        .eq("customer_id", contract.customer_id)
+        .eq("document_type", "contract")
+        .eq("title", document.title)
+        .maybeSingle();
+      const documentResult = existingDocument
+        ? await supabase.from("customer_documents").update(document).eq("id", existingDocument.id)
+        : await supabase.from("customer_documents").insert(document);
+      if (documentResult.error) throw documentResult.error;
+
+      await logCustomerActivity(
+        supabase,
+        contract.customer_id,
+        "contract_sent",
+        "Contract sent",
+        `Contract #${contract.contract_number ?? id} was emailed to ${customer.email}.`,
+        { type: "contract", id },
+      );
+    }
 
 
 

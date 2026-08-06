@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { pdf } from "@react-pdf/renderer";
 
 import SignedContractPDF from "@/components/documents/SignedContractPDF";
+import { logCustomerActivity } from "@/lib/activity/logActivity";
 
 
 
@@ -274,6 +275,37 @@ export async function POST(
 
     if(updateError)
       throw updateError;
+
+    if (contract.customer_id) {
+      const document = {
+        customer_id: contract.customer_id,
+        document_type: "signed_agreement",
+        title: `Contract #${contract.contract_number ?? id} - Signed`,
+        file_url: urlData.publicUrl,
+        status: "Signed",
+        signed_date: contract.signed_at ?? new Date().toISOString(),
+      };
+      const { data: existingDocument } = await supabase
+        .from("customer_documents")
+        .select("id")
+        .eq("customer_id", contract.customer_id)
+        .eq("document_type", "signed_agreement")
+        .eq("title", document.title)
+        .maybeSingle();
+      const documentResult = existingDocument
+        ? await supabase.from("customer_documents").update(document).eq("id", existingDocument.id)
+        : await supabase.from("customer_documents").insert(document);
+      if (documentResult.error) throw documentResult.error;
+
+      await logCustomerActivity(
+        supabase,
+        contract.customer_id,
+        "contract_signed",
+        "Contract signed",
+        `Contract #${contract.contract_number ?? id} was signed by the customer.`,
+        { type: "contract", id },
+      );
+    }
 
 
 

@@ -71,7 +71,7 @@ export default function EditContractPage() {
 
         .from("customers")
 
-        .select("id, first_name, last_name")
+        .select("id, first_name, last_name, address")
 
         .order("first_name"),
 
@@ -87,7 +87,7 @@ export default function EditContractPage() {
 
         .from("jobs")
 
-        .select("id, job_number")
+        .select("id, job_number, customer_id, estimate_id, title, description")
 
         .order("job_number"),
 
@@ -162,6 +162,9 @@ export default function EditContractPage() {
 
         status:
           updatedValues.status,
+
+        terms:
+          updatedValues.terms,
 
         notes:
           updatedValues.notes,

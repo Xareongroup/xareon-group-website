@@ -662,23 +662,12 @@ export default async function CustomerDetailsPage({
 
 
 
-            <Button
-
-              variant="outline"
-
-              className="w-full justify-start"
-
-              disabled
-
-            >
-
-              <ScrollText
-                className="mr-2 h-4 w-4"
-              />
-
-              Contracts Coming Soon
-
-            </Button>
+            <Link href={`/admin/contracts/new?customer=${customer.id}`}>
+              <Button variant="outline" className="w-full justify-start">
+                <ScrollText className="mr-2 h-4 w-4" />
+                Create Contract
+              </Button>
+            </Link>
 
 
 

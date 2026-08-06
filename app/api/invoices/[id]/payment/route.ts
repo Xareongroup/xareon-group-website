@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
+import { logCustomerActivity } from "@/lib/activity/logActivity";
 
 
 interface RouteProps {
@@ -129,6 +130,7 @@ export async function POST(
 
     const {
 
+      data: payment,
       error: paymentError,
 
     } = await supabase
@@ -157,7 +159,9 @@ export async function POST(
           new Date()
             .toISOString(),
 
-      });
+      })
+      .select("id")
+      .single();
 
 
 
@@ -338,6 +342,27 @@ export async function POST(
 
       throw updateError;
 
+    }
+
+    await logCustomerActivity(
+      supabase,
+      invoice.customer_id,
+      "payment_received",
+      "Payment received",
+      `Payment of $${Number(amount).toFixed(2)} was recorded for invoice #${invoice.invoice_number ?? id}.`,
+      { type: "payment" },
+    );
+
+    if (invoice.customer_id && payment) {
+      const document = {
+        customer_id: invoice.customer_id,
+        document_type: "receipt",
+        title: `Receipt for invoice #${invoice.invoice_number ?? id}`,
+        file_url: `/api/payments/${payment.id}/receipt`,
+        status: "Paid",
+      };
+      const { error: documentError } = await supabase.from("customer_documents").insert(document);
+      if (documentError) throw documentError;
     }
 
 

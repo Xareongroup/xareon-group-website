@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import CreateInvoiceButton from "@/components/admin/jobs/CreateInvoiceButton";
 import JobPhotos from "@/components/admin/jobs/JobPhotos";
 import JobProfitabilityCard from "@/components/admin/financials/JobProfitabilityCard";
+import CancelJobButton from "@/components/admin/jobs/CancelJobButton";
 
 interface PageProps {
   params: Promise<{
@@ -135,6 +136,10 @@ console.log("Error:", error);
     ✓ Job Completed
   </span>
 )}
+
+          {job.status !== "Completed" && job.status !== "Cancelled" && (
+            <CancelJobButton jobId={job.id} />
+          )}
 
           {job.invoice_id ? (
   <Link

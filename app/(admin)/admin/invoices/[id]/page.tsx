@@ -23,9 +23,9 @@ import RecordPaymentButton
 
 
 interface Props {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 
@@ -33,6 +33,8 @@ interface Props {
 export default async function InvoicePage({
   params,
 }: Props) {
+
+  const { id } = await params;
 
 
   const supabase =
@@ -61,7 +63,7 @@ export default async function InvoicePage({
 
     .eq(
       "id",
-      params.id
+      id
     )
 
     .single();

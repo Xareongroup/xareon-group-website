@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
+import { logCustomerActivity } from "@/lib/activity/logActivity";
 
 import {
   generateSignedEstimatePDF,
@@ -169,7 +170,7 @@ export async function POST(
 
 
           document_type:
-            "Signed Estimate",
+            "signed_agreement",
 
 
           title:
@@ -223,6 +224,15 @@ export async function POST(
 
     if(updateError)
       throw updateError;
+
+    await logCustomerActivity(
+      supabase,
+      customer.id,
+      "estimate_signed",
+      "Estimate signed",
+      `Estimate #${estimate.estimate_number ?? id} was signed by the customer.`,
+      { type: "estimate", id },
+    );
 
 
 

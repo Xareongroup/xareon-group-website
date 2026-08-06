@@ -79,6 +79,62 @@ export default function NewInvoicePage() {
 
   }, []);
 
+  // A job is the authoritative link between the customer and its approved
+  // estimate. Selecting it hydrates the draft invoice from that estimate.
+  useEffect(() => {
+    if (!invoice.jobId) return;
+
+    async function loadJobEstimate() {
+      const { data: job, error: jobError } = await supabase
+        .from("jobs")
+        .select("customer_id,estimate_id")
+        .eq("id", invoice.jobId)
+        .single();
+      if (jobError || !job) {
+        alert("Unable to load the selected job.");
+        return;
+      }
+
+      if (!job.estimate_id) {
+        setInvoice((previous) => ({ ...previous, customerId: job.customer_id ?? "", estimateId: "" }));
+        return;
+      }
+
+      const [{ data: estimate, error: estimateError }, { data: estimateItems, error: itemsError }] = await Promise.all([
+        supabase.from("estimates").select("id,customer_id,subtotal,tax_rate,tax,discount,total").eq("id", job.estimate_id).single(),
+        supabase.from("estimate_items").select("id,description,quantity,unit,unit_price,discount,taxable,total").eq("estimate_id", job.estimate_id).order("sort_order"),
+      ]);
+      if (estimateError || itemsError || !estimate) {
+        alert("Unable to load the estimate for this job.");
+        return;
+      }
+
+      setInvoice((previous) => ({
+        ...previous,
+        customerId: estimate.customer_id,
+        estimateId: estimate.id,
+        items: (estimateItems ?? []).map((item) => ({
+          id: item.id,
+          description: item.description,
+          quantity: Number(item.quantity ?? 0),
+          unit: item.unit ?? "",
+          unitPrice: Number(item.unit_price ?? 0),
+          discount: Number(item.discount ?? 0),
+          taxable: item.taxable ?? false,
+          total: Number(item.total ?? 0),
+        })),
+        subtotal: Number(estimate.subtotal ?? 0),
+        taxRate: Number(estimate.tax_rate ?? 0),
+        tax: Number(estimate.tax ?? 0),
+        discount: Number(estimate.discount ?? 0),
+        total: Number(estimate.total ?? 0),
+        balanceDue: Number(estimate.total ?? 0),
+      }));
+    }
+
+    void loadJobEstimate();
+  }, [invoice.jobId]);
+
 
 
 

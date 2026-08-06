@@ -14,6 +14,65 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_logs: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          customer_id: string
+          description: string | null
+          entity_id: string | null
+          entity_type: string
+          event_type: string
+          id: string
+          title: string
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          customer_id: string
+          description?: string | null
+          entity_id?: string | null
+          entity_type: string
+          event_type: string
+          id?: string
+          title: string
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          customer_id?: string
+          description?: string | null
+          entity_id?: string | null
+          entity_type?: string
+          event_type?: string
+          id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_logs_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_activities: {
+        Row: { activity_type: string; created_at: string; created_by: string | null; description: string | null; id: string; lead_id: string }
+        Insert: { activity_type: string; created_at?: string; created_by?: string | null; description?: string | null; id?: string; lead_id: string }
+        Update: { activity_type?: string; created_at?: string; created_by?: string | null; description?: string | null; id?: string; lead_id?: string }
+        Relationships: [{ foreignKeyName: "lead_activities_lead_id_fkey"; columns: ["lead_id"]; isOneToOne: false; referencedRelation: "leads"; referencedColumns: ["id"] }]
+      }
+      leads: {
+        Row: { address: string | null; assigned_to: string | null; converted_customer_id: string | null; created_at: string; email: string; first_name: string; id: string; last_name: string; lead_number: string; message: string | null; phone: string; photos: Json; service_type: string | null; source: string; status: string; updated_at: string }
+        Insert: { address?: string | null; assigned_to?: string | null; converted_customer_id?: string | null; created_at?: string; email: string; first_name: string; id?: string; last_name: string; lead_number: string; message?: string | null; phone: string; photos?: Json; service_type?: string | null; source?: string; status?: string; updated_at?: string }
+        Update: { address?: string | null; assigned_to?: string | null; converted_customer_id?: string |null; created_at?: string; email?: string; first_name?: string; id?: string; last_name?: string; lead_number?: string; message?: string | null; phone?: string; photos?: Json; service_type?: string | null; source?: string; status?: string; updated_at?: string }
+        Relationships: [
+          { foreignKeyName: "leads_converted_customer_id_fkey"; columns: ["converted_customer_id"]; isOneToOne: false; referencedRelation: "customers"; referencedColumns: ["id"] },
+          { foreignKeyName: "leads_assigned_to_fkey"; columns: ["assigned_to"]; isOneToOne: false; referencedRelation: "employees"; referencedColumns: ["id"] },
+        ]
+      }
       contracts: {
         Row: {
           contract_number: string | null
@@ -1043,7 +1102,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_access_assigned_job: {
+        Args: { target_job_id: string }
+        Returns: boolean
+      }
       generate_contract_number: { Args: never; Returns: string }
+      generate_customer_number: { Args: never; Returns: string }
+      generate_lead_number: { Args: never; Returns: string }
       generate_invoice_number: { Args: never; Returns: string }
       generate_job_number: { Args: never; Returns: string }
       has_permission: {

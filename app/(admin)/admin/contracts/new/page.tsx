@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/client";
 import { getNextDocumentNumber } from "@/lib/documentNumbers";
@@ -18,6 +18,7 @@ export default function NewContractPage() {
 
 
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const supabase = createClient();
 
@@ -50,7 +51,7 @@ export default function NewContractPage() {
   const initialValues: ContractFormValues = {
 
 
-    customer_id: "",
+    customer_id: searchParams.get("customer") ?? "",
 
     estimate_id: "",
 
@@ -89,7 +90,7 @@ export default function NewContractPage() {
         .from("customers")
 
         .select(
-          "id, first_name, last_name"
+          "id, first_name, last_name, address"
         )
 
         .order(
@@ -118,7 +119,7 @@ export default function NewContractPage() {
         .from("jobs")
 
         .select(
-          "id, job_number"
+          "id, job_number, customer_id, estimate_id, title, description"
         )
 
         .order(

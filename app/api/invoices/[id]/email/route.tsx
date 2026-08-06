@@ -7,6 +7,7 @@ import { Resend } from "resend";
 import { adminSupabase } from "@/lib/supabase/admin";
 
 import InvoicePDF from "@/components/pdf/InvoicePDF";
+import { logCustomerActivity } from "@/lib/activity/logActivity";
 
 
 
@@ -281,6 +282,34 @@ export async function POST(
 
 
     });
+
+    const document = {
+      customer_id: customer.id,
+      document_type: "invoice",
+      title: `Invoice #${invoice.invoice_number ?? id}`,
+      file_url: `/api/invoices/${id}/pdf`,
+      status: "Sent",
+    };
+    const { data: existingDocument } = await supabase
+      .from("customer_documents")
+      .select("id")
+      .eq("customer_id", customer.id)
+      .eq("document_type", "invoice")
+      .eq("title", document.title)
+      .maybeSingle();
+    const documentResult = existingDocument
+      ? await supabase.from("customer_documents").update(document).eq("id", existingDocument.id)
+      : await supabase.from("customer_documents").insert(document);
+    if (documentResult.error) throw documentResult.error;
+
+    await logCustomerActivity(
+      supabase,
+      customer.id,
+      "invoice_sent",
+      "Invoice sent",
+      `Invoice #${invoice.invoice_number ?? id} was emailed to ${customer.email}.`,
+      { type: "invoice", id },
+    );
 
 
 

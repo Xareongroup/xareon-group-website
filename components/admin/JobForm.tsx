@@ -145,25 +145,6 @@ export default function JobForm({
 
           <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
 
-            {/* Job Number */}
-
-            <div>
-
-              <label className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                Job Number
-              </label>
-
-              <input
-                value={values.job_number}
-                onChange={(e) =>
-                  update("job_number", e.target.value)
-                }
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 transition focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-100"
-                required
-              />
-
-            </div>
-
             {/* Job Title */}
 
             <div>
