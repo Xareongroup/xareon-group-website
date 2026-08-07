@@ -36,7 +36,13 @@ This repository therefore cannot create live payments. Do not set a live Stripe 
 
 ## Phase 6.1 validation status
 
-The additive staging migration `20260817_add_stripe_payment_foundation.sql` has been applied and the generated database types include the provider fields and event ledger. The repository validation suite confirms that the integration fails closed when payment enablement is absent, a live key is supplied, or `VERCEL_ENV=production`.
+**Foundation verification: complete.** The additive staging migration `20260817_add_stripe_payment_foundation.sql` is present both locally and on the linked staging database. Generated database types confirm the `payments` provider fields and the `payment_provider_events` ledger relationship.
+
+The migration intentionally uses `payment_provider` (rather than a generic `provider`) and records refunds as `refunded_amount` / `refunded_at`; it does not include a `provider_refund_id`. That is the deployed schema contract and no schema change was made during this verification pass.
+
+A read-only staging check found 11 existing payment records, zero Stripe-provider payment records, and zero provider-event records. No existing payment business data, provider event, or production record was changed. The unique `(provider, provider_event_id)` constraint and the partial unique Stripe transaction index provide the two idempotency gates for webhooks and CRM payment writes.
+
+The repository validation suite confirms that the integration fails closed when payment enablement is absent, a live key is supplied, or `VERCEL_ENV=production`.
 
 External Stripe staging validation remains operationally blocked in this local checkout: no local `.env.local` exists, no preview deployment URL is available here, and no test-mode Stripe credentials or staging portal invoice/token were supplied. Consequently, no Checkout Session, webhook, payment, refund, email, or provider-event row has been created by this validation pass.
 

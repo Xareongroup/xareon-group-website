@@ -3,7 +3,7 @@
 ## Ready for controlled staging release
 
 - Lead capture, CRM workflow, document/signature foundations, scheduling, employee dispatch, financial module, customer portal access layer, and automation task/log foundations.
-- Generated Supabase database type file and migration history through `20260816`.
+- Generated Supabase database type file and migration history through `20260817`.
 - Current local validation: TypeScript, Vitest, and Next build pass.
 - Scheduler automated coverage verifies missing-secret failure, invalid authorization denial, authenticated dry-run dispatch, dry-run non-mutation, and duplicate reminder suppression.
 - Service-role access inventory and database/portal token reviews are complete. Invoice PDF and invoice email endpoints now require explicit internal API roles.
@@ -26,7 +26,8 @@
 
 ## Future development, not a launch prerequisite
 
-- Payment gateway activation/Stripe checkout workflow.
+- Stripe Phase 6.1 foundation verification is complete in staging: migration `20260817` matches remote, provider-event idempotency schema is present, and a read-only check found 11 existing payments with zero Stripe payments/provider events. No production payment configuration or live keys were enabled.
+- Controlled Stripe Checkout, signed webhook, failed-payment, refund, and duplicate-event delivery tests still require approved Preview/Staging test configuration (`STRIPE_PAYMENTS_ENABLED=true`, `sk_test_...`, `whsec_...`) plus a disposable portal invoice/token. This is an operational staging-test requirement, not permission to enable production payments.
 - Automated SMS and recurring automation delivery.
 - Automated scheduler monitoring/alerting integration.
 - Broader integration-test coverage for automation dry-run/execution behavior.
