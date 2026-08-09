@@ -189,33 +189,13 @@ export async function POST(
 
 
 
-    const {
-      data:urlData
-
-    } = supabase.storage
-
-      .from(
-        "customer-documents"
-      )
-
-      .getPublicUrl(
-        fileName
-      );
-
-
-
-
-
-
-
     await supabase
 
       .from("contracts")
 
       .update({
 
-        pdf_url:
-          urlData.publicUrl,
+        pdf_url: fileName,
 
       })
 
@@ -224,14 +204,16 @@ export async function POST(
         id
       );
 
-    await recordCustomerDocument(supabase, {
+    const document = await recordCustomerDocument(supabase, {
       customerId: contract.customer_id,
       documentType: contract.signed ? "Signed Contract" : "Contract",
       title: `${contract.signed ? "Signed contract" : "Contract"} #${contract.contract_number ?? id}`,
-      fileUrl: urlData.publicUrl,
+      fileUrl: fileName,
       status: contract.status,
       signedDate: contract.signed_at,
     });
+
+    if (!document) throw new Error("Unable to register the contract document.");
 
 
 
@@ -243,8 +225,7 @@ export async function POST(
 
       success:true,
 
-      url:
-        urlData.publicUrl,
+      url: `/api/admin/customer-documents/${document.id}/download`,
 
     });
 

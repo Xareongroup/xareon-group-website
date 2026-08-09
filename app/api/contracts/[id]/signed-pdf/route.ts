@@ -8,6 +8,7 @@ import { pdf } from "@react-pdf/renderer";
 
 import SignedContractPDF from "@/components/documents/SignedContractPDF";
 import { logCustomerActivity } from "@/lib/activity/logActivity";
+import { recordCustomerDocument } from "@/lib/documents/recordCustomerDocument";
 
 
 
@@ -211,27 +212,12 @@ export async function POST(
 
 
     /*
-      GET PUBLIC URL
+      PRIVATE DOCUMENT STORAGE
     */
 
 
-    const {
-
-      data:urlData,
-
-    } =
-
-      supabase.storage
-
-        .from(
-          "customer-documents"
-        )
-
-        .getPublicUrl(
-
-          fileName
-
-        );
+    // Keep only a storage path. Private documents are delivered through an
+    // authenticated signed-URL route, never by a public bucket URL.
 
 
 
@@ -241,7 +227,7 @@ export async function POST(
 
 
     /*
-      SAVE SIGNED PDF URL
+      SAVE SIGNED PDF STORAGE PATH
     */
 
 
@@ -258,7 +244,7 @@ export async function POST(
         .update({
 
           signed_pdf_url:
-            urlData.publicUrl,
+            fileName,
 
         })
 
@@ -276,26 +262,19 @@ export async function POST(
     if(updateError)
       throw updateError;
 
+    let customerDocument: { id: string } | null = null;
     if (contract.customer_id) {
       const document = {
-        customer_id: contract.customer_id,
-        document_type: "signed_agreement",
+        documentType: "signed_agreement" as const,
         title: `Contract #${contract.contract_number ?? id} - Signed`,
-        file_url: urlData.publicUrl,
+        fileUrl: fileName,
         status: "Signed",
-        signed_date: contract.signed_at ?? new Date().toISOString(),
+        signedDate: contract.signed_at ?? new Date().toISOString(),
       };
-      const { data: existingDocument } = await supabase
-        .from("customer_documents")
-        .select("id")
-        .eq("customer_id", contract.customer_id)
-        .eq("document_type", "signed_agreement")
-        .eq("title", document.title)
-        .maybeSingle();
-      const documentResult = existingDocument
-        ? await supabase.from("customer_documents").update(document).eq("id", existingDocument.id)
-        : await supabase.from("customer_documents").insert(document);
-      if (documentResult.error) throw documentResult.error;
+      customerDocument = await recordCustomerDocument(supabase, {
+        customerId: contract.customer_id,
+        ...document,
+      });
 
       await logCustomerActivity(
         supabase,
@@ -317,8 +296,7 @@ export async function POST(
 
       success:true,
 
-      url:
-        urlData.publicUrl,
+      url: customerDocument ? `/api/admin/customer-documents/${customerDocument.id}/download` : null,
 
     });
 
