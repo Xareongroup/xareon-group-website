@@ -89,15 +89,6 @@ export default function CustomerDocuments({
 
   },[customerId]);
 
-  function documentUrl(fileUrl: string) {
-    if (fileUrl.startsWith("http") || fileUrl.startsWith("/")) return fileUrl;
-    return supabase.storage.from("customer-documents").getPublicUrl(fileUrl).data.publicUrl;
-  }
-
-
-
-
-
   function getIcon(type:string){
 
     switch(type){
@@ -209,8 +200,9 @@ export default function CustomerDocuments({
 
 
                   <a
-                    href={documentUrl(doc.file_url)}
+                    href={`/api/admin/customer-documents/${doc.id}/download`}
                     target="_blank"
+                    rel="noreferrer"
                     className="inline-flex items-center gap-2 text-sm text-blue-600 hover:underline"
                   >
 

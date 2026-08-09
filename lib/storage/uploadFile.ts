@@ -11,6 +11,12 @@ export async function uploadFile({
   folder,
   file,
 }: UploadFileOptions) {
+  if (bucket === "customer-documents") {
+    throw new Error(
+      "Customer documents are private and must be uploaded through a server-authorized document workflow.",
+    );
+  }
+
   const supabase = createClient();
 
   const extension = file.name.split(".").pop();

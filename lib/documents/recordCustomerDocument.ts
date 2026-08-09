@@ -4,7 +4,7 @@ import type { Database } from "@/lib/supabase/database.types";
 
 type CustomerDocumentInput = {
   customerId: string | null | undefined;
-  documentType: "Estimate" | "Signed Estimate" | "Contract" | "Signed Contract" | "Invoice" | "Payment Receipt";
+  documentType: "Estimate" | "Signed Estimate" | "Contract" | "Signed Contract" | "Invoice" | "Payment Receipt" | "signed_agreement";
   title: string;
   fileUrl: string;
   status?: string | null;
@@ -16,7 +16,7 @@ export async function recordCustomerDocument(
   supabase: SupabaseClient<Database>,
   input: CustomerDocumentInput,
 ) {
-  if (!input.customerId) return;
+  if (!input.customerId) return null;
 
   const { data: existing, error: lookupError } = await supabase
     .from("customer_documents")
@@ -26,17 +26,22 @@ export async function recordCustomerDocument(
     .maybeSingle();
   if (lookupError) {
     console.error("Customer document lookup failed", lookupError);
-    return;
+    return null;
   }
-  if (existing) return;
+  if (existing) return existing;
 
-  const { error } = await supabase.from("customer_documents").insert({
+  const { data, error } = await supabase.from("customer_documents").insert({
     customer_id: input.customerId,
     document_type: input.documentType,
     title: input.title,
     file_url: input.fileUrl,
     status: input.status ?? null,
     signed_date: input.signedDate ?? null,
-  });
-  if (error) console.error("Customer document registration failed", error);
+  }).select("id").single();
+  if (error) {
+    console.error("Customer document registration failed", error);
+    return null;
+  }
+
+  return data;
 }
