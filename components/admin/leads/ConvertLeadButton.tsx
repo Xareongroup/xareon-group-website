@@ -26,6 +26,12 @@ export default function ConvertLeadButton({ leadId, convertedCustomerId }: { lea
       result = await response.json();
     }
     setLoading(false);
+    if (response.status === 409 && result.code === "multiple_existing_customers") {
+      const customerNumbers = Array.isArray(result.customers)
+        ? result.customers.map((customer: { customer_number?: string | null }) => customer.customer_number ?? "Customer record").join(", ")
+        : "multiple customer records";
+      return window.alert(`Multiple customer records match this lead's email (${customerNumbers}). Resolve the duplicate customer records before converting this lead.`);
+    }
     if (!response.ok) return window.alert(result.error ?? "Unable to convert lead.");
     router.push(`/admin/customers/${result.customerId}`);
     router.refresh();

@@ -12,6 +12,7 @@ import SearchBar from "@/components/admin/SearchBar";
 import StatusBadge from "@/components/admin/StatusBadge";
 import EmptyState from "@/components/admin/EmptyState";
 import DataTable from "@/components/admin/DataTable";
+import MobileRecordCard from "@/components/admin/MobileRecordCard";
 
 import {
   Receipt,
@@ -224,6 +225,22 @@ export default function InvoicesPage() {
             buttonText="Create Invoice"
             buttonHref="/admin/invoices/new"
           />
+        }
+        mobileCards={
+          filteredInvoices.map((invoice) => (
+            <MobileRecordCard
+              key={invoice.id}
+              title={invoice.invoice_number ?? "Pending invoice"}
+              subtitle={invoice.customer ? `${invoice.customer.first_name} ${invoice.customer.last_name}` : "Unknown customer"}
+              badge={<StatusBadge status={invoice.status} />}
+              fields={[
+                { label: "Issue date", value: invoice.issue_date ? new Date(invoice.issue_date).toLocaleDateString() : "Not issued" },
+                { label: "Due date", value: invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : "Not set" },
+                { label: "Total", value: formatCurrency(invoice.total ?? 0) },
+              ]}
+              actions={<><Link href={`/admin/invoices/${invoice.id}`} className="inline-flex min-h-11 items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white">View</Link><Link href={`/admin/invoices/${invoice.id}/edit`} className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 px-4 text-sm font-medium text-slate-700">Edit</Link></>}
+            />
+          ))
         }
         headers={
           <tr>

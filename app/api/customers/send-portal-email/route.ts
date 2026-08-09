@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
+import { buildCustomerPortalUrl } from "@/lib/portal/buildCustomerPortalUrl";
 
 import { Resend } from "resend";
 
@@ -125,8 +126,23 @@ export async function POST(
 
 
 
-    const portalLink =
-      `${process.env.NEXT_PUBLIC_SITE_URL}/portal/${customer.portal_token}`;
+    const portalUrl = buildCustomerPortalUrl(
+      process.env.NEXT_PUBLIC_SITE_URL,
+      customer.portal_token
+    );
+
+    if (!portalUrl.ok) {
+      console.error("Customer portal email link configuration failed:", {
+        reason: portalUrl.reason,
+        customerId: customer.id,
+      });
+      const error = portalUrl.reason === "missing_portal_token"
+        ? "A secure portal link is not available for this customer. Generate a new portal link before sending email."
+        : "Portal access email is not configured. Please contact XAREON GROUP.";
+      return NextResponse.json({ error }, { status: 503 });
+    }
+
+    const portalLink = portalUrl.url;
 
 
 
@@ -271,7 +287,7 @@ export async function POST(
   }
 
 
-  catch(error:any){
+  catch(error){
 
 
 
@@ -285,8 +301,7 @@ export async function POST(
 
       {
         error:
-        error.message ??
-        "Email failed."
+        "Unable to send the portal access email. Please try again."
       },
 
       {

@@ -128,7 +128,11 @@ const sections = [
   },
 ];
 
-export default function AdminSidebar() {
+interface AdminSidebarProps {
+  onNavigate?: () => void;
+}
+
+export default function AdminSidebar({ onNavigate }: AdminSidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -136,6 +140,7 @@ export default function AdminSidebar() {
       {/* Logo */}
       <Link
         href="/admin/dashboard"
+        onClick={onNavigate}
         className="border-b border-slate-700 p-6 transition hover:bg-slate-800"
       >
         <div className="flex flex-col items-center">
@@ -161,7 +166,7 @@ export default function AdminSidebar() {
       <nav className="flex-1 overflow-y-auto px-4 py-5">
         {sections.map((section) => (
           <div key={section.title} className="mb-7">
-            <h3 className="mb-3 px-3 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500">
+            <h3 className="mb-3 px-3 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">
               {section.title}
             </h3>
 
@@ -177,6 +182,8 @@ export default function AdminSidebar() {
                   <Link
                     key={link.href}
                     href={link.href}
+                    onClick={onNavigate}
+                    aria-current={active ? "page" : undefined}
                     className={`group flex items-center gap-4 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300 ${
                       active
                         ? "bg-blue-600 text-white shadow-lg"
