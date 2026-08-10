@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
 import { logCustomerActivity } from "@/lib/activity/logActivity";
+import { recordCustomerDocument } from "@/lib/documents/recordCustomerDocument";
 
 import {
   generateSignedEstimatePDF,
@@ -157,43 +158,14 @@ export async function POST(
 
     // Save customer document record
 
-    const {
-      error: documentError
-    }
-    =
-      await supabase
-        .from("customer_documents")
-        .insert({
-
-          customer_id:
-            customer.id,
-
-
-          document_type:
-            "signed_agreement",
-
-
-          title:
-            `Estimate #${estimate.estimate_number} - Signed`,
-
-
-          file_url:
-            filePath,
-
-
-          status:
-            "Signed",
-
-
-          signed_date:
-            estimate.signed_at,
-
-        });
-
-
-
-    if(documentError)
-      throw documentError;
+    await recordCustomerDocument(supabase, {
+      customerId: customer.id,
+      documentType: "Signed Estimate",
+      title: `Estimate #${estimate.estimate_number} - Signed`,
+      fileUrl: filePath,
+      status: "Signed",
+      signedDate: estimate.signed_at,
+    });
 
 
 

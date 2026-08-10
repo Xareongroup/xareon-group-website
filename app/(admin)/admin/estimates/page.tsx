@@ -6,6 +6,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { formatCurrency } from "@/lib/utils/currency";
 import MobileRecordCard from "@/components/admin/MobileRecordCard";
+import DocumentDeleteButton from "@/components/documents/DocumentDeleteButton";
 
 interface Estimate {
   id: string;
@@ -144,7 +145,7 @@ export default function EstimatesPage() {
             subtitle={estimate.customer ? `${estimate.customer.first_name} ${estimate.customer.last_name}` : "Unknown customer"}
             badge={<span className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${getStatusColor(estimate.status)}`}>{estimate.status}</span>}
             fields={[{ label: "Date", value: estimate.issue_date ? new Date(estimate.issue_date).toLocaleDateString() : "Not issued" }, { label: "Total", value: formatCurrency(estimate.total ?? 0) }]}
-            actions={<><Link href={`/admin/estimates/${estimate.id}`} className="inline-flex min-h-11 items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white">View</Link><Link href={`/admin/estimates/${estimate.id}/edit`} className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 px-4 text-sm font-medium text-slate-700">Edit</Link></>}
+            actions={<><Link href={`/admin/estimates/${estimate.id}`} className="inline-flex min-h-11 items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white">View</Link><Link href={`/admin/estimates/${estimate.id}/edit`} className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 px-4 text-sm font-medium text-slate-700">Edit</Link><DocumentDeleteButton kind="estimates" id={estimate.id} label="estimate" onDeleted={() => setEstimates((current) => current.filter((item) => item.id !== estimate.id))} /></>}
           />
         ))}
       </div>
@@ -292,6 +293,7 @@ export default function EstimatesPage() {
                       >
                         Edit
                       </Link>
+                      <DocumentDeleteButton kind="estimates" id={estimate.id} label="estimate" onDeleted={() => setEstimates((current) => current.filter((item) => item.id !== estimate.id))} />
 
                     </div>
 

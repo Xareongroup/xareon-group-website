@@ -4,6 +4,7 @@ import { resend } from "@/lib/resend";
 import { renderEstimatePdf } from "@/lib/pdf/renderEstimatePdf";
 import { logCustomerActivity } from "@/lib/activity/logActivity";
 import { triggerAutomation } from "@/lib/automation/automationEngine";
+import { recordCustomerDocument } from "@/lib/documents/recordCustomerDocument";
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -34,10 +35,13 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     const sentAt = new Date().toISOString();
     const { error: updateError } = await supabase.from("estimates").update({ sent_at: sentAt, signature_status: "Pending", signature_token: signatureToken, status: "Sent" }).eq("id", id);
     if (updateError) throw updateError;
-    const { data: existingDocument } = await supabase.from("customer_documents").select("id").eq("customer_id", customer.id).eq("document_type", "estimate").eq("title", `Estimate #${estimate.estimate_number ?? id}`).maybeSingle();
-    const document = { customer_id: customer.id, document_type: "estimate", title: `Estimate #${estimate.estimate_number ?? id}`, file_url: documentUrl, status: "Sent" };
-    const documentResult = existingDocument ? await supabase.from("customer_documents").update(document).eq("id", existingDocument.id) : await supabase.from("customer_documents").insert(document);
-    if (documentResult.error) throw documentResult.error;
+    await recordCustomerDocument(supabase, {
+      customerId: customer.id,
+      documentType: "Estimate",
+      title: `Estimate #${estimate.estimate_number ?? id}`,
+      fileUrl: documentUrl,
+      status: "Sent",
+    });
     await logCustomerActivity(
       supabase,
       customer.id,

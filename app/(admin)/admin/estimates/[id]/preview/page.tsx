@@ -67,7 +67,7 @@ export default async function EstimatePreviewPage({
 
       {/* Printable Document */}
 
-      <div className="estimate-print relative overflow-hidden rounded-2xl bg-white p-6 shadow-xl">
+      <div className="document-print relative overflow-hidden rounded-2xl bg-white p-6 shadow-xl">
         {/* Watermark */}
 
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">

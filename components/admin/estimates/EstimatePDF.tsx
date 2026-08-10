@@ -1,49 +1,7 @@
-import {
-  Document,
-  Page,
-  Text,
-  View,
-  StyleSheet,
-} from "@react-pdf/renderer";
+import { Text, View, StyleSheet } from "@react-pdf/renderer";
+import DocumentPdfShell from "@/components/pdf/DocumentPdfShell";
 
 const styles = StyleSheet.create({
-  page: {
-    padding: 40,
-    fontSize: 11,
-    fontFamily: "Helvetica",
-    color: "#111827",
-  },
-
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    borderBottom: 1,
-    borderBottomColor: "#d1d5db",
-    paddingBottom: 16,
-    marginBottom: 24,
-  },
-
-  company: {
-    width: "55%",
-  },
-
-  title: {
-    width: "40%",
-    textAlign: "right",
-  },
-
-  companyName: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 6,
-  },
-
-  estimateTitle: {
-    fontSize: 30,
-    color: "#2563eb",
-    fontWeight: "bold",
-    marginBottom: 12,
-  },
 
   sectionTitle: {
     fontSize: 13,
@@ -122,12 +80,6 @@ const styles = StyleSheet.create({
     color: "#2563eb",
   },
 
-  footer: {
-    marginTop: 40,
-    textAlign: "center",
-    fontSize: 10,
-    color: "#6b7280",
-  },
 });
 
 function currency(value: number) {
@@ -149,64 +101,7 @@ export default function EstimatePDF({
   items,
 }: EstimatePDFProps) {
   return (
-    <Document>
-
-      <Page size="LETTER" style={styles.page}>
-
-        <View style={styles.header}>
-
-          <View style={styles.company}>
-
-            <Text style={styles.companyName}>
-              XAREON GROUP
-            </Text>
-
-            <Text>Shield of Integrity</Text>
-
-            <Text>
-              Professional Home Repair &
-              Installation Services
-            </Text>
-
-            <Text>Greater DMV Metro Area</Text>
-
-            <Text>(202) 286-8497</Text>
-
-            <Text>info@xareongroup.com</Text>
-
-            <Text>www.xareongroup.com</Text>
-
-          </View>
-
-          <View style={styles.title}>
-
-            <Text style={styles.estimateTitle}>
-              ESTIMATE
-            </Text>
-
-            <Text>
-              Estimate #: {estimate.estimate_number}
-            </Text>
-
-            <Text>
-              Status: {estimate.status}
-            </Text>
-
-            <Text>
-              Issue:
-              {" "}
-              {estimate.issue_date}
-            </Text>
-
-            <Text>
-              Expires:
-              {" "}
-              {estimate.expiration_date}
-            </Text>
-
-          </View>
-
-        </View>
+    <DocumentPdfShell title="ESTIMATE" metadata={<><Text>Estimate #: {estimate.estimate_number}</Text><Text>Status: {estimate.status}</Text><Text>Issue: {estimate.issue_date ?? "-"}</Text><Text>Expires: {estimate.expiration_date ?? "-"}</Text></>}>
 
         <View style={styles.customer}>
 
@@ -310,20 +205,6 @@ export default function EstimatePDF({
 
         </View>
 
-        <View style={styles.footer}>
-
-          <Text>
-            Thank you for choosing XAREON GROUP.
-          </Text>
-
-          <Text>
-            We appreciate your business.
-          </Text>
-
-        </View>
-
-      </Page>
-
-    </Document>
+    </DocumentPdfShell>
   );
 }

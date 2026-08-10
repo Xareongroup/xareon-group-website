@@ -265,7 +265,7 @@ export async function POST(
     let customerDocument: { id: string } | null = null;
     if (contract.customer_id) {
       const document = {
-        documentType: "signed_agreement" as const,
+        documentType: "Signed Contract" as const,
         title: `Contract #${contract.contract_number ?? id} - Signed`,
         fileUrl: fileName,
         status: "Signed",

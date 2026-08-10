@@ -12,6 +12,7 @@ import StatusBadge from "@/components/admin/StatusBadge";
 import EmptyState from "@/components/admin/EmptyState";
 import DataTable from "@/components/admin/DataTable";
 import MobileRecordCard from "@/components/admin/MobileRecordCard";
+import DocumentDeleteButton from "@/components/documents/DocumentDeleteButton";
 
 import {
   FileSignature,
@@ -538,7 +539,7 @@ mobileCards={
         { label: "Job", value: contract.job?.job_number ?? "Not linked" },
         { label: "Signed", value: contract.signed_at ? new Date(contract.signed_at).toLocaleDateString() : "Not signed" },
       ]}
-      actions={<><Link href={`/admin/contracts/${contract.id}`} className="inline-flex min-h-11 items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white">View</Link><Link href={`/admin/contracts/${contract.id}/edit`} className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 px-4 text-sm font-medium text-slate-700">Edit</Link></>}
+      actions={<><Link href={`/admin/contracts/${contract.id}`} className="inline-flex min-h-11 items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white">View</Link><Link href={`/admin/contracts/${contract.id}/edit`} className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 px-4 text-sm font-medium text-slate-700">Edit</Link><DocumentDeleteButton kind="contracts" id={contract.id} label="contract" onDeleted={() => setContracts((current) => current.filter((item) => item.id !== contract.id))} /></>}
     />
   ))
 }
@@ -739,6 +740,8 @@ className="rounded-md border px-3 py-1.5 text-sm hover:bg-slate-100"
 Edit
 
 </Link>
+
+<DocumentDeleteButton kind="contracts" id={contract.id} label="contract" onDeleted={() => setContracts((current) => current.filter((item) => item.id !== contract.id))} />
 
 
 
