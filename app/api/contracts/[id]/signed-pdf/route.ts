@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import * as React from "react";
 
 import { createClient } from "@/lib/supabase/server";
+import { requireApiRole } from "@/lib/auth/requireApiRole";
 
 import { pdf } from "@react-pdf/renderer";
 
@@ -23,6 +24,9 @@ export async function POST(
   }
 ) {
 
+
+  const access = await requireApiRole(["owner", "admin", "manager"]);
+  if ("response" in access) return access.response;
 
   try {
 

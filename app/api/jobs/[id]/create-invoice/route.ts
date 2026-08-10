@@ -1,12 +1,15 @@
 import { NextResponse } from "next/server";
 import { logCustomerActivity } from "@/lib/activity/logActivity";
 import { createClient } from "@/lib/supabase/server";
+import { requireApiRole } from "@/lib/auth/requireApiRole";
 import { triggerAutomation } from "@/lib/automation/automationEngine";
 
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const access = await requireApiRole(["owner", "admin", "manager", "accounting"]);
+  if ("response" in access) return access.response;
   const { id } = await params;
 
   const supabase = await createClient();

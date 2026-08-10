@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
+import { requireApiRole } from "@/lib/auth/requireApiRole";
 
 import { randomUUID } from "crypto";
 
@@ -9,6 +10,9 @@ import { randomUUID } from "crypto";
 export async function POST(
   request: Request
 ) {
+
+  const access = await requireApiRole(["owner", "admin", "manager", "sales"]);
+  if ("response" in access) return access.response;
 
 
   try {

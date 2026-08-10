@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
+import { requireApiRole } from "@/lib/auth/requireApiRole";
 import { logCustomerActivity } from "@/lib/activity/logActivity";
 import { recordCustomerDocument } from "@/lib/documents/recordCustomerDocument";
 
@@ -22,6 +23,9 @@ export async function POST(
   { params }: RouteProps
 
 ) {
+
+  const access = await requireApiRole(["owner", "admin", "accounting"]);
+  if ("response" in access) return access.response;
 
 
   try {
