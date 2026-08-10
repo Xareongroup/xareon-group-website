@@ -94,11 +94,14 @@ body {
   }
 
   .print-area,
-  .print-area * {
+  .print-area *,
+  .document-print,
+  .document-print * {
     visibility: visible;
   }
 
-  .print-area {
+  .print-area,
+  .document-print {
 
     position: static !important;
 
