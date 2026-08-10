@@ -72,7 +72,7 @@ export default function AdminShell({
           {/* Sidebar */}
           <div
             id="admin-mobile-navigation"
-            className="fixed inset-y-0 left-0 z-50 w-72 lg:hidden"
+            className="fixed left-0 top-0 z-50 h-[100dvh] w-72 overflow-hidden lg:hidden"
             role="dialog"
             aria-modal="true"
             aria-label="Administration navigation"

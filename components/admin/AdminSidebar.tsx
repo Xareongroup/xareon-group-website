@@ -136,7 +136,7 @@ export default function AdminSidebar({ onNavigate }: AdminSidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="flex w-72 flex-col border-r border-slate-200 bg-slate-900 text-white shadow-xl">
+    <aside className="flex h-full w-72 flex-col border-r border-slate-200 bg-slate-900 text-white shadow-xl">
       {/* Logo */}
       <Link
         href="/admin/dashboard"
@@ -163,7 +163,7 @@ export default function AdminSidebar({ onNavigate }: AdminSidebarProps) {
       </Link>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto px-4 py-5">
+      <nav className="flex-1 overflow-y-auto overscroll-contain px-4 py-5 [-webkit-overflow-scrolling:touch]">
         {sections.map((section) => (
           <div key={section.title} className="mb-7">
             <h3 className="mb-3 px-3 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">
