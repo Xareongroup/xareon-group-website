@@ -4,6 +4,7 @@ import { recalculateInvoice } from "@/lib/invoices/recalculateInvoice";
 import { requireApiRole } from "@/lib/auth/requireApiRole";
 import { logCustomerActivity } from "@/lib/activity/logActivity";
 import { triggerAutomation } from "@/lib/automation/automationEngine";
+import { recordCustomerDocument } from "@/lib/documents/recordCustomerDocument";
 
 export async function POST(request: Request) {
   const access = await requireApiRole(["owner", "admin", "accounting"]);
@@ -73,14 +74,13 @@ export async function POST(request: Request) {
       { type: "payment", id: payment?.id },
     );
     if (invoice.customer_id && payment) {
-      const { error: documentError } = await supabase.from("customer_documents").insert({
-        customer_id: invoice.customer_id,
-        document_type: "receipt",
+      await recordCustomerDocument(supabase, {
+        customerId: invoice.customer_id,
+        documentType: "Payment Receipt",
         title: `Receipt for invoice #${invoice.invoice_number ?? invoice_id}`,
-        file_url: `/api/payments/${payment.id}/receipt`,
+        fileUrl: `/api/payments/${payment.id}/receipt`,
         status: "Paid",
       });
-      if (documentError) console.error("Payment receipt document logging failed", documentError);
     }
     await triggerAutomation({ event: "payment_received", entityType: "payment", entityId: payment?.id ?? invoice.id, customerId: invoice.customer_id, title: `Payment of $${Number(amount).toFixed(2)} was received for invoice #${invoice.invoice_number ?? invoice.id}.` });
 

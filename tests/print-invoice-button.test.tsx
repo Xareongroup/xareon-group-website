@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import PrintInvoiceButton from "@/components/admin/invoices/PrintInvoiceButton";
+import DocumentPrintButton from "@/components/documents/DocumentPrintButton";
 
 describe("PrintInvoiceButton", () => {
   afterEach(() => {
@@ -19,5 +20,10 @@ describe("PrintInvoiceButton", () => {
     fireEvent.click(button);
 
     expect(print).toHaveBeenCalledOnce();
+  });
+
+  it("uses the shared document print control", () => {
+    render(<DocumentPrintButton label="Print Estimate" className="document-print-action" />);
+    expect(screen.getByRole("button", { name: "Print Estimate" })).toHaveClass("document-print-action");
   });
 });

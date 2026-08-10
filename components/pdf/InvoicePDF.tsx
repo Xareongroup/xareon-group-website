@@ -1,15 +1,8 @@
-import {
-  Document,
-  Page,
-  Text,
-  View,
-  StyleSheet,
-} from "@react-pdf/renderer";
+import { Text, View, StyleSheet } from "@react-pdf/renderer";
 
-import CompanyHeader from "./CompanyHeader";
 import CompanyInfo from "./CompanyInfo";
 import TotalsCard from "./TotalsCard";
-import CompanyFooter from "./CompanyFooter";
+import DocumentPdfShell from "./DocumentPdfShell";
 
 interface InvoicePDFProps {
   invoice: any;
@@ -18,25 +11,6 @@ interface InvoicePDFProps {
 }
 
 const styles = StyleSheet.create({
-  page: {
-    padding: 40,
-    fontSize: 11,
-    fontFamily: "Helvetica",
-  },
-
-  header: {
-  flexDirection: "row",
-  justifyContent: "flex-end",
-  marginBottom: 25,
-},
-
-  invoiceTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "right",
-    marginBottom: 10,
-  },
-
   tableHeader: {
     flexDirection: "row",
     borderBottomWidth: 1,
@@ -77,7 +51,7 @@ const styles = StyleSheet.create({
     textAlign: "right",
   },
 
-  });
+});
 
 const money = (value: number) =>
   new Intl.NumberFormat("en-US", {
@@ -91,38 +65,7 @@ export default function InvoicePDF({
   items,
 }: InvoicePDFProps) {
   return (
-    <Document>
-      <Page size="A4" style={styles.page}>
-
-        <CompanyHeader />
-
-<View style={styles.header}>
-
-  <View />
-
-  <View>
-    <Text style={styles.invoiceTitle}>
-      INVOICE
-    </Text>
-
-    <Text>
-      Invoice #: {invoice.invoice_number}
-    </Text>
-
-    <Text>
-      Status: {invoice.status}
-    </Text>
-
-    <Text>
-      Issue Date:{" "}
-      {invoice.issued_at
-        ? new Date(invoice.issued_at).toLocaleDateString()
-        : "-"}
-    </Text>
-
-  </View>
-
-</View>
+    <DocumentPdfShell title="INVOICE" metadata={<><Text>Invoice #: {invoice.invoice_number}</Text><Text>Status: {invoice.status}</Text><Text>Issue date: {invoice.issue_date ? new Date(invoice.issue_date).toLocaleDateString() : "-"}</Text></>}>
 
         <CompanyInfo customer={customer} />
 
@@ -144,13 +87,11 @@ export default function InvoicePDF({
           </View>
         ))}
 
-        <TotalsCard
+<TotalsCard
   subtotal={invoice.subtotal}
   tax={invoice.tax}
   total={invoice.total}
 />
-<CompanyFooter />
-      </Page>
-    </Document>
+    </DocumentPdfShell>
   );
 }

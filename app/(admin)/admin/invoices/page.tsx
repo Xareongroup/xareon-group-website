@@ -13,6 +13,7 @@ import StatusBadge from "@/components/admin/StatusBadge";
 import EmptyState from "@/components/admin/EmptyState";
 import DataTable from "@/components/admin/DataTable";
 import MobileRecordCard from "@/components/admin/MobileRecordCard";
+import DocumentDeleteButton from "@/components/documents/DocumentDeleteButton";
 
 import {
   Receipt,
@@ -238,7 +239,7 @@ export default function InvoicesPage() {
                 { label: "Due date", value: invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : "Not set" },
                 { label: "Total", value: formatCurrency(invoice.total ?? 0) },
               ]}
-              actions={<><Link href={`/admin/invoices/${invoice.id}`} className="inline-flex min-h-11 items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white">View</Link><Link href={`/admin/invoices/${invoice.id}/edit`} className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 px-4 text-sm font-medium text-slate-700">Edit</Link></>}
+              actions={<><Link href={`/admin/invoices/${invoice.id}`} className="inline-flex min-h-11 items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white">View</Link><Link href={`/admin/invoices/${invoice.id}/edit`} className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 px-4 text-sm font-medium text-slate-700">Edit</Link><DocumentDeleteButton kind="invoices" id={invoice.id} label="invoice" onDeleted={() => setInvoices((current) => current.filter((item) => item.id !== invoice.id))} /></>}
             />
           ))
         }
@@ -334,6 +335,7 @@ export default function InvoicesPage() {
                 >
                   Edit
                 </Link>
+                <DocumentDeleteButton kind="invoices" id={invoice.id} label="invoice" onDeleted={() => setInvoices((current) => current.filter((item) => item.id !== invoice.id))} />
 
               </div>
             </td>
