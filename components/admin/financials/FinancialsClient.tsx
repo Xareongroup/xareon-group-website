@@ -7,6 +7,7 @@ import type { Tables } from "@/lib/supabase/database.types";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import MobileRecordCard from "@/components/admin/MobileRecordCard";
 import type { ExpenseFormValues } from "@/types/financial";
+import ExpenseReceiptButton from "@/components/admin/financials/ExpenseReceiptButton";
 
 type View =
   | "dashboard"
@@ -41,6 +42,8 @@ type Job = Pick<
   Tables<"jobs">,
   "id" | "job_number" | "title" | "status" | "scheduled_date" | "completed_date"
 >;
+type Customer = Pick<Tables<"customers">, "id" | "first_name" | "last_name" | "email">;
+type Employee = Pick<Tables<"employees">, "id" | "first_name" | "last_name" | "role">;
 const currency = (value: number) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(
     value || 0,
@@ -72,11 +75,14 @@ export default function FinancialsClient({
   const [categories, setCategories] = useState<Category[]>([]);
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [jobs, setJobs] = useState<Job[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [form, setForm] = useState(initialExpense);
+  const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const [period, setPeriod] = useState("monthly");
   const [categoryForm, setCategoryForm] = useState({
@@ -108,6 +114,8 @@ export default function FinancialsClient({
       vendorResult,
       jobResult,
       invoiceResult,
+      customerResult,
+      employeeResult,
     ] = await Promise.all([
       supabase
         .from("expenses")
@@ -128,6 +136,8 @@ export default function FinancialsClient({
       supabase
         .from("invoices")
         .select("id,total,amount_paid,balance_due,status,issue_date,job_id"),
+      supabase.from("customers").select("id,first_name,last_name,email").order("first_name"),
+      supabase.from("employees").select("id,first_name,last_name,role").order("first_name"),
     ]);
     const firstError = [
       expenseResult.error,
@@ -135,6 +145,8 @@ export default function FinancialsClient({
       vendorResult.error,
       jobResult.error,
       invoiceResult.error,
+      customerResult.error,
+      employeeResult.error,
     ].find(Boolean);
     if (firstError) setError(firstError.message);
     setExpenses((expenseResult.data ?? []) as Expense[]);
@@ -142,6 +154,8 @@ export default function FinancialsClient({
     setVendors(vendorResult.data ?? []);
     setJobs(jobResult.data ?? []);
     setInvoices(invoiceResult.data ?? []);
+    setCustomers(customerResult.data ?? []);
+    setEmployees(employeeResult.data ?? []);
     setLoading(false);
   }, [supabase]);
   useEffect(() => {
@@ -185,13 +199,27 @@ export default function FinancialsClient({
       receipt_url: form.receipt_url || null,
       notes: form.notes || null,
     };
-    const result = expenseId
-      ? await supabase.from("expenses").update(payload).eq("id", expenseId)
-      : await supabase
-          .from("expenses")
-          .insert({ ...payload, expense_number: `EXP-${Date.now()}` });
+    const result = await fetch(
+      expenseId ? `/api/financials/expenses/${expenseId}` : "/api/financials/expenses",
+      {
+        method: expenseId ? "PATCH" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      },
+    );
     setSaving(false);
-    if (result.error) return setError(result.error.message);
+    const resultBody = await result.json() as { expense?: { id: string }; error?: string };
+    if (!result.ok) return setError(resultBody.error ?? "Unable to save the expense.");
+    const savedExpenseId = expenseId ?? resultBody.expense?.id;
+    if (receiptFile && savedExpenseId) {
+      setSaving(true);
+      const receiptData = new FormData();
+      receiptData.append("file", receiptFile);
+      const receiptResult = await fetch(`/api/financials/expenses/${savedExpenseId}/receipt`, { method: "POST", body: receiptData });
+      const receiptBody = await receiptResult.json() as { error?: string };
+      setSaving(false);
+      if (!receiptResult.ok) return setError(receiptBody.error ?? "Expense saved, but the receipt could not be uploaded.");
+    }
     window.location.assign("/admin/financials/expenses");
   }
   async function saveCategory(event: React.FormEvent) {
@@ -257,16 +285,12 @@ export default function FinancialsClient({
   async function confirmDelete() {
     if (!deleting) return;
     setSaving(true);
-    const table =
-      deleting.type === "expense"
-        ? "expenses"
-        : deleting.type === "vendor"
-          ? "vendors"
-          : "expense_categories";
-    const { error: deleteError } = await supabase
-      .from(table)
-      .delete()
-      .eq("id", deleting.id);
+    const deleteError = deleting.type === "expense"
+      ? await fetch(`/api/financials/expenses/${deleting.id}`, { method: "DELETE" }).then(async (response) => response.ok ? null : new Error(((await response.json()) as { error?: string }).error ?? "Unable to delete the expense."))
+      : (await supabase
+          .from(deleting.type === "vendor" ? "vendors" : "expense_categories")
+          .delete()
+          .eq("id", deleting.id)).error;
     setSaving(false);
     if (deleteError) setError(deleteError.message);
     else {
@@ -331,6 +355,10 @@ export default function FinancialsClient({
         categories={categories}
         vendors={vendors}
         jobs={jobs}
+        customers={customers}
+        employees={employees}
+        receiptFile={receiptFile}
+        setReceiptFile={setReceiptFile}
         saving={saving}
         error={error}
         onSave={saveExpense}
@@ -655,6 +683,10 @@ function ExpenseForm({
   categories,
   vendors,
   jobs,
+  customers,
+  employees,
+  receiptFile,
+  setReceiptFile,
   saving,
   error,
   onSave,
@@ -664,10 +696,21 @@ function ExpenseForm({
   categories: Category[];
   vendors: Vendor[];
   jobs: Job[];
+  customers: Customer[];
+  employees: Employee[];
+  receiptFile: File | null;
+  setReceiptFile: (file: File | null) => void;
   saving: boolean;
   error: string;
   onSave: (event: React.FormEvent) => Promise<void>;
 }) {
+  const [expenseType, setExpenseType] = useState("");
+  const availableCategories = categories.filter((category) =>
+    expenseType === "Job Materials" ? category.group_name === "Materials"
+      : expenseType === "Employee/Contractor Payments" ? category.group_name === "Labor"
+        : expenseType === "Business Purchases" ? !["Materials", "Labor"].includes(category.group_name)
+          : true,
+  );
   const input = (
     label: string,
     key: keyof ExpenseFormValues,
@@ -690,6 +733,25 @@ function ExpenseForm({
         {form.description ? "Edit Expense" : "New Expense"}
       </h1>
       <div className="grid gap-5 rounded-2xl border bg-white p-6 shadow-sm md:grid-cols-2">
+        <label>
+          Expense type
+          <select
+            value={expenseType}
+            required
+            onChange={(event) => {
+              setExpenseType(event.target.value);
+              const group = event.target.value === "Job Materials" ? "Materials" : event.target.value === "Employee/Contractor Payments" ? "Labor" : "";
+              if (group && !categories.some((category) => category.id === form.category_id && category.group_name === group)) setForm({ ...form, category_id: "" });
+            }}
+            className="mt-2 w-full rounded-xl border p-3"
+          >
+            <option value="">Select type</option>
+            <option>Job Materials</option>
+            <option>Business Purchases</option>
+            <option>Employee/Contractor Payments</option>
+          </select>
+          <span className="mt-1 block text-xs text-slate-500">Classification is derived from the selected category.</span>
+        </label>
         {input("Description", "description")}
         {input("Amount", "amount", "number")}
         {input("Date", "date", "date")}
@@ -697,13 +759,14 @@ function ExpenseForm({
           Category
           <select
             value={form.category_id}
+            required
             onChange={(event) =>
               setForm({ ...form, category_id: event.target.value })
             }
             className="mt-2 w-full rounded-xl border p-3"
           >
-            <option value="">None</option>
-            {categories.map((category) => (
+            <option value="">Select category</option>
+            {availableCategories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
               </option>
@@ -742,6 +805,20 @@ function ExpenseForm({
                 {job.job_number ?? job.title ?? "Job"}
               </option>
             ))}
+          </select>
+        </label>
+        <label>
+          Customer
+          <select value={form.customer_id} onChange={(event) => setForm({ ...form, customer_id: event.target.value })} className="mt-2 w-full rounded-xl border p-3">
+            <option value="">None</option>
+            {customers.map((customer) => <option key={customer.id} value={customer.id}>{`${customer.first_name} ${customer.last_name}`}{customer.email ? ` — ${customer.email}` : ""}</option>)}
+          </select>
+        </label>
+        <label>
+          Employee / contractor
+          <select value={form.employee_id} onChange={(event) => setForm({ ...form, employee_id: event.target.value })} className="mt-2 w-full rounded-xl border p-3">
+            <option value="">None</option>
+            {employees.map((employee) => <option key={employee.id} value={employee.id}>{`${employee.first_name} ${employee.last_name}`}{employee.role ? ` — ${employee.role}` : ""}</option>)}
           </select>
         </label>
         <label>
@@ -789,6 +866,12 @@ function ExpenseForm({
             className="mt-2 w-full rounded-xl border p-3"
             rows={4}
           />
+        </label>
+        <label className="md:col-span-2">
+          Receipt upload
+          <input type="file" accept="image/*,application/pdf" onChange={(event) => setReceiptFile(event.target.files?.[0] ?? null)} className="mt-2 block w-full rounded-xl border p-3" />
+          <span className="mt-1 block text-xs text-slate-500">Images and PDFs up to 10 MB are stored in the private expense-receipts bucket.</span>
+          {receiptFile && <span className="mt-1 block text-sm text-slate-600">Selected: {receiptFile.name}</span>}
         </label>
         {error && <p className="text-red-600 md:col-span-2">{error}</p>}
         <button
@@ -848,13 +931,7 @@ function ExpenseDetail({
         </p>
         <p>
           <b>Receipt:</b>{" "}
-          {item.receipt_url ? (
-            <a className="text-blue-700" href={item.receipt_url}>
-              View attachment
-            </a>
-          ) : (
-            "—"
-          )}
+          <ExpenseReceiptButton expenseId={item.id} hasReceipt={Boolean(item.receipt_url)} />
         </p>
         <p className="md:col-span-2">
           <b>Notes:</b> {item.notes ?? "—"}
