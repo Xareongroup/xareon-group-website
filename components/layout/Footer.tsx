@@ -74,6 +74,10 @@ export default function Footer() {
                 Reviews
               </Link>
 
+              <Link href="/blog" className="text-slate-400 hover:text-blue-400">
+                Blog
+              </Link>
+
               <Link href="#contact" className="text-slate-400 hover:text-blue-400">
                 Contact
               </Link>

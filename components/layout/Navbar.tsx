@@ -78,6 +78,13 @@ export default function Navbar() {
           </Link>
 
           <Link
+            href="/blog"
+            className="text-base font-semibold text-white transition hover:text-blue-400"
+          >
+            Blog
+          </Link>
+
+          <Link
             href="#contact"
             className="text-base font-semibold text-white transition hover:text-blue-400"
           >
@@ -147,6 +154,14 @@ export default function Navbar() {
               className="rounded-xl px-4 py-3 text-white transition hover:bg-blue-600"
             >
               Reviews
+            </Link>
+
+            <Link
+              href="/blog"
+              onClick={() => setMobileMenuOpen(false)}
+              className="rounded-xl px-4 py-3 text-white transition hover:bg-blue-600"
+            >
+              Blog
             </Link>
 
             <Link
