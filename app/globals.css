@@ -32,6 +32,15 @@ body {
   color-scheme: light;
 }
 
+/* Portal cards use light surfaces. Preserve readable inherited text for
+   phones following a dark system theme without changing desktop styling. */
+@media (max-width: 767px) and (prefers-color-scheme: dark) {
+  .customer-portal {
+    color: #0f172a;
+    color-scheme: light;
+  }
+}
+
 /* ===================================================== */
 /* PRINT STYLES */
 /* ===================================================== */

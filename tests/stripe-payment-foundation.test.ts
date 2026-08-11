@@ -23,21 +23,29 @@ describe("Stripe payment environment guard", () => {
     process.env.STRIPE_SECRET_KEY = "sk_test_placeholder";
     delete process.env.STRIPE_PAYMENTS_ENABLED;
     const { getStripe } = await import("@/lib/payments/stripe");
-    expect(() => getStripe()).toThrow("Stripe test payments are not enabled");
+    expect(() => getStripe()).toThrow("Stripe payments are not enabled for this non-production environment");
   });
 
-  it("rejects a live Stripe key even when payments are enabled", async () => {
+  it("rejects a live Stripe key outside production", async () => {
     process.env.STRIPE_PAYMENTS_ENABLED = "true";
     process.env.STRIPE_SECRET_KEY = "sk_live_placeholder";
     const { getStripe } = await import("@/lib/payments/stripe");
-    expect(() => getStripe()).toThrow("Stripe test payments are not enabled");
+    expect(() => getStripe()).toThrow("Stripe payments are not enabled for this non-production environment");
   });
 
-  it("rejects Stripe initialization in a production deployment", async () => {
+  it("rejects a test Stripe key in production", async () => {
     process.env.STRIPE_PAYMENTS_ENABLED = "true";
     process.env.STRIPE_SECRET_KEY = "sk_test_placeholder";
     process.env.VERCEL_ENV = "production";
     const { getStripe } = await import("@/lib/payments/stripe");
-    expect(() => getStripe()).toThrow("Stripe test payments are not enabled");
+    expect(() => getStripe()).toThrow("Stripe payments are not enabled for this production environment");
+  });
+
+  it("allows a live Stripe key in an explicitly enabled production deployment", async () => {
+    process.env.STRIPE_PAYMENTS_ENABLED = "true";
+    process.env.STRIPE_SECRET_KEY = "sk_live_placeholder";
+    process.env.VERCEL_ENV = "production";
+    const { getStripe } = await import("@/lib/payments/stripe");
+    expect(() => getStripe()).not.toThrow();
   });
 });

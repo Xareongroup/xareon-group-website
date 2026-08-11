@@ -45,6 +45,7 @@ export async function recalculateInvoice(invoiceId: string) {
   const { error: updateError } = await supabase
     .from("invoices")
     .update({
+      amount_paid: totalPaid,
       balance_due: balanceDue,
       status,
       paid_at:
