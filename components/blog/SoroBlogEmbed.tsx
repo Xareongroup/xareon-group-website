@@ -16,7 +16,7 @@ export default function SoroBlogEmbed() {
       {mounted && (
         <Script
           id="soro-blog-widget"
-          src="https://app.trysoro.com/api/embed/676f94d-c8e0-45f5-bb6f-0b80798f1ab2"
+          src="https://app.trysoro.com/api/embed/6f76f94d-c8e0-45f5-bb6f-0b80798f1ab2"
           strategy="afterInteractive"
         />
       )}
