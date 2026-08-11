@@ -1,5 +1,4 @@
-import Script from "next/script";
-
+import SoroBlogEmbed from "@/components/blog/SoroBlogEmbed";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 
@@ -22,16 +21,11 @@ export default function BlogPage() {
           </div>
 
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-            <div id="soro-blog" />
+            <SoroBlogEmbed />
           </div>
         </section>
       </main>
       <Footer />
-      <Script
-        id="soro-blog-widget"
-        src="https://app.trysoro.com/api/embed/676f94d-c8e0-45f5-bb6f-0b80798f1ab2"
-        strategy="afterInteractive"
-      />
     </>
   );
 }
