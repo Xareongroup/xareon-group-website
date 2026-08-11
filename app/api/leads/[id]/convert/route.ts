@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { requireApiRole } from "@/lib/auth/requireApiRole";
 import { logCustomerActivity } from "@/lib/activity/logActivity";
+import { findCustomerEmailMatches, type ExistingCustomerMatch } from "@/lib/leads/customerEmailMatches";
 import { adminSupabase } from "@/lib/supabase/admin";
 
 type ConvertLeadRequest = {
@@ -13,20 +14,31 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   if ("response" in access) return access.response;
   const { id } = await params;
   const { data: lead, error: leadError } = await adminSupabase.from("leads").select("*").eq("id", id).single();
-  if (leadError || !lead) return NextResponse.json({ error: "Lead not found." }, { status: 404 });
+  if (leadError || !lead) {
+    console.error("Lead conversion lookup failed:", leadError);
+    return NextResponse.json({ error: "Lead not found." }, { status: 404 });
+  }
   if (lead.converted_customer_id) return NextResponse.json({ customerId: lead.converted_customer_id });
 
   const body = await request.json().catch(() => ({})) as ConvertLeadRequest;
   const email = lead.email.trim().toLowerCase();
-  const { data: existingCustomer, error: existingCustomerError } = await adminSupabase
-    .from("customers")
-    .select("id, customer_number, first_name, last_name")
-    .ilike("email", email)
-    .maybeSingle();
-
-  if (existingCustomerError) {
-    return NextResponse.json({ error: existingCustomerError.message }, { status: 500 });
+  let existingCustomers: ExistingCustomerMatch[];
+  try {
+    existingCustomers = await findCustomerEmailMatches(adminSupabase, email);
+  } catch (error) {
+    console.error("Lead conversion customer email lookup failed:", error);
+    return NextResponse.json({ error: "Unable to check existing customers." }, { status: 500 });
   }
+
+  if (existingCustomers.length > 1) {
+    return NextResponse.json({
+      error: "Multiple customer records use this email. Resolve the duplicate customer records before converting this lead.",
+      code: "multiple_existing_customers",
+      customers: existingCustomers,
+    }, { status: 409 });
+  }
+
+  const existingCustomer = existingCustomers[0];
 
   if (existingCustomer && !body.linkExistingCustomer) {
     return NextResponse.json({
@@ -41,7 +53,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
   if (!customerId) {
     const { data: generatedCustomerNumber, error: numberError } = await adminSupabase.rpc("generate_customer_number");
-    if (numberError || !generatedCustomerNumber) return NextResponse.json({ error: numberError?.message ?? "Unable to generate customer number." }, { status: 500 });
+    if (numberError || !generatedCustomerNumber) {
+      console.error("Lead conversion customer number generation failed:", numberError);
+      return NextResponse.json({ error: "Unable to generate a customer number." }, { status: 500 });
+    }
 
     const photoReferences = Array.isArray(lead.photos) && lead.photos.length
       ? `\n\nLead photo references: ${lead.photos.map((photo) => typeof photo === "object" && photo && "name" in photo ? String(photo.name) : "Uploaded photo").join(", ")}`
@@ -56,13 +71,19 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       notes: `${lead.message ?? ""}${photoReferences}`.trim() || null,
       status: "Active",
     }).select("id, customer_number").single();
-    if (customerError || !customer) return NextResponse.json({ error: customerError?.message ?? "Unable to create customer." }, { status: 500 });
+    if (customerError || !customer) {
+      console.error("Lead conversion customer creation failed:", customerError);
+      return NextResponse.json({ error: "Unable to create the customer." }, { status: 500 });
+    }
     customerId = customer.id;
     customerNumber = customer.customer_number;
   }
 
   const { error: updateError } = await adminSupabase.from("leads").update({ converted_customer_id: customerId, status: "Converted" }).eq("id", id);
-  if (updateError) return NextResponse.json({ error: updateError.message }, { status: 500 });
+  if (updateError) {
+    console.error("Lead conversion update failed:", updateError);
+    return NextResponse.json({ error: "Unable to complete the lead conversion." }, { status: 500 });
+  }
   await adminSupabase.from("lead_activities").insert({ lead_id: id, activity_type: "converted", description: `${existingCustomer ? "Linked to existing" : "Converted to"} customer ${customerNumber ?? customerId}.`, created_by: access.user.id });
   await logCustomerActivity(
     adminSupabase,

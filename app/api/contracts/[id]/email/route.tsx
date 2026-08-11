@@ -5,6 +5,7 @@ import { renderToBuffer } from "@react-pdf/renderer";
 import { resend } from "@/lib/resend";
 
 import { createClient } from "@/lib/supabase/server";
+import { requireApiRole } from "@/lib/auth/requireApiRole";
 
 import ContractPDF from "@/components/documents/ContractPDF";
 
@@ -27,6 +28,9 @@ export async function POST(
 
 ) {
 
+
+  const access = await requireApiRole(["owner", "admin", "manager"]);
+  if ("response" in access) return access.response;
 
   try {
 

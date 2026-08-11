@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { requireApiRole } from "@/lib/auth/requireApiRole";
 import { recordCustomerDocument } from "@/lib/documents/recordCustomerDocument";
 import { renderEstimatePdf } from "@/lib/pdf/renderEstimatePdf";
 
@@ -13,6 +14,8 @@ export async function GET(
   request: Request,
   { params }: RouteProps
 ) {
+  const access = await requireApiRole(["owner", "admin", "manager", "sales"]);
+  if ("response" in access) return access.response;
   const { id } = await params;
 
   const supabase = await createClient();

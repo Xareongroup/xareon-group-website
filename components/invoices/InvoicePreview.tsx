@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { formatCurrency } from "@/lib/utils/currency";
 import type { Tables } from "@/lib/supabase/database.types";
+import DocumentPrintButton from "@/components/documents/DocumentPrintButton";
 
 interface InvoicePreviewProps {
   invoice: Tables<"invoices">;
@@ -18,7 +19,7 @@ export default function InvoicePreview({
   return (
     <div className="min-h-screen bg-slate-100 p-6 print:bg-white print:p-0">
 
-      <div className="estimate-print mx-auto max-w-[8.5in] rounded-2xl bg-white p-6 shadow-xl print:rounded-none print:p-0 print:shadow-none">
+      <div className="document-print mx-auto max-w-[8.5in] rounded-2xl bg-white p-6 shadow-xl print:rounded-none print:p-0 print:shadow-none">
 
         {/* ====================================================== */}
         {/* Header */}
@@ -363,12 +364,7 @@ export default function InvoicePreview({
             ← Back
           </Link>
 
-          <button
-            onClick={() => window.print()}
-            className="rounded-xl bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700"
-          >
-            Print Invoice
-          </button>
+          <DocumentPrintButton label="Print Invoice" className="rounded-xl bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700" />
 
         </div>
 

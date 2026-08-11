@@ -9,6 +9,7 @@ import { requireApiRole } from "@/lib/auth/requireApiRole";
 
 import InvoicePDF from "@/components/pdf/InvoicePDF";
 import { logCustomerActivity } from "@/lib/activity/logActivity";
+import { recordCustomerDocument } from "@/lib/documents/recordCustomerDocument";
 
 
 
@@ -82,14 +83,8 @@ export async function POST(
 
 
 
-    if(invoiceError || !invoice){
-
-      throw new Error(
-        "Invoice not found."
-      );
-
-    }
-    if (!invoice.customer_id) throw new Error("Invoice is not linked to a customer.");
+    if(invoiceError || !invoice) return NextResponse.json({ error: "Invoice not found." }, { status: 404 });
+    if (!invoice.customer_id) return NextResponse.json({ error: "This invoice is not linked to a customer." }, { status: 422 });
 
 
 
@@ -124,26 +119,14 @@ export async function POST(
 
 
 
-    if(customerError || !customer){
-
-      throw new Error(
-        "Customer not found."
-      );
-
-    }
+    if(customerError || !customer) return NextResponse.json({ error: "Invoice customer not found." }, { status: 404 });
 
 
 
 
 
 
-    if(!customer.email){
-
-      throw new Error(
-        "Customer email address is missing."
-      );
-
-    }
+    if(!customer.email) return NextResponse.json({ error: "The customer does not have an email address." }, { status: 422 });
 
 
 
@@ -217,7 +200,7 @@ export async function POST(
     */
 
 
-    await resend.emails.send({
+    const { error: emailError } = await resend.emails.send({
 
       from:
         "XAREON Group <info@xareongroup.com>",
@@ -285,25 +268,18 @@ export async function POST(
 
 
     });
+    if (emailError) {
+      console.error("Invoice email provider rejected delivery", emailError);
+      return NextResponse.json({ error: "Unable to send the invoice email. Please try again." }, { status: 502 });
+    }
 
-    const document = {
-      customer_id: customer.id,
-      document_type: "invoice",
+    await recordCustomerDocument(supabase, {
+      customerId: customer.id,
+      documentType: "Invoice",
       title: `Invoice #${invoice.invoice_number ?? id}`,
-      file_url: `/api/invoices/${id}/pdf`,
+      fileUrl: `/api/invoices/${id}/pdf`,
       status: "Sent",
-    };
-    const { data: existingDocument } = await supabase
-      .from("customer_documents")
-      .select("id")
-      .eq("customer_id", customer.id)
-      .eq("document_type", "invoice")
-      .eq("title", document.title)
-      .maybeSingle();
-    const documentResult = existingDocument
-      ? await supabase.from("customer_documents").update(document).eq("id", existingDocument.id)
-      : await supabase.from("customer_documents").insert(document);
-    if (documentResult.error) throw documentResult.error;
+    });
 
     await logCustomerActivity(
       supabase,
@@ -335,7 +311,7 @@ export async function POST(
 
   }
 
-  catch(error:any){
+  catch(error){
 
 
     console.error(
@@ -349,9 +325,7 @@ export async function POST(
 
       {
 
-        error:
-          error.message ??
-          "Unable to send invoice email."
+        error: "Unable to send invoice email. Please try again."
 
       },
 

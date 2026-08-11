@@ -9,6 +9,7 @@ interface DataTableProps {
   headers: React.ReactNode;
 
   children: React.ReactNode;
+  mobileCards?: React.ReactNode;
 }
 
 export default function DataTable({
@@ -18,6 +19,7 @@ export default function DataTable({
   emptyState,
   headers,
   children,
+  mobileCards,
 }: DataTableProps) {
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -39,22 +41,21 @@ export default function DataTable({
         emptyState
 
       ) : (
+        <>
+          {mobileCards ? (
+            <div className="space-y-3 p-3 md:hidden">{mobileCards}</div>
+          ) : null}
 
-        <table className="min-w-full">
+          <div className={mobileCards ? "hidden overflow-x-auto md:block" : "overflow-x-auto"}>
+            <table className="min-w-full">
+              <thead className="bg-slate-50 text-xs uppercase tracking-[0.18em] text-slate-500">
+                {headers}
+              </thead>
 
-          <thead className="bg-slate-50 text-xs uppercase tracking-[0.18em] text-slate-500">
-
-            {headers}
-
-          </thead>
-
-          <tbody>
-
-            {children}
-
-          </tbody>
-
-        </table>
+              <tbody>{children}</tbody>
+            </table>
+          </div>
+        </>
 
       )}
 

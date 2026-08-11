@@ -14,26 +14,18 @@
     print-color-adjust: exact;
   }
 
-  nav,
-  aside,
-  header,
-  footer,
-  button,
-  a {
-    display: none !important;
-  }
-
   body * {
     visibility: hidden;
   }
 
-  .estimate-print,
-  .estimate-print * {
+  .document-print,
+  .document-print * {
     visibility: visible;
   }
 
-  .estimate-print {
-  position: static !important;
+  .document-print {
+  position: absolute !important;
+  inset: 0 !important;
   width: 100% !important;
   margin: 0 !important;
   padding: 0 !important;

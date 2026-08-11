@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { requireApiRole } from "@/lib/auth/requireApiRole";
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const access = await requireApiRole(["owner", "admin", "manager", "sales"]);
+  if ("response" in access) return access.response;
   const { id } = await params;
   const supabase = await createClient();
   const { data: estimate, error } = await supabase.from("estimates").select("signature_token").eq("id", id).single();

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { adminSupabase } from "@/lib/supabase/admin";
 import InvoicePreview from "@/components/invoices/InvoicePreview";
+import "../../../estimates/[id]/preview/print.css";
 
 interface PageProps {
   params: Promise<{

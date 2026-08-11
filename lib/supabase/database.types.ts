@@ -675,6 +675,24 @@ export type Database = {
         }
         Relationships: []
       }
+      expense_number_counters: {
+        Row: {
+          expense_year: number
+          last_value: number
+          updated_at: string
+        }
+        Insert: {
+          expense_year: number
+          last_value?: number
+          updated_at?: string
+        }
+        Update: {
+          expense_year?: number
+          last_value?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       expenses: {
         Row: {
           amount: number
@@ -1490,6 +1508,25 @@ export type Database = {
         Returns: boolean
       }
       can_manage_jobs: { Args: { target_action: string }; Returns: boolean }
+      create_expense_with_number: {
+        Args: {
+          p_amount: number
+          p_category_id: string
+          p_customer_id: string
+          p_date: string
+          p_description: string
+          p_employee_id: string
+          p_job_id: string
+          p_notes: string
+          p_payment_method: string
+          p_status: string
+          p_vendor_id: string
+        }
+        Returns: {
+          expense_number: string
+          id: string
+        }[]
+      }
       generate_contract_number: { Args: never; Returns: string }
       generate_customer_number: { Args: never; Returns: string }
       generate_invoice_number: { Args: never; Returns: string }

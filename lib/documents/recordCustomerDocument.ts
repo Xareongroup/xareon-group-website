@@ -2,9 +2,20 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { Database } from "@/lib/supabase/database.types";
 
+export const CUSTOMER_DOCUMENT_TYPES = [
+  "Estimate",
+  "Signed Estimate",
+  "Contract",
+  "Signed Contract",
+  "Invoice",
+  "Payment Receipt",
+] as const;
+
+export type CustomerDocumentType = (typeof CUSTOMER_DOCUMENT_TYPES)[number];
+
 type CustomerDocumentInput = {
   customerId: string | null | undefined;
-  documentType: "Estimate" | "Signed Estimate" | "Contract" | "Signed Contract" | "Invoice" | "Payment Receipt" | "signed_agreement";
+  documentType: CustomerDocumentType;
   title: string;
   fileUrl: string;
   status?: string | null;

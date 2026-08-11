@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
+import { requireApiRole } from "@/lib/auth/requireApiRole";
 import { logCustomerActivity } from "@/lib/activity/logActivity";
+import { recordCustomerDocument } from "@/lib/documents/recordCustomerDocument";
 
 
 interface RouteProps {
@@ -21,6 +23,9 @@ export async function POST(
   { params }: RouteProps
 
 ) {
+
+  const access = await requireApiRole(["owner", "admin", "accounting"]);
+  if ("response" in access) return access.response;
 
 
   try {
@@ -354,15 +359,13 @@ export async function POST(
     );
 
     if (invoice.customer_id && payment) {
-      const document = {
-        customer_id: invoice.customer_id,
-        document_type: "receipt",
+      await recordCustomerDocument(supabase, {
+        customerId: invoice.customer_id,
+        documentType: "Payment Receipt",
         title: `Receipt for invoice #${invoice.invoice_number ?? id}`,
-        file_url: `/api/payments/${payment.id}/receipt`,
+        fileUrl: `/api/payments/${payment.id}/receipt`,
         status: "Paid",
-      };
-      const { error: documentError } = await supabase.from("customer_documents").insert(document);
-      if (documentError) throw documentError;
+      });
     }
 
 

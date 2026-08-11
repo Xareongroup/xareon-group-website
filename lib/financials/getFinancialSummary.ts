@@ -33,6 +33,13 @@ export interface ExpenseReport {
   vendors: Array<{ name: string; total: number }>;
 }
 
+export interface JobProfitability {
+  revenue: number;
+  costs: number;
+  profit: number;
+  margin: number;
+}
+
 function dateOnly(date: Date) {
   return date.toISOString().slice(0, 10);
 }
@@ -137,4 +144,22 @@ export async function getExpenseReport(period: FinancialPeriod = "month"): Promi
     categories: Array.from(categoryTotals.entries()).sort(byTotal).map(([name, categoryTotal]) => ({ name, total: categoryTotal })),
     vendors: Array.from(vendorTotals.entries()).sort(byTotal).map(([name, vendorTotal]) => ({ name, total: vendorTotal })),
   };
+}
+
+/** Server-calculated profitability so job views never derive financial totals in the browser. */
+export async function getJobProfitability(jobId: string): Promise<JobProfitability> {
+  const [invoicesResult, expensesResult] = await Promise.all([
+    adminSupabase.from("invoices").select("total,status").eq("job_id", jobId),
+    adminSupabase.from("expenses").select("amount,status").eq("job_id", jobId),
+  ]);
+  if (invoicesResult.error) throw invoicesResult.error;
+  if (expensesResult.error) throw expensesResult.error;
+  const revenue = (invoicesResult.data ?? [])
+    .filter((invoice) => invoice.status !== "Cancelled")
+    .reduce((sum, invoice) => sum + Number(invoice.total ?? 0), 0);
+  const costs = (expensesResult.data ?? [])
+    .filter((expense) => expense.status !== "Pending")
+    .reduce((sum, expense) => sum + Number(expense.amount ?? 0), 0);
+  const profit = revenue - costs;
+  return { revenue, costs, profit, margin: revenue ? (profit / revenue) * 100 : 0 };
 }

@@ -5,6 +5,8 @@ import Link from "next/link";
 
 import { createClient } from "@/lib/supabase/client";
 import { formatCurrency } from "@/lib/utils/currency";
+import MobileRecordCard from "@/components/admin/MobileRecordCard";
+import DocumentDeleteButton from "@/components/documents/DocumentDeleteButton";
 
 interface Estimate {
   id: string;
@@ -129,7 +131,26 @@ export default function EstimatesPage() {
 
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="space-y-3 md:hidden">
+        {loading ? (
+          <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-slate-500 shadow-sm">Loading estimates...</div>
+        ) : error ? (
+          <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-red-600 shadow-sm">{error}</div>
+        ) : estimates.length === 0 ? (
+          <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm"><h3 className="text-xl font-semibold text-slate-900">No Estimates Yet</h3><p className="mt-2 text-slate-500">Create your first estimate to get started.</p><Link href="/admin/estimates/new" className="mt-6 inline-flex min-h-11 items-center rounded-lg bg-blue-600 px-5 font-medium text-white">Create Estimate</Link></div>
+        ) : estimates.map((estimate) => (
+          <MobileRecordCard
+            key={estimate.id}
+            title={estimate.estimate_number ?? "Pending estimate"}
+            subtitle={estimate.customer ? `${estimate.customer.first_name} ${estimate.customer.last_name}` : "Unknown customer"}
+            badge={<span className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${getStatusColor(estimate.status)}`}>{estimate.status}</span>}
+            fields={[{ label: "Date", value: estimate.issue_date ? new Date(estimate.issue_date).toLocaleDateString() : "Not issued" }, { label: "Total", value: formatCurrency(estimate.total ?? 0) }]}
+            actions={<><Link href={`/admin/estimates/${estimate.id}`} className="inline-flex min-h-11 items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white">View</Link><Link href={`/admin/estimates/${estimate.id}/edit`} className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 px-4 text-sm font-medium text-slate-700">Edit</Link><DocumentDeleteButton kind="estimates" id={estimate.id} label="estimate" onDeleted={() => setEstimates((current) => current.filter((item) => item.id !== estimate.id))} /></>}
+          />
+        ))}
+      </div>
+
+      <div className="hidden overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm md:block">
 
         {loading ? (
 
@@ -272,6 +293,7 @@ export default function EstimatesPage() {
                       >
                         Edit
                       </Link>
+                      <DocumentDeleteButton kind="estimates" id={estimate.id} label="estimate" onDeleted={() => setEstimates((current) => current.filter((item) => item.id !== estimate.id))} />
 
                     </div>
 

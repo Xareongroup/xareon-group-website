@@ -3,6 +3,7 @@ import { renderEstimatePdf } from "@/lib/pdf/renderEstimatePdf";
 
 import { createClient } from "@/lib/supabase/server";
 import { resend } from "@/lib/resend";
+import { requireApiRole } from "@/lib/auth/requireApiRole";
 
 interface RouteProps {
   params: Promise<{
@@ -14,6 +15,8 @@ export async function GET(
   request: Request,
   { params }: RouteProps
 ) {
+  const access = await requireApiRole(["owner", "admin", "manager", "sales"]);
+  if ("response" in access) return access.response;
   try {
     const { id } = await params;
 

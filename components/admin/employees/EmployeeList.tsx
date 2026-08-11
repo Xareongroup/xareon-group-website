@@ -127,7 +127,7 @@ export default function EmployeeList() {
           {filteredEmployees.map((employee) => (
             <div
               key={employee.id}
-              className="flex items-center justify-between p-5"
+              className="flex flex-col items-start gap-4 p-5 sm:flex-row sm:items-center sm:justify-between"
             >
               <div>
                 <h3 className="font-semibold">
@@ -145,7 +145,7 @@ export default function EmployeeList() {
                 )}
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
                 <span
                   className={`rounded-full px-3 py-1 text-xs font-medium ${
                     employee.status === "Active"
@@ -158,7 +158,7 @@ export default function EmployeeList() {
 
                 <Link
                   href={`/admin/employees/${employee.id}`}
-                  className="rounded-lg bg-slate-100 px-3 py-1 text-sm font-medium text-slate-700 hover:bg-slate-200"
+                  className="inline-flex min-h-11 items-center rounded-lg bg-slate-100 px-3 py-1 text-sm font-medium text-slate-700 hover:bg-slate-200"
                 >
                   View
                 </Link>
@@ -167,7 +167,7 @@ export default function EmployeeList() {
                   <>
                     <Link
                       href={`/admin/employees/${employee.id}/edit`}
-                      className="rounded-lg bg-blue-50 px-3 py-1 text-sm font-medium text-blue-600 hover:bg-blue-100"
+                      className="inline-flex min-h-11 items-center rounded-lg bg-blue-50 px-3 py-1 text-sm font-medium text-blue-600 hover:bg-blue-100"
                     >
                       Edit
                     </Link>
@@ -175,7 +175,7 @@ export default function EmployeeList() {
                     <button
                       onClick={() => setEmployeeToDeactivate(employee)}
                       disabled={employee.status === "Inactive"}
-                      className="rounded-lg bg-red-50 px-3 py-1 text-sm font-medium text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="min-h-11 rounded-lg bg-red-50 px-3 py-1 text-sm font-medium text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       Deactivate
                     </button>

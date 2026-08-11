@@ -17,7 +17,7 @@ export default function CancelJobButton({ jobId }: { jobId: string }) {
     router.refresh();
   }
 
-  return <button type="button" onClick={cancelJob} disabled={loading} className="rounded-lg border border-red-200 px-4 py-2 font-medium text-red-700 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60">
+  return <button type="button" onClick={cancelJob} disabled={loading} className="min-h-11 rounded-lg border border-red-200 px-4 py-2 font-medium text-red-700 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60">
     {loading ? "Cancelling…" : "Cancel Job"}
   </button>;
 }

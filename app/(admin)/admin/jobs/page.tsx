@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import CancelJobButton from "@/components/admin/jobs/CancelJobButton";
+import MobileRecordCard from "@/components/admin/MobileRecordCard";
 
 import { createClient } from "@/lib/supabase/client";
 
@@ -288,7 +289,83 @@ export default function JobsPage() {
 
       {/* Jobs Table */}
 
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="space-y-3 md:hidden">
+        {loading ? (
+          <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-slate-500 shadow-sm">
+            Loading jobs...
+          </div>
+        ) : error ? (
+          <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-red-600 shadow-sm">
+            {error}
+          </div>
+        ) : filteredJobs.length === 0 ? (
+          <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+            <h3 className="text-xl font-semibold text-slate-900">No Jobs Found</h3>
+            <p className="mt-2 text-slate-500">Create your first work order to get started.</p>
+            <Link
+              href="/admin/jobs/new"
+              className="mt-6 inline-flex min-h-11 items-center rounded-lg bg-blue-600 px-5 font-medium text-white transition hover:bg-blue-700"
+            >
+              Create Job
+            </Link>
+          </div>
+        ) : (
+          filteredJobs.map((job) => (
+            <MobileRecordCard
+              key={job.id}
+              title={job.title}
+              subtitle={job.job_number ?? "Pending job number"}
+              badge={
+                <span className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${getStatusColor(job.status)}`}>
+                  {job.status}
+                </span>
+              }
+              fields={[
+                {
+                  label: "Customer",
+                  value: job.customer
+                    ? `${job.customer.first_name} ${job.customer.last_name}`
+                    : "Unknown customer",
+                },
+                {
+                  label: "Technician",
+                  value: job.employee
+                    ? `${job.employee.first_name} ${job.employee.last_name}`
+                    : "Unassigned",
+                },
+                {
+                  label: "Scheduled",
+                  value: job.scheduled_date
+                    ? new Date(job.scheduled_date).toLocaleDateString()
+                    : "Not scheduled",
+                },
+                { label: "Priority", value: job.priority },
+              ]}
+              actions={
+                <>
+                  <Link
+                    href={`/admin/jobs/${job.id}`}
+                    className="inline-flex min-h-11 items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition hover:bg-blue-700"
+                  >
+                    View
+                  </Link>
+                  <Link
+                    href={`/admin/jobs/${job.id}/edit`}
+                    className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 px-4 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+                  >
+                    Edit
+                  </Link>
+                  {job.status !== "Completed" && job.status !== "Cancelled" ? (
+                    <CancelJobButton jobId={job.id} />
+                  ) : null}
+                </>
+              }
+            />
+          ))
+        )}
+      </div>
+
+      <div className="hidden overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm md:block">
 
         {loading ? (
 

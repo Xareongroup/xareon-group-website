@@ -21,6 +21,9 @@ import EmailInvoiceButton
 import RecordPaymentButton
   from "@/components/admin/invoices/RecordPaymentButton";
 
+import PrintInvoiceButton
+  from "@/components/admin/invoices/PrintInvoiceButton";
+
 
 interface Props {
   params: Promise<{
@@ -998,9 +1001,7 @@ export default async function InvoicePage({
 
 
 
-        <button
-          onClick={() => window.print()}
-
+        <PrintInvoiceButton
           className="
           rounded-lg
           border
@@ -1012,12 +1013,7 @@ export default async function InvoicePage({
           transition
           hover:bg-slate-50
           "
-
-        >
-
-          Print
-
-        </button>
+        />
 
 
 
