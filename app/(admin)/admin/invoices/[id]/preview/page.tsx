@@ -2,18 +2,22 @@ import { notFound } from "next/navigation";
 
 import { adminSupabase } from "@/lib/supabase/admin";
 import InvoicePreview from "@/components/invoices/InvoicePreview";
+import PrintOnLoad from "@/components/documents/PrintOnLoad";
 import "../../../estimates/[id]/preview/print.css";
 
 interface PageProps {
   params: Promise<{
     id: string;
   }>;
+  searchParams: Promise<{ print?: string }>;
 }
 
 export default async function InvoicePreviewPage({
   params,
+  searchParams,
 }: PageProps) {
   const { id } = await params;
+  const { print: shouldPrint } = await searchParams;
 
   const supabase = adminSupabase;
 
@@ -43,11 +47,12 @@ export default async function InvoicePreviewPage({
     .eq("invoice_id", id)
     .order("sort_order");
 
-  return (
+  return <>
+    {shouldPrint === "1" && <PrintOnLoad />}
     <InvoicePreview
       invoice={invoice}
       customer={customer}
       items={items ?? []}
     />
-  );
+  </>;
 }

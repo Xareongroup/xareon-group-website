@@ -352,7 +352,7 @@ export default async function EstimatePreviewPage({
         {/* Totals */}
         {/* ====================================================== */}
 
-        <div className="relative z-10 mb-6 flex justify-end">
+        <div className="print-keep-together relative z-10 mb-6 flex justify-end">
 
           <div className="w-full max-w-md overflow-hidden rounded-2xl border border-slate-200">
 
@@ -474,7 +474,7 @@ export default async function EstimatePreviewPage({
         {/* Acceptance */}
         {/* ====================================================== */}
 
-        <div className="mt-8">
+        <div className="print-keep-together mt-8">
 
           <h3 className="mb-6 text-lg font-bold text-slate-800">
             Acceptance

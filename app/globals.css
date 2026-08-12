@@ -60,13 +60,9 @@ body {
     color: #000 !important;
   }
 
-  /* Hide dashboard/navigation */
-
-  nav,
-  aside,
-  header {
-    display: none !important;
-  }
+  /* The visibility boundary below hides the CRM shell. Do not hide every
+     semantic header here: contract documents use a <header> for their
+     branded document header. */
 
   /* Hide anything marked print:hidden */
 
@@ -111,41 +107,22 @@ body {
 
   .print-area,
   .document-print {
-
+    box-sizing: border-box !important;
     position: static !important;
-
     width: 100% !important;
-
-    max-width: 8.5in !important;
-
-    margin: 0 auto !important;
-
-    padding: 0 !important;
-
+    max-width: none !important;
+    margin: 0 !important;
     background: white !important;
-
-    transform: scale(0.88);
-
-    transform-origin: top center;
-
+    overflow: visible !important;
+    transform: none !important;
   }
 
-  /* Prevent awkward page breaks */
-
-  .rounded-2xl,
-  .rounded-3xl,
-  table,
-  thead,
-  tbody,
-  tr,
-  td,
-  th {
-
-    break-inside: avoid;
-
-    page-break-inside: avoid;
-
-  }
+  /* Let long cards and terms flow naturally. Only table rows and explicitly
+     marked groups stay together, so a short document does not gain a page. */
+  table { break-inside: auto; page-break-inside: auto; }
+  thead { display: table-header-group; }
+  tr { break-inside: avoid; page-break-inside: avoid; }
+  .print-keep-together { break-inside: avoid; page-break-inside: avoid; }
 
   /* Remove shadows */
 

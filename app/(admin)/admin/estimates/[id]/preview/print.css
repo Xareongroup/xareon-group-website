@@ -1,6 +1,6 @@
 @page {
   size: Letter;
-  margin: 0.4in;
+  margin: 0.35in;
 }
 
 @media print {
@@ -24,20 +24,20 @@
   }
 
   .document-print {
-  position: absolute !important;
-  inset: 0 !important;
-  width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-  background: white !important;
-  overflow: visible !important;
-}
+    position: static !important;
+    inset: auto !important;
+    width: 100% !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    background: white !important;
+    overflow: visible !important;
+  }
 
   /* Keep important sections together */
 
-  .no-break {
+  .no-break,
+  .print-keep-together {
     break-inside: avoid;
     page-break-inside: avoid;
   }
@@ -69,9 +69,7 @@ tr {
     display: table-footer-group;
   }
 
-  tr,
-  td,
-  th {
+  tr {
     break-inside: avoid;
     page-break-inside: avoid;
   }

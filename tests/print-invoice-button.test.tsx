@@ -33,5 +33,16 @@ describe("PrintInvoiceButton", () => {
     const printStyles = readFileSync(join(process.cwd(), "app", "globals.css"), "utf8");
     expect(printStyles).toMatch(/\.document-print,\s*\.document-print \*/);
     expect(printStyles).toMatch(/\.print-area,\s*\.document-print \{/);
+    expect(printStyles).not.toContain("transform: scale(0.88)");
+    expect(printStyles).not.toMatch(/\.rounded-2xl,[\s\S]*page-break-inside: avoid/);
+  });
+
+  it("opens the document preview when printing from an invoice detail page", () => {
+    const open = vi.spyOn(window, "open").mockImplementation(() => null);
+    const { container } = render(<PrintInvoiceButton invoiceId="invoice-id" />);
+
+    fireEvent.click(container.querySelector("button") as HTMLButtonElement);
+
+    expect(open).toHaveBeenCalledWith("/admin/invoices/invoice-id/preview?print=1", "_blank", "noopener,noreferrer");
   });
 });

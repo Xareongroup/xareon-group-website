@@ -1002,6 +1002,7 @@ export default async function InvoicePage({
 
 
         <PrintInvoiceButton
+          invoiceId={invoice.id}
           className="
           rounded-lg
           border
