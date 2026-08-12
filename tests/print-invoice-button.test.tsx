@@ -35,6 +35,7 @@ describe("PrintInvoiceButton", () => {
     expect(printStyles).toMatch(/\.print-area,\s*\.document-print \{/);
     expect(printStyles).not.toContain("transform: scale(0.88)");
     expect(printStyles).not.toMatch(/\.rounded-2xl,[\s\S]*page-break-inside: avoid/);
+    expect(printStyles).not.toContain("print-keep-together");
   });
 
   it("opens the document preview when printing from an invoice detail page", () => {

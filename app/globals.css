@@ -117,12 +117,11 @@ body {
     transform: none !important;
   }
 
-  /* Let long cards and terms flow naturally. Only table rows and explicitly
-     marked groups stay together, so a short document does not gain a page. */
+  /* Let cards, summaries, signatures, and long terms use normal document
+     flow. Only table rows are protected from splitting. */
   table { break-inside: auto; page-break-inside: auto; }
   thead { display: table-header-group; }
   tr { break-inside: avoid; page-break-inside: avoid; }
-  .print-keep-together { break-inside: avoid; page-break-inside: avoid; }
 
   /* Remove shadows */
 

@@ -276,7 +276,7 @@ export default function InvoicePreview({
         {/* Totals */}
         {/* ====================================================== */}
 
-        <div className="print-keep-together mt-6 flex justify-end">
+        <div className="mt-6 flex justify-end">
 
           <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-slate-50 p-6">
 
@@ -344,7 +344,7 @@ export default function InvoicePreview({
         {/* Footer */}
         {/* ====================================================== */}
 
-        <div className="print-keep-together mt-12 border-t border-slate-200 pt-6 text-center text-sm text-slate-500 print:block">
+        <div className="mt-12 border-t border-slate-200 pt-6 text-center text-sm text-slate-500 print:block">
 
           <p>This document was prepared by <strong>XAREON GROUP</strong>.</p>
           <p className="mt-1">Shield of Integrity | www.xareongroup.com | info@xareongroup.com</p>

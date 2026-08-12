@@ -34,14 +34,6 @@
     overflow: visible !important;
   }
 
-  /* Keep important sections together */
-
-  .no-break,
-  .print-keep-together {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-
   table {
   width: 100%;
   border-collapse: collapse;
@@ -72,18 +64,6 @@ tr {
   tr {
     break-inside: avoid;
     page-break-inside: avoid;
-  }
-
-  img {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4 {
-    page-break-after: avoid;
   }
 
   p {
