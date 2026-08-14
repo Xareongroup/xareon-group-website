@@ -25,7 +25,7 @@ export default function InvoicePreview({
         {/* Header */}
         {/* ====================================================== */}
 
-        <div className="mb-6 flex items-start justify-between border-b border-slate-200 pb-6">
+        <div className="print-document-header mb-6 flex items-start justify-between border-b border-slate-200 pb-6">
 
           <div className="flex items-start gap-8">
 
@@ -127,7 +127,7 @@ export default function InvoicePreview({
         {/* Bill To */}
         {/* ====================================================== */}
 
-        <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-6">
+        <div className="print-customer-card mb-6 rounded-2xl border border-slate-200 bg-white p-6">
 
           <h3 className="mb-5 text-lg font-semibold text-slate-900">
             Bill To
@@ -193,7 +193,7 @@ export default function InvoicePreview({
         {/* Items */}
         {/* ====================================================== */}
 
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+        <div className="print-line-items overflow-hidden rounded-2xl border border-slate-200 bg-white">
 
           <table className="min-w-full">
 
@@ -276,7 +276,7 @@ export default function InvoicePreview({
         {/* Totals */}
         {/* ====================================================== */}
 
-        <div className="mt-6 flex justify-end">
+        <div className="print-summary mt-6 flex justify-end">
 
           <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-slate-50 p-6">
 
@@ -338,13 +338,13 @@ export default function InvoicePreview({
 
         </div>
 
-        {(invoice.payment_notes || invoice.payment_method) && <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200"><div className="bg-slate-100 px-5 py-3 font-bold">Notes & Payment Terms</div><div className="whitespace-pre-wrap p-4 text-sm text-slate-700">{invoice.payment_notes ?? "Payment method: " + (invoice.payment_method ?? "—")}</div></div>}
+        {(invoice.payment_notes || invoice.payment_method) && <div className="print-notes mt-6 overflow-hidden rounded-2xl border border-slate-200"><div className="bg-slate-100 px-5 py-3 font-bold">Notes & Payment Terms</div><div className="whitespace-pre-wrap p-4 text-sm text-slate-700">{invoice.payment_notes ?? "Payment method: " + (invoice.payment_method ?? "—")}</div></div>}
 
         {/* ====================================================== */}
         {/* Footer */}
         {/* ====================================================== */}
 
-        <div className="mt-12 border-t border-slate-200 pt-6 text-center text-sm text-slate-500 print:block">
+        <div className="print-document-footer mt-12 border-t border-slate-200 pt-6 text-center text-sm text-slate-500 print:block">
 
           <p>This document was prepared by <strong>XAREON GROUP</strong>.</p>
           <p className="mt-1">Shield of Integrity | www.xareongroup.com | info@xareongroup.com</p>

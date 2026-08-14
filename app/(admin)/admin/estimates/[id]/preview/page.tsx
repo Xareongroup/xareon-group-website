@@ -83,7 +83,7 @@ export default async function EstimatePreviewPage({
         {/* Header */}
         {/* ====================================================== */}
 
-        <div className="relative z-10 mb-5 flex items-start justify-between border-b-2 border-slate-200 pb-5">
+        <div className="print-document-header relative z-10 mb-5 flex items-start justify-between border-b-2 border-slate-200 pb-5">
 
           {/* Company */}
 
@@ -200,7 +200,7 @@ export default async function EstimatePreviewPage({
         {/* Customer */}
         {/* ====================================================== */}
 
-        <div className="relative z-10 mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+        <div className="print-customer-card relative z-10 mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
 
           <h3 className="mb-4 text-lg font-bold text-slate-800">
             Prepared For
@@ -265,7 +265,7 @@ export default async function EstimatePreviewPage({
         {/* Line Items */}
         {/* ====================================================== */}
 
-        <table className="relative z-10 mb-6 w-full border-collapse overflow-hidden rounded-xl border border-slate-200">
+        <table className="print-line-items relative z-10 mb-6 w-full border-collapse overflow-hidden rounded-xl border border-slate-200">
 
           <thead>
 
@@ -352,7 +352,7 @@ export default async function EstimatePreviewPage({
         {/* Totals */}
         {/* ====================================================== */}
 
-        <div className="relative z-10 mb-6 flex justify-end">
+        <div className="print-summary relative z-10 mb-6 flex justify-end">
 
           <div className="w-full max-w-md overflow-hidden rounded-2xl border border-slate-200">
 
@@ -424,7 +424,7 @@ export default async function EstimatePreviewPage({
 
         {estimate.notes && (
 
-          <div className="mb-6 overflow-hidden rounded-2xl border border-slate-200">
+          <div className="print-notes mb-6 overflow-hidden rounded-2xl border border-slate-200">
 
             <div className="bg-slate-100 px-5 py-3">
 
@@ -450,7 +450,7 @@ export default async function EstimatePreviewPage({
 
         {estimate.terms && (
 
-          <div className="mb-6 overflow-hidden rounded-2xl border border-slate-200">
+          <div className="print-terms mb-6 overflow-hidden rounded-2xl border border-slate-200">
 
             <div className="bg-slate-100 px-5 py-3">
 
@@ -474,7 +474,7 @@ export default async function EstimatePreviewPage({
         {/* Acceptance */}
         {/* ====================================================== */}
 
-        <div className="mt-8">
+        <div className="print-signature mt-8">
 
           <h3 className="mb-6 text-lg font-bold text-slate-800">
             Acceptance
@@ -510,7 +510,7 @@ export default async function EstimatePreviewPage({
         {/* Footer */}
         {/* ====================================================== */}
 
-        <div className="mt-8 border-t border-slate-200 pt-5 text-center">
+        <div className="print-document-footer mt-8 border-t border-slate-200 pt-5 text-center">
 
           <h4 className="text-base font-bold text-blue-700">
             Thank You for Choosing XAREON GROUP

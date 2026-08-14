@@ -155,4 +155,227 @@ body {
     max-width: 100% !important;
   }
 
+  /* Print uses the preview's markup, but desktop spacing is intentionally
+     more generous than a Letter page needs. These rules only tighten the
+     document's existing sections; screen previews remain unchanged. */
+  .document-print .print-document-header,
+  article.document-print > header {
+    margin-bottom: 0.55rem !important;
+    padding-bottom: 0.55rem !important;
+  }
+
+  .document-print .print-document-header .h-36,
+  article.document-print > header .h-36 {
+    width: 4.5rem !important;
+    height: 4.5rem !important;
+  }
+
+  .document-print .print-document-header .gap-8,
+  article.document-print > header .gap-8 {
+    gap: 0.85rem !important;
+  }
+
+  .document-print .print-document-header h1,
+  article.document-print > header h1 {
+    font-size: 1.3rem !important;
+    line-height: 1.1 !important;
+  }
+
+  .document-print .print-document-header h2,
+  article.document-print > header h2 {
+    margin-bottom: 0.4rem !important;
+    font-size: 1.1rem !important;
+    line-height: 1.1 !important;
+  }
+
+  .document-print .print-document-header .mt-5,
+  article.document-print > header .mt-5 {
+    margin-top: 0.45rem !important;
+  }
+
+  .document-print .print-document-header .text-sm,
+  article.document-print > header .text-sm {
+    font-size: 0.65rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .document-print .print-document-header .min-w-\[220px\],
+  article.document-print > header .min-w-\[220px\] {
+    min-width: 10rem !important;
+  }
+
+  .document-print .print-document-header .p-3\.5,
+  article.document-print > header .p-3\.5 {
+    padding: 0.55rem !important;
+  }
+
+  .document-print .print-customer-card,
+  article.document-print > section:first-of-type {
+    margin-bottom: 0.65rem !important;
+    padding: 0.65rem !important;
+  }
+
+  .document-print .print-customer-card h3,
+  article.document-print > section:first-of-type h3 {
+    margin-bottom: 0.5rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  .document-print .print-customer-card .gap-x-8,
+  .document-print .print-customer-card .gap-x-10,
+  article.document-print > section:first-of-type .gap-x-8 {
+    column-gap: 1rem !important;
+  }
+
+  .document-print .print-customer-card .gap-y-3,
+  .document-print .print-customer-card .gap-y-4,
+  article.document-print > section:first-of-type .gap-y-3 {
+    row-gap: 0.45rem !important;
+  }
+
+  .document-print .print-customer-card .text-lg {
+    font-size: 0.9rem !important;
+  }
+
+  .document-print .print-customer-card .text-sm,
+  article.document-print > section:first-of-type .text-sm {
+    font-size: 0.65rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .document-print .print-customer-card .text-\[11px\],
+  article.document-print > section:first-of-type .text-\[11px\] {
+    font-size: 0.55rem !important;
+  }
+
+  .document-print .print-line-items {
+    margin-bottom: 0.65rem !important;
+  }
+
+  .document-print .print-line-items th,
+  .document-print .print-line-items td {
+    padding-top: 0.3rem !important;
+    padding-bottom: 0.3rem !important;
+    font-size: 0.65rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .document-print .print-summary {
+    margin-top: 0.65rem !important;
+    margin-bottom: 0.65rem !important;
+  }
+
+  .document-print .print-summary > div {
+    max-width: 17rem !important;
+  }
+
+  .document-print .print-summary .p-6,
+  .document-print .print-summary .p-5,
+  .document-print .print-summary .p-4 {
+    padding: 0.65rem !important;
+  }
+
+  .document-print .print-summary .py-3 {
+    padding-top: 0.45rem !important;
+    padding-bottom: 0.45rem !important;
+  }
+
+  .document-print .print-summary .space-y-3 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0.4rem !important;
+  }
+
+  .document-print .print-summary .pt-3,
+  .document-print .print-summary .pt-4 {
+    padding-top: 0.45rem !important;
+  }
+
+  .document-print .print-summary .text-3xl {
+    font-size: 1.4rem !important;
+  }
+
+  .document-print .print-summary .text-2xl {
+    font-size: 1.2rem !important;
+  }
+
+  .document-print .print-summary .text-xl,
+  .document-print .print-summary .text-lg {
+    font-size: 1rem !important;
+  }
+
+  .document-print .print-notes,
+  .document-print .print-terms,
+  article.document-print > section:nth-of-type(2) {
+    margin-top: 0.65rem !important;
+    margin-bottom: 0.65rem !important;
+    padding: 0.65rem !important;
+  }
+
+  .document-print .print-notes .px-5,
+  .document-print .print-terms .px-5 {
+    padding: 0.45rem 0.65rem !important;
+  }
+
+  .document-print .print-notes .p-4,
+  .document-print .print-terms .p-4 {
+    padding: 0.65rem !important;
+  }
+
+  .document-print .print-notes .text-sm,
+  .document-print .print-terms .text-sm,
+  article.document-print > section:nth-of-type(2) .text-sm {
+    font-size: 0.65rem !important;
+    line-height: 1.35 !important;
+  }
+
+  article.document-print > section:nth-of-type(2) h3 {
+    margin-top: 0.5rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  article.document-print > section:nth-of-type(2) h3:first-child {
+    margin-top: 0 !important;
+  }
+
+  article.document-print > section:nth-of-type(2) .mt-4 {
+    margin-top: 0.5rem !important;
+  }
+
+  .document-print .print-signature,
+  article.document-print > section:nth-of-type(3) {
+    margin-top: 0.75rem !important;
+    padding: 0.65rem !important;
+  }
+
+  .document-print .print-signature h3,
+  article.document-print > section:nth-of-type(3) h3 {
+    margin-bottom: 0.5rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  .document-print .print-signature .mb-6 {
+    margin-bottom: 0.5rem !important;
+  }
+
+  .document-print .print-signature .mb-10 {
+    margin-bottom: 0.9rem !important;
+  }
+
+  .document-print .print-signature .mt-5,
+  article.document-print > section:nth-of-type(3) .mt-5 {
+    margin-top: 0.5rem !important;
+  }
+
+  .document-print .print-document-footer,
+  article.document-print > footer {
+    margin-top: 0.75rem !important;
+    padding-top: 0.55rem !important;
+    font-size: 0.6rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .document-print .print-document-footer .mt-2,
+  .document-print .print-document-footer .mt-4 {
+    margin-top: 0.35rem !important;
+  }
+
 }
