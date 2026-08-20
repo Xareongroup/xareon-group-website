@@ -105,6 +105,7 @@ export const privateRouteMetadata: Metadata = {
   authors: null,
   creator: null,
   publisher: null,
+  verification: {},
   openGraph: null,
   twitter: null,
 };

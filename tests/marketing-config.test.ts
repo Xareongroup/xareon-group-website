@@ -4,6 +4,7 @@ import {
   validateGa4MeasurementId,
   validateGoogleAdsLeadConversionId,
 } from "@/lib/marketing-config";
+import { privateRouteMetadata } from "@/lib/site-metadata";
 
 describe("marketing identifier validation", () => {
   it("accepts only a full Google Ads destination for the verified base account", () => {
@@ -19,5 +20,11 @@ describe("marketing identifier validation", () => {
     expect(validateGa4MeasurementId(" G-ABC123XYZ ")).toBe("G-ABC123XYZ");
     expect(validateGa4MeasurementId("GTM-ABC123")).toBeUndefined();
     expect(validateGa4MeasurementId(undefined)).toBeUndefined();
+  });
+});
+
+describe("search verification isolation", () => {
+  it("clears inherited verification metadata from private route layouts", () => {
+    expect(privateRouteMetadata.verification).toEqual({});
   });
 });
