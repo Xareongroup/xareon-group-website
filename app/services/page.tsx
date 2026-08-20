@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { CheckCircle2, Lightbulb, Phone } from "lucide-react";
+import { CheckCircle2, Phone } from "lucide-react";
 
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 import JsonLd from "@/components/seo/JsonLd";
 import { TrackedEstimateLink, TrackedPhoneLink } from "@/components/analytics/TrackedLinks";
+import { coreExpansionServices } from "@/lib/services-core-expansion";
 import { featuredServices } from "@/lib/services";
 import { phase2BServices } from "@/lib/services-phase-2b";
 import { BUSINESS, createPublicPageMetadata } from "@/lib/site-metadata";
@@ -12,7 +13,7 @@ import { createPublicPageSchema } from "@/lib/structured-data";
 
 const title = "Home Repair & Installation Services | XAREON GROUP";
 const description =
-  "Explore drywall repair, interior painting, general home repairs, and practical installation services from XAREON GROUP across the DMV region.";
+  "Explore home repair, drywall, painting, mounting, assembly, smart-home, minor plumbing and electrical, kitchen, bathroom, and installation services across the DMV.";
 
 export const metadata = createPublicPageMetadata({
   path: "/services",
@@ -30,10 +31,6 @@ const structuredData = createPublicPageSchema({
     { name: "Services", path: "/services" },
   ],
 });
-
-const additionalServices = [
-  { name: "Smart-home device installation", icon: Lightbulb },
-];
 
 export default function ServicesPage() {
   return (
@@ -116,18 +113,19 @@ export default function ServicesPage() {
         <section className="py-16 md:py-24" aria-labelledby="additional-services">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <div className="max-w-3xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">Additional project types</p>
-              <h2 id="additional-services" className="mt-3 text-3xl font-bold md:text-4xl">More ways XAREON GROUP can help</h2>
-              <p className="mt-5 text-lg leading-8 text-slate-600">These existing service categories do not yet have separate pages. Include their details in your estimate request so the complete work can be reviewed.</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">More focused services</p>
+              <h2 id="additional-services" className="mt-3 text-3xl font-bold md:text-4xl">Smart-home, minor repair, and room-improvement projects</h2>
+              <p className="mt-5 text-lg leading-8 text-slate-600">Review the defined scope and important boundaries for each service before requesting an estimate.</p>
             </div>
-            <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {additionalServices.map(({ name, icon: Icon }) => (
-                <li key={name} className="flex items-center gap-4 rounded-2xl border border-slate-200 p-5">
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600"><Icon aria-hidden="true" size={22} /></span>
-                  <span className="font-semibold leading-6">{name}</span>
-                </li>
+            <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {coreExpansionServices.map((service) => (
+                <article key={service.path} className="flex flex-col rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+                  <h3 className="text-2xl font-bold">{service.name}</h3>
+                  <p className="mt-4 flex-1 leading-7 text-slate-600">{service.heroCopy}</p>
+                  <Link href={service.path} className="mt-7 inline-flex min-h-11 items-center font-semibold text-blue-700 hover:text-blue-900">Explore {service.name}</Link>
+                </article>
               ))}
-            </ul>
+            </div>
           </div>
         </section>
 

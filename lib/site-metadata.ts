@@ -17,7 +17,7 @@ export const DEFAULT_TITLE =
   "XAREON GROUP | Professional Home Repair & Installation Services";
 
 export const DEFAULT_DESCRIPTION =
-  "Professional Home Repair, TV Mounting, Furniture Assembly, Smart Home Installation, Painting, Drywall Repair, Minor Plumbing, Minor Electrical, and Handyman Services throughout Maryland, Washington DC, and Northern Virginia.";
+  "Professional general home repairs, drywall repair, interior painting, TV mounting, furniture assembly, smart-home installation, minor plumbing and electrical repairs, door and fixture installation, partition walls, kitchen installation, and bathroom improvements across Maryland, Washington, DC, and Northern Virginia.";
 
 export const SOCIAL_DESCRIPTION =
   "Professional Home Repair & Installation Services serving Maryland, Washington DC and Northern Virginia.";

@@ -30,6 +30,11 @@ describe("IndexNow URL allowlisting", () => {
     expect(isApprovedIndexNowUrl("https://www.xareongroup.com/")).toBe(true);
     expect(isApprovedIndexNowUrl("https://www.xareongroup.com/services/drywall-repair")).toBe(true);
     expect(isApprovedIndexNowUrl("https://www.xareongroup.com/services/furniture-assembly")).toBe(true);
+    expect(isApprovedIndexNowUrl("https://www.xareongroup.com/services/smart-home-installation")).toBe(true);
+    expect(isApprovedIndexNowUrl("https://www.xareongroup.com/services/minor-plumbing-repairs")).toBe(true);
+    expect(isApprovedIndexNowUrl("https://www.xareongroup.com/services/minor-electrical-repairs")).toBe(true);
+    expect(isApprovedIndexNowUrl("https://www.xareongroup.com/services/kitchen-installation")).toBe(true);
+    expect(isApprovedIndexNowUrl("https://www.xareongroup.com/services/bathroom-improvements")).toBe(true);
     expect(isApprovedIndexNowUrl("https://www.xareongroup.com/service-areas/montgomery-county-md")).toBe(true);
   });
 

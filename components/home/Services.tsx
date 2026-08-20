@@ -47,7 +47,10 @@ export default function Services() {
       title: "Smart Home",
       icon: Lightbulb,
       description:
-        "Ring Doorbells, Smart Locks, Nest Thermostats, Cameras and Wi-Fi setup.",
+        "Video doorbells, smart locks, thermostats, cameras and basic device setup.",
+      links: [
+        { label: "Explore Smart Home Installation", href: "/services/smart-home-installation" },
+      ],
     },
     {
       title: "Painting",
@@ -59,11 +62,13 @@ export default function Services() {
       ],
     },
     {
-      title: "Plumbing & Electrical",
+      title: "Minor Plumbing & Electrical",
       icon: Wrench,
       description:
-        "Minor plumbing repairs, fixture replacement and electrical repairs.",
+        "Minor fixture-level plumbing work, existing-location electrical issues and compatible fixture replacement.",
       links: [
+        { label: "Explore Minor Plumbing Repairs", href: "/services/minor-plumbing-repairs" },
+        { label: "Explore Minor Electrical Repairs", href: "/services/minor-electrical-repairs" },
         { label: "Explore Fixture Installation", href: "/services/fixture-installation" },
       ],
     },

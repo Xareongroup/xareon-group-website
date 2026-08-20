@@ -270,13 +270,19 @@ const response = await fetch("/api/contact", {
           className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-600"
         >
           <option value="">Select a service</option>
-          <option>Home Repair</option>
+          <option>General Home Repairs</option>
+          <option>Drywall Repair</option>
+          <option>Door Installation &amp; Repair</option>
           <option>TV Mounting</option>
           <option>Furniture Assembly</option>
-          <option>Painting</option>
+          <option>Interior Painting</option>
           <option>Smart Home Installation</option>
-          <option>Minor Plumbing</option>
-          <option>Minor Electrical</option>
+          <option>Minor Plumbing Repairs</option>
+          <option>Minor Electrical Repairs</option>
+          <option>Kitchen Installation</option>
+          <option>Bathroom Improvements</option>
+          <option>Fixture Installation</option>
+          <option>Partition Wall Installation</option>
           <option>Other</option>
         </select>
 
