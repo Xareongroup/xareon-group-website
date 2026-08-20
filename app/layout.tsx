@@ -1,16 +1,26 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import MarketingAnalytics from "@/components/analytics/MarketingAnalytics";
+import {
+  createOpenGraphMetadata,
+  DEFAULT_DESCRIPTION,
+  DEFAULT_TITLE,
+  SITE_URL,
+  twitterMetadata,
+} from "@/lib/site-metadata";
+
+const googleSiteVerification = process.env.GOOGLE_SITE_VERIFICATION?.trim();
+const bingSiteVerification = process.env.BING_SITE_VERIFICATION?.trim();
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.xareongroup.com"),
+  metadataBase: new URL(SITE_URL),
 
   title: {
-    default: "XAREON GROUP | Professional Home Repair & Installation Services",
+    default: DEFAULT_TITLE,
     template: "%s | XAREON GROUP",
   },
 
-  description:
-    "Professional Home Repair, TV Mounting, Furniture Assembly, Smart Home Installation, Painting, Drywall Repair, Minor Plumbing, Minor Electrical, and Handyman Services throughout Maryland, Washington DC, and Northern Virginia.",
+  description: DEFAULT_DESCRIPTION,
 
   keywords: [
     "XAREON GROUP",
@@ -45,44 +55,23 @@ export const metadata: Metadata = {
     follow: true,
   },
 
-  alternates: {
-    canonical: "https://www.xareongroup.com",
-  },
+  verification:
+    googleSiteVerification || bingSiteVerification
+      ? {
+          ...(googleSiteVerification ? { google: googleSiteVerification } : {}),
+          ...(bingSiteVerification
+            ? { other: { "msvalidate.01": bingSiteVerification } }
+            : {}),
+        }
+      : undefined,
 
-  openGraph: {
-    title: "XAREON GROUP | Professional Home Repair & Installation Services",
+  openGraph: createOpenGraphMetadata({
+    path: "/",
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
+  }),
 
-    description:
-      "Professional Home Repair & Installation Services serving Maryland, Washington DC and Northern Virginia.",
-
-    url: "https://www.xareongroup.com",
-
-    siteName: "XAREON GROUP",
-
-    locale: "en_US",
-
-    type: "website",
-
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "XAREON GROUP",
-      },
-    ],
-  },
-
-  twitter: {
-    card: "summary_large_image",
-
-    title: "XAREON GROUP | Professional Home Repair & Installation Services",
-
-    description:
-      "Professional Home Repair & Installation Services serving Maryland, Washington DC and Northern Virginia.",
-
-    images: ["/og-image.jpg"],
-  },
+  twitter: twitterMetadata,
 
   icons: {
     icon: "/favicon.ico",
@@ -98,24 +87,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=AW-18357774354"
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-
-              gtag('config', 'AW-18357774354');
-            `,
-          }}
-        />
-      </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <MarketingAnalytics />
+      </body>
     </html>
   );
 }

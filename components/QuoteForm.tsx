@@ -1,12 +1,17 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import { useForm } from "react-hook-form";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { trackConversion } from "@/lib/utils/conversions";
+import {
+  readEstimateAttribution,
+  trackGoogleAdsLeadConversion,
+  trackMarketingEvent,
+} from "@/lib/utils/conversions";
 
 const quoteSchema = z.object({
   name: z.string().min(2, "Please enter your full name."),
@@ -24,9 +29,11 @@ type QuoteFormData = z.infer<typeof quoteSchema>;
 const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
 export default function QuoteForm() {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [files, setFiles] = useState<File[]>([]);
+  const [formStarted, setFormStarted] = useState(false);
 
   useEffect(() => {
     if (process.env.NODE_ENV === "development") {
@@ -42,7 +49,17 @@ export default function QuoteForm() {
     resolver: zodResolver(quoteSchema),
   });
 const onDrop = useCallback((acceptedFiles: File[]) => {
-  setFiles((previous) => [...previous, ...acceptedFiles]);
+  if (!acceptedFiles.length) return;
+  setFiles((previous) => {
+    const nextFiles = [...previous, ...acceptedFiles];
+    trackMarketingEvent("photo_upload", {
+      form_context: "homepage_quote_form",
+      photo_count: acceptedFiles.length,
+      total_photo_count: nextFiles.length,
+      ...readEstimateAttribution(),
+    });
+    return nextFiles;
+  });
 }, []);
 
 const {
@@ -58,10 +75,26 @@ const {
   maxSize: 10 * 1024 * 1024,
 });
 async function onSubmit(data: QuoteFormData) {
+    if (loading) return;
+
+    const attribution = readEstimateAttribution();
+    trackMarketingEvent("estimate_form_submit", {
+      form_context: "homepage_quote_form",
+      service_name: data.service,
+      photo_count: files.length,
+      ...attribution,
+    });
+
     if (!turnstileToken) {
-  alert("Please complete the security verification.");
-  return;
-}
+      trackMarketingEvent("estimate_form_error", {
+        form_context: "homepage_quote_form",
+        error_type: "security_verification",
+        ...attribution,
+      });
+      alert("Please complete the security verification.");
+      return;
+    }
+  let errorType = "network_or_server";
   try {
     setLoading(true);
 
@@ -88,26 +121,61 @@ const response = await fetch("/api/contact", {
     const result = await response.json();
 
     if (!response.ok) {
+      errorType = `http_${response.status}`;
       throw new Error(result.error || "Something went wrong.");
     }
 
-    trackConversion("generate_lead", { lead_source: "quote_form" });
-
-    alert("✅ Thank you! Your free estimate request has been sent successfully.");
-
-    window.location.reload();
+    trackMarketingEvent("estimate_form_success", {
+      form_context: "homepage_quote_form",
+      service_name: data.service,
+      photo_count: files.length,
+      ...attribution,
+    });
+    trackGoogleAdsLeadConversion();
+    trackMarketingEvent("generate_lead", {
+      lead_source: "quote_form",
+      service_name: data.service,
+      ...attribution,
+    });
+    router.push("/thank-you");
   } catch (error) {
     console.error(error);
-
+    trackMarketingEvent("estimate_form_error", {
+      form_context: "homepage_quote_form",
+      error_type: errorType,
+      ...attribution,
+    });
     alert("❌ Unable to send your estimate request. Please try again.");
   } finally {
     setLoading(false);
   }
 }
 
+  function handleFormInteraction(event: React.SyntheticEvent<HTMLFormElement>) {
+    if (formStarted) return;
+    const target = event.target;
+    if (!(target instanceof HTMLInputElement || target instanceof HTMLSelectElement || target instanceof HTMLTextAreaElement)) return;
+    if (target instanceof HTMLInputElement && (target.type === "file" || target.type === "hidden")) return;
+    setFormStarted(true);
+    trackMarketingEvent("estimate_form_start", {
+      form_context: "homepage_quote_form",
+      form_section: "contact",
+      ...readEstimateAttribution(),
+    });
+  }
+
+  function onInvalid() {
+    trackMarketingEvent("estimate_form_error", {
+      form_context: "homepage_quote_form",
+      error_type: "validation",
+      ...readEstimateAttribution(),
+    });
+  }
+
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit, onInvalid)}
+      onChangeCapture={handleFormInteraction}
       className="rounded-3xl bg-white p-8 shadow-2xl space-y-6"
     >
       <div className="text-center">
@@ -116,18 +184,19 @@ const response = await fetch("/api/contact", {
         </h2>
 
         <p className="mt-2 text-slate-600">
-          Tell us about your project and we'll get back to you shortly.
+          Tell us about your project and we&apos;ll get back to you shortly.
         </p>
       </div>
 
       {/* Full Name */}
 
       <div>
-        <label className="mb-2 block text-sm font-semibold text-slate-700">
+        <label htmlFor="quote-name" className="mb-2 block text-sm font-semibold text-slate-700">
           Full Name *
         </label>
 
         <input
+          id="quote-name"
           {...register("name")}
           placeholder="John Smith"
           className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-600"
@@ -145,11 +214,12 @@ const response = await fetch("/api/contact", {
         {/* Email */}
 
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label htmlFor="quote-email" className="mb-2 block text-sm font-semibold text-slate-700">
             Email Address *
           </label>
 
           <input
+            id="quote-email"
             type="email"
             {...register("email")}
             placeholder="john@email.com"
@@ -166,11 +236,12 @@ const response = await fetch("/api/contact", {
         {/* Phone */}
 
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label htmlFor="quote-phone" className="mb-2 block text-sm font-semibold text-slate-700">
             Phone Number *
           </label>
 
           <input
+            id="quote-phone"
             type="tel"
             {...register("phone")}
             placeholder="(202) 286-8497"
@@ -189,11 +260,12 @@ const response = await fetch("/api/contact", {
       {/* Service */}
 
       <div>
-        <label className="mb-2 block text-sm font-semibold text-slate-700">
+        <label htmlFor="quote-service" className="mb-2 block text-sm font-semibold text-slate-700">
           Service Needed *
         </label>
 
         <select
+          id="quote-service"
           {...register("service")}
           className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-600"
         >
@@ -220,11 +292,12 @@ const response = await fetch("/api/contact", {
         {/* Property */}
 
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label htmlFor="quote-property-type" className="mb-2 block text-sm font-semibold text-slate-700">
             Property Type *
           </label>
 
           <select
+            id="quote-property-type"
             {...register("propertyType")}
             className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-600"
           >
@@ -243,11 +316,12 @@ const response = await fetch("/api/contact", {
         {/* City */}
 
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label htmlFor="quote-city" className="mb-2 block text-sm font-semibold text-slate-700">
             City *
           </label>
 
           <input
+            id="quote-city"
             {...register("city")}
             placeholder="Rockville"
             className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-600"
@@ -265,11 +339,12 @@ const response = await fetch("/api/contact", {
       {/* Description */}
 
       <div>
-        <label className="mb-2 block text-sm font-semibold text-slate-700">
+        <label htmlFor="quote-description" className="mb-2 block text-sm font-semibold text-slate-700">
           Describe Your Project *
         </label>
 
         <textarea
+          id="quote-description"
           rows={6}
           {...register("description")}
           placeholder="Tell us about your project..."

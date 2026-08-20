@@ -1,5 +1,6 @@
 import Image from "next/image";
 import FadeIn from "@/components/ui/FadeIn";
+import { TrackedEstimateLink, TrackedPhoneLink } from "@/components/analytics/TrackedLinks";
 
 export default function Hero() {
   return (
@@ -45,19 +46,20 @@ export default function Hero() {
 
           {/* Buttons */}
           <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
-            <a
+            <TrackedEstimateLink
               href="#contact"
+              placement="homepage_hero"
               className="w-full rounded-2xl bg-blue-600 px-8 py-4 text-lg font-semibold shadow-lg transition-all duration-300 hover:bg-blue-700 sm:w-auto"
             >
               Get a Free Quote
-            </a>
+            </TrackedEstimateLink>
 
-            <a
-              href="tel:+12022868497"
+            <TrackedPhoneLink
+              placement="homepage_hero"
               className="w-full rounded-2xl border border-white/30 bg-white/10 px-8 py-4 text-lg font-semibold backdrop-blur-md transition-all duration-300 hover:bg-white hover:text-slate-900 sm:w-auto"
             >
               Call (202) 286-8497
-            </a>
+            </TrackedPhoneLink>
           </div>
 
           {/* Trust Badges */}

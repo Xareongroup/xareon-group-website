@@ -1,10 +1,35 @@
 import SoroBlogEmbed from "@/components/blog/SoroBlogEmbed";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
+import JsonLd from "@/components/seo/JsonLd";
+import { createPublicPageMetadata } from "@/lib/site-metadata";
+import { createPublicPageSchema } from "@/lib/structured-data";
+
+const title = "Home Repair & Installation Blog | XAREON GROUP";
+const description =
+  "Explore practical home repair, installation, painting, drywall, maintenance, and home improvement insights from XAREON GROUP.";
+
+export const metadata = createPublicPageMetadata({
+  path: "/blog",
+  title,
+  description,
+});
+
+const structuredData = createPublicPageSchema({
+  path: "/blog",
+  name: title,
+  description,
+  type: "CollectionPage",
+  breadcrumbs: [
+    { name: "Home", path: "/" },
+    { name: "Blog", path: "/blog" },
+  ],
+});
 
 export default function BlogPage() {
   return (
     <>
+      <JsonLd data={structuredData} />
       <Navbar />
       <main className="min-h-screen bg-slate-50 pb-16 pt-28 md:pt-36">
         <section className="mx-auto max-w-7xl px-4 sm:px-6">

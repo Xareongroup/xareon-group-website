@@ -5,6 +5,7 @@ import {
   Mail,
   MapPin,
 } from "lucide-react";
+import { TrackedEmailLink, TrackedEstimateLink, TrackedPhoneLink } from "@/components/analytics/TrackedLinks";
 
 export default function Footer() {
   return (
@@ -62,15 +63,19 @@ export default function Footer() {
                 Home
               </Link>
 
-              <Link href="#services" className="text-slate-400 hover:text-blue-400">
+              <Link href="/services" className="text-slate-400 hover:text-blue-400">
                 Services
               </Link>
 
-              <Link href="#portfolio" className="text-slate-400 hover:text-blue-400">
+              <Link href="/service-areas" className="text-slate-400 hover:text-blue-400">
+                Service Areas
+              </Link>
+
+              <Link href="/#portfolio" className="text-slate-400 hover:text-blue-400">
                 Portfolio
               </Link>
 
-              <Link href="#reviews" className="text-slate-400 hover:text-blue-400">
+              <Link href="/#reviews" className="text-slate-400 hover:text-blue-400">
                 Reviews
               </Link>
 
@@ -78,9 +83,9 @@ export default function Footer() {
                 Blog
               </Link>
 
-              <Link href="#contact" className="text-slate-400 hover:text-blue-400">
+              <TrackedEstimateLink href="/#contact" placement="footer_navigation" className="text-slate-400 hover:text-blue-400">
                 Contact
-              </Link>
+              </TrackedEstimateLink>
 
             </div>
 
@@ -96,21 +101,21 @@ export default function Footer() {
 
             <div className="space-y-4">
 
-              <a
-                href="tel:+12022868497"
+              <TrackedPhoneLink
+                placement="footer_contact"
                 className="flex items-center gap-3 text-slate-400 hover:text-blue-400"
               >
                 <Phone size={18} />
                 (202) 286-8497
-              </a>
+              </TrackedPhoneLink>
 
-              <a
-                href="mailto:info@xareongroup.com"
+              <TrackedEmailLink
+                placement="footer_contact"
                 className="flex items-center gap-3 text-slate-400 hover:text-blue-400"
               >
                 <Mail size={18} />
                 info@xareongroup.com
-              </a>
+              </TrackedEmailLink>
 
               <div className="flex items-start gap-3 text-slate-400">
 
@@ -145,12 +150,12 @@ export default function Footer() {
               installation and smart home services.
             </p>
 
-            <a
-              href="tel:+12022868497"
+            <TrackedPhoneLink
+              placement="footer_cta"
               className="mt-6 inline-flex w-full justify-center rounded-2xl bg-blue-600 px-6 py-4 font-semibold text-white transition hover:bg-blue-700"
             >
               📞 Call Now
-            </a>
+            </TrackedPhoneLink>
 
           </div>
 

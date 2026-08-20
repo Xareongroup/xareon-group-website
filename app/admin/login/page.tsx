@@ -1,4 +1,7 @@
+import { privateRouteMetadata } from "@/lib/site-metadata";
 import LoginForm from "@/components/admin/LoginForm";
+
+export const metadata = privateRouteMetadata;
 
 export default function LoginPage() {
   return (

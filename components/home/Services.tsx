@@ -8,6 +8,7 @@ import {
   Paintbrush,
   Hammer,
 } from "lucide-react";
+import Link from "next/link";
 
 import FadeIn from "@/components/ui/FadeIn";
 
@@ -18,12 +19,20 @@ export default function Services() {
       icon: House,
       description:
         "Drywall, doors, windows, trim, caulking and general home repairs.",
+      links: [
+        { label: "Explore General Home Repairs", href: "/services/general-home-repairs" },
+        { label: "Explore Drywall Repair", href: "/services/drywall-repair" },
+        { label: "Explore Door Installation & Repair", href: "/services/door-installation-repair" },
+      ],
     },
     {
       title: "TV Mounting",
       icon: Tv,
       description:
         "TV mounting, soundbars, shelves, curtain rods and more.",
+      links: [
+        { label: "Explore TV Mounting", href: "/services/tv-mounting" },
+      ],
     },
     {
       title: "Assembly",
@@ -42,12 +51,18 @@ export default function Services() {
       icon: Paintbrush,
       description:
         "Interior painting, drywall patching and professional finishing.",
+      links: [
+        { label: "Explore Interior Painting", href: "/services/interior-painting" },
+      ],
     },
     {
       title: "Plumbing & Electrical",
       icon: Wrench,
       description:
         "Minor plumbing repairs, fixture replacement and electrical repairs.",
+      links: [
+        { label: "Explore Fixture Installation", href: "/services/fixture-installation" },
+      ],
     },
   ];
 
@@ -99,9 +114,27 @@ export default function Services() {
                   <p className="mt-3 flex-grow text-sm leading-7 text-slate-600 md:mt-4 md:text-base">
                     {service.description}
                   </p>
+
+                  {service.links?.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="mt-4 inline-flex min-h-11 items-center font-semibold text-blue-700 hover:text-blue-900"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
                 </div>
               );
             })}
+          </div>
+          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <Link href="/services" className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-blue-600 px-7 py-3 font-semibold text-blue-700 transition hover:bg-blue-600 hover:text-white">
+              View All Services
+            </Link>
+            <Link href="/service-areas" className="inline-flex min-h-12 items-center justify-center px-4 py-3 font-semibold text-blue-700 transition hover:text-blue-900">
+              View Service Areas
+            </Link>
           </div>
         </div>
       </section>

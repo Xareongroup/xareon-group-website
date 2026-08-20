@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
+import { TrackedEstimateLink, TrackedPhoneLink } from "@/components/analytics/TrackedLinks";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -33,9 +34,9 @@ export default function Navbar() {
 
           <div className="leading-tight">
 
-            <h1 className="text-base font-bold tracking-wide text-white md:text-xl">
+            <span className="block text-base font-bold tracking-wide text-white md:text-xl">
               XAREON GROUP
-            </h1>
+            </span>
 
             <p className="hidden text-xs uppercase tracking-[0.35em] text-blue-300 md:block">
               Shield of Integrity
@@ -57,21 +58,21 @@ export default function Navbar() {
           </Link>
 
           <Link
-            href="#services"
+            href="/services"
             className="text-base font-semibold text-white transition hover:text-blue-400"
           >
             Services
           </Link>
 
           <Link
-            href="#portfolio"
+            href="/#portfolio"
             className="text-base font-semibold text-white transition hover:text-blue-400"
           >
             Portfolio
           </Link>
 
           <Link
-            href="#reviews"
+            href="/#reviews"
             className="text-base font-semibold text-white transition hover:text-blue-400"
           >
             Reviews
@@ -84,12 +85,13 @@ export default function Navbar() {
             Blog
           </Link>
 
-          <Link
-            href="#contact"
+          <TrackedEstimateLink
+            href="/#contact"
+            placement="navbar_contact"
             className="text-base font-semibold text-white transition hover:text-blue-400"
           >
             Contact
-          </Link>
+          </TrackedEstimateLink>
 
         </nav>
 
@@ -97,12 +99,12 @@ export default function Navbar() {
 
         <div className="flex items-center gap-4">
 
-          <a
-            href="tel:+12022868497"
+          <TrackedPhoneLink
+            placement="navbar_desktop"
             className="hidden h-12 items-center rounded-xl bg-blue-600 px-7 text-base font-semibold text-white shadow-lg transition hover:scale-105 hover:bg-blue-700 lg:inline-flex"
           >
             Call Now
-          </a>
+          </TrackedPhoneLink>
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -133,7 +135,7 @@ export default function Navbar() {
             </Link>
 
             <Link
-              href="#services"
+              href="/services"
               onClick={() => setMobileMenuOpen(false)}
               className="rounded-xl px-4 py-3 text-white transition hover:bg-blue-600"
             >
@@ -141,7 +143,7 @@ export default function Navbar() {
             </Link>
 
             <Link
-              href="#portfolio"
+              href="/#portfolio"
               onClick={() => setMobileMenuOpen(false)}
               className="rounded-xl px-4 py-3 text-white transition hover:bg-blue-600"
             >
@@ -149,7 +151,7 @@ export default function Navbar() {
             </Link>
 
             <Link
-              href="#reviews"
+              href="/#reviews"
               onClick={() => setMobileMenuOpen(false)}
               className="rounded-xl px-4 py-3 text-white transition hover:bg-blue-600"
             >
@@ -164,20 +166,21 @@ export default function Navbar() {
               Blog
             </Link>
 
-            <Link
-              href="#contact"
+            <TrackedEstimateLink
+              href="/#contact"
+              placement="navbar_mobile_contact"
               onClick={() => setMobileMenuOpen(false)}
               className="rounded-xl px-4 py-3 text-white transition hover:bg-blue-600"
             >
               Contact
-            </Link>
+            </TrackedEstimateLink>
 
-            <a
-              href="tel:+12022868497"
+            <TrackedPhoneLink
+              placement="navbar_mobile"
               className="mt-3 rounded-xl bg-blue-600 py-3 text-center font-semibold text-white transition hover:bg-blue-700"
             >
               📞 Call Now
-            </a>
+            </TrackedPhoneLink>
 
           </nav>
 
