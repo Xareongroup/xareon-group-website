@@ -29,6 +29,7 @@ describe("IndexNow URL allowlisting", () => {
   it("accepts only approved canonical production URLs", () => {
     expect(isApprovedIndexNowUrl("https://www.xareongroup.com/")).toBe(true);
     expect(isApprovedIndexNowUrl("https://www.xareongroup.com/services/drywall-repair")).toBe(true);
+    expect(isApprovedIndexNowUrl("https://www.xareongroup.com/services/furniture-assembly")).toBe(true);
     expect(isApprovedIndexNowUrl("https://www.xareongroup.com/service-areas/montgomery-county-md")).toBe(true);
   });
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CheckCircle2, Hammer, Lightbulb, Phone } from "lucide-react";
+import { CheckCircle2, Lightbulb, Phone } from "lucide-react";
 
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
@@ -32,7 +32,6 @@ const structuredData = createPublicPageSchema({
 });
 
 const additionalServices = [
-  { name: "Furniture and equipment assembly", icon: Hammer },
   { name: "Smart-home device installation", icon: Lightbulb },
 ];
 

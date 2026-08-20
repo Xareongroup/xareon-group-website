@@ -289,9 +289,98 @@ export const generalHomeRepairsService: ServicePageContent = {
       description: "Address interior door alignment, replacement, and compatible hardware.",
     },
     {
+      name: "Furniture Assembly",
+      href: "/services/furniture-assembly",
+      description: "Plan a focused furniture assembly project for one item or several pieces.",
+    },
+  ],
+};
+
+export const furnitureAssemblyService: ServicePageContent = {
+  path: "/services/furniture-assembly",
+  name: "Furniture Assembly",
+  serviceType: "Furniture and equipment assembly",
+  title: "Furniture Assembly Services in the DMV | XAREON GROUP",
+  description:
+    "Furniture assembly for beds, dressers, desks, tables, chairs, shelving, storage furniture, office furniture, and compatible fitness equipment across the DMV.",
+  eyebrow: "Furniture Assembly",
+  heroCopy:
+    "Turn packaged furniture and compatible equipment into properly assembled, ready-to-use pieces by following the supplied instructions and reviewing each item before work begins.",
+  overview: [
+    "Furniture assembly can involve one essential piece or several items for a room, home, or workplace. XAREON GROUP assembles common ready-to-assemble furniture for homeowners and businesses, including beds, dressers, desks, tables, chairs, bookshelves, shelving units, cabinets, and storage furniture.",
+    "The project scope is based on the supplied product, manufacturer instructions, available parts, assembly area, and requested placement. Customers across Montgomery County and the broader DMV region can share product details and photos so each item can be reviewed before scheduling.",
+  ],
+  commonProjects: [
+    {
+      title: "Beds and bedroom furniture",
+      description:
+        "Assembling compatible bed frames, dressers, nightstands, and related ready-to-assemble bedroom pieces.",
+    },
+    {
+      title: "Desks, tables, and chairs",
+      description:
+        "Putting together common home and office desks, dining or utility tables, and compatible seating according to supplied instructions.",
+    },
+    {
+      title: "Bookshelves and shelving units",
+      description:
+        "Assembling freestanding bookshelves, storage shelves, and similar furniture while reviewing any placement or anchoring instructions supplied with the product.",
+    },
+    {
+      title: "Cabinets and storage furniture",
+      description:
+        "Assembling compatible freestanding cabinets, organizers, and storage pieces for living, work, or utility spaces.",
+    },
+    {
+      title: "Office and fitness equipment",
+      description:
+        "Assembling compatible office furniture and customer-provided fitness equipment when the product, instructions, parts, and work area are suitable.",
+    },
+    {
+      title: "Multi-item assembly projects",
+      description:
+        "Reviewing several furniture items together for a move-in, room setup, home office, or other clearly documented project.",
+    },
+  ],
+  processNote:
+    "Include the product name or model, assembly instructions when available, the number of boxes or items, and photos of the planned assembly area.",
+  faqs: [
+    {
+      question: "What types of furniture can you assemble?",
+      answer:
+        "Projects may include compatible beds, dressers, desks, tables, chairs, bookshelves, shelving units, cabinets, storage furniture, and office furniture. Share the product details so the exact item and scope can be reviewed.",
+    },
+    {
+      question: "Can I request assembly for several furniture items at once?",
+      answer:
+        "Yes. Multi-item projects can be reviewed together. Provide a list of every item, the quantity of each, product links or model information, and photos of the boxes and assembly area when available.",
+    },
+    {
+      question: "Do you assemble fitness equipment?",
+      answer:
+        "Compatible customer-provided fitness equipment may be considered when complete instructions and parts are available and the planned location is suitable. Product details are needed before the scope can be confirmed.",
+    },
+    {
+      question: "What should I do before the assembly appointment?",
+      answer:
+        "Keep the boxes, hardware, and instructions together, confirm that the assembly area is accessible, and identify the intended location for each finished item. Let us know about stairs or other access considerations in advance.",
+    },
+    {
+      question: "Can furniture assembly be combined with other home repairs?",
+      answer:
+        "Yes. Use General Home Repairs when furniture assembly is one part of a mixed task list. Use this Furniture Assembly service when assembly is the main focus of the project.",
+    },
+  ],
+  relatedServices: [
+    {
+      name: "General Home Repairs",
+      href: "/services/general-home-repairs",
+      description: "Combine assembly with a clearly documented list of other household tasks.",
+    },
+    {
       name: "Fixture Installation",
       href: "/services/fixture-installation",
-      description: "Install compatible fixtures, shelving, mirrors, and household accessories.",
+      description: "Plan compatible wall-mounted shelving, mirrors, and household accessories.",
     },
   ],
 };
@@ -300,4 +389,5 @@ export const featuredServices = [
   drywallRepairService,
   interiorPaintingService,
   generalHomeRepairsService,
+  furnitureAssemblyService,
 ] as const;

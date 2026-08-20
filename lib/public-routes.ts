@@ -4,6 +4,7 @@ export const PUBLIC_INDEXABLE_ROUTES = [
   { path: "/services/drywall-repair", changeFrequency: "monthly", priority: 0.8 },
   { path: "/services/interior-painting", changeFrequency: "monthly", priority: 0.8 },
   { path: "/services/general-home-repairs", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/services/furniture-assembly", changeFrequency: "monthly", priority: 0.8 },
   { path: "/services/tv-mounting", changeFrequency: "monthly", priority: 0.8 },
   { path: "/services/door-installation-repair", changeFrequency: "monthly", priority: 0.8 },
   { path: "/services/partition-walls", changeFrequency: "monthly", priority: 0.8 },

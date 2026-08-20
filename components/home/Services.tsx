@@ -39,6 +39,9 @@ export default function Services() {
       icon: Hammer,
       description:
         "Furniture assembly, gazebos, office furniture and fitness equipment.",
+      links: [
+        { label: "Explore Furniture Assembly", href: "/services/furniture-assembly" },
+      ],
     },
     {
       title: "Smart Home",
