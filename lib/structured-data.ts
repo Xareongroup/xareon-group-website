@@ -2,6 +2,9 @@ import {
   absoluteUrl,
   BUSINESS,
   DEFAULT_DESCRIPTION,
+  EXTENDED_SERVICE_AREAS,
+  GOOGLE_BUSINESS_PROFILE_URL,
+  PRIMARY_SERVICE_AREAS,
   SITE_URL,
 } from "@/lib/site-metadata";
 
@@ -11,7 +14,7 @@ export const SCHEMA_IDS = {
   primaryImage: `${SITE_URL}/#primaryimage`,
 } as const;
 
-type PageSchemaType = "WebPage" | "CollectionPage";
+type PageSchemaType = "WebPage" | "CollectionPage" | "ContactPage";
 
 export interface BreadcrumbItem {
   name: string;
@@ -53,11 +56,20 @@ function createBusinessEntity(): SchemaNode {
     image: BUSINESS.image,
     telephone: BUSINESS.telephone,
     email: BUSINESS.email,
+    sameAs: [GOOGLE_BUSINESS_PROFILE_URL],
     description: DEFAULT_DESCRIPTION,
-    areaServed: BUSINESS.serviceAreas.map((name) => ({
-      "@type": "AdministrativeArea",
-      name,
-    })),
+    areaServed: [
+      ...PRIMARY_SERVICE_AREAS.map((name) => ({
+        "@type": "AdministrativeArea",
+        name,
+        description: "Primary regular service area",
+      })),
+      ...EXTENDED_SERVICE_AREAS.map((name) => ({
+        "@type": "AdministrativeArea",
+        name,
+        description: "Extended service area; projects depend on scope and availability",
+      })),
+    ],
   };
 }
 
@@ -178,10 +190,18 @@ export function createServicePageSchema({
     description,
     url,
     provider: { "@id": SCHEMA_IDS.business },
-    areaServed: BUSINESS.serviceAreas.map((areaName) => ({
-      "@type": "AdministrativeArea",
-      name: areaName,
-    })),
+    areaServed: [
+      ...PRIMARY_SERVICE_AREAS.map((name) => ({
+        "@type": "AdministrativeArea",
+        name,
+        description: "Primary regular service area",
+      })),
+      ...EXTENDED_SERVICE_AREAS.map((name) => ({
+        "@type": "AdministrativeArea",
+        name,
+        description: "Extended service area; projects depend on scope and availability",
+      })),
+    ],
     mainEntityOfPage: { "@id": pageId },
   });
 

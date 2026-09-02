@@ -6,6 +6,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { TrackedEmailLink, TrackedEstimateLink, TrackedPhoneLink } from "@/components/analytics/TrackedLinks";
+import { SERVICE_AREA_STATEMENT } from "@/lib/site-metadata";
 
 export default function Footer() {
   return (
@@ -43,8 +44,8 @@ export default function Footer() {
             </div>
 
             <p className="mt-5 text-sm leading-7 text-slate-400">
-              Professional Home Repair & Installation Services
-              serving Maryland, Washington DC and Northern Virginia.
+              Professional Home Repair &amp; Installation Services. Regularly serving
+              Montgomery and Howard counties, with select extended-area projects.
             </p>
 
           </div>
@@ -67,6 +68,10 @@ export default function Footer() {
                 Services
               </Link>
 
+              <Link href="/about" className="text-slate-400 hover:text-blue-400">
+                About
+              </Link>
+
               <Link href="/service-areas" className="text-slate-400 hover:text-blue-400">
                 Service Areas
               </Link>
@@ -83,9 +88,13 @@ export default function Footer() {
                 Blog
               </Link>
 
-              <TrackedEstimateLink href="/#contact" placement="footer_navigation" className="text-slate-400 hover:text-blue-400">
+              <TrackedEstimateLink href="/contact" placement="footer_navigation" className="text-slate-400 hover:text-blue-400">
                 Contact
               </TrackedEstimateLink>
+
+              <Link href="/privacy" className="text-slate-400 hover:text-blue-400">
+                Privacy
+              </Link>
 
             </div>
 
@@ -121,15 +130,7 @@ export default function Footer() {
 
                 <MapPin size={18} className="mt-1" />
 
-                <span>
-                  Serving
-                  <br />
-                  Maryland
-                  <br />
-                  Washington DC
-                  <br />
-                  Northern Virginia
-                </span>
+                <span>{SERVICE_AREA_STATEMENT}</span>
 
               </div>
 

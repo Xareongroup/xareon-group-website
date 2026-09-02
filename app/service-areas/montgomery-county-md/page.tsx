@@ -101,7 +101,7 @@ export default function MontgomeryCountyPage() {
     <>
       <JsonLd data={structuredData} />
       <Navbar />
-      <main className="bg-white text-slate-900">
+      <main id="main-content" tabIndex={-1} className="bg-white text-slate-900">
         <section className="bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 pb-20 pt-32 text-white md:pb-24 md:pt-40">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <nav aria-label="Breadcrumb" className="text-sm text-blue-200">
@@ -218,7 +218,7 @@ export default function MontgomeryCountyPage() {
         <section className="py-16 text-center md:py-24" aria-labelledby="county-final-cta">
           <div className="mx-auto max-w-4xl px-4 sm:px-6">
             <h2 id="county-final-cta" className="text-3xl font-bold md:text-4xl">Ready to discuss your Montgomery County project?</h2>
-            <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">Share the location, requested work, and photos when available. You can also review the broader <Link href="/service-areas" className="font-semibold text-blue-700 hover:text-blue-900">XAREON GROUP service area</Link>.</p>
+            <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">Share the location, requested work, and photos when available. You can also review the broader <Link href="/service-areas" className="font-semibold text-blue-700 hover:text-blue-900">XAREON GROUP service area</Link> or the separate <Link href="/service-areas/howard-county-md" className="font-semibold text-blue-700 hover:text-blue-900">Howard County service guide</Link>.</p>
             <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
               <TrackedEstimateLink href="/#contact" placement="montgomery_county_final" className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-blue-600 px-7 py-3 font-semibold text-white hover:bg-blue-700">Request a Free Estimate</TrackedEstimateLink>
               <TrackedPhoneLink placement="montgomery_county_final" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-slate-300 px-7 py-3 font-semibold text-slate-700 hover:bg-slate-50"><Phone aria-hidden="true" size={19} />Call {BUSINESS.telephoneDisplay}</TrackedPhoneLink>

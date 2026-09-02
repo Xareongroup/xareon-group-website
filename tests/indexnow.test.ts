@@ -28,6 +28,9 @@ describe("IndexNow key verification", () => {
 describe("IndexNow URL allowlisting", () => {
   it("accepts only approved canonical production URLs", () => {
     expect(isApprovedIndexNowUrl("https://www.xareongroup.com/")).toBe(true);
+    expect(isApprovedIndexNowUrl("https://www.xareongroup.com/about")).toBe(true);
+    expect(isApprovedIndexNowUrl("https://www.xareongroup.com/contact")).toBe(true);
+    expect(isApprovedIndexNowUrl("https://www.xareongroup.com/privacy")).toBe(true);
     expect(isApprovedIndexNowUrl("https://www.xareongroup.com/services/drywall-repair")).toBe(true);
     expect(isApprovedIndexNowUrl("https://www.xareongroup.com/services/furniture-assembly")).toBe(true);
     expect(isApprovedIndexNowUrl("https://www.xareongroup.com/services/smart-home-installation")).toBe(true);
@@ -36,6 +39,7 @@ describe("IndexNow URL allowlisting", () => {
     expect(isApprovedIndexNowUrl("https://www.xareongroup.com/services/kitchen-installation")).toBe(true);
     expect(isApprovedIndexNowUrl("https://www.xareongroup.com/services/bathroom-improvements")).toBe(true);
     expect(isApprovedIndexNowUrl("https://www.xareongroup.com/service-areas/montgomery-county-md")).toBe(true);
+    expect(isApprovedIndexNowUrl("https://www.xareongroup.com/service-areas/howard-county-md")).toBe(true);
   });
 
   it.each([

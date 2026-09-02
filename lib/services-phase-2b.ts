@@ -4,9 +4,9 @@ export const tvMountingService: ServicePageContent = {
   path: "/services/tv-mounting",
   name: "TV Mounting",
   serviceType: "TV wall mounting and installation",
-  title: "TV Mounting Services in the DMV | XAREON GROUP",
+  title: "TV Mounting in Montgomery & Howard Counties | XAREON GROUP",
   description:
-    "TV wall mounting for homes and businesses, including careful placement, leveling, compatible mounts, and basic cable organization across the DMV region.",
+    "TV mounting in Montgomery and Howard counties, with select Washington, D.C. and Northern Virginia projects based on scope and availability.",
   eyebrow: "TV Mounting",
   heroCopy:
     "Place a television at a comfortable viewing height with careful wall-support checks, accurate positioning, and a compatible customer-provided mount.",
@@ -41,9 +41,9 @@ export const doorInstallationRepairService: ServicePageContent = {
   path: "/services/door-installation-repair",
   name: "Door Installation & Repair",
   serviceType: "Interior door installation and repair",
-  title: "Door Installation & Repair in the DMV | XAREON GROUP",
+  title: "Door Installation in Montgomery & Howard Counties | XAREON GROUP",
   description:
-    "Interior door installation, adjustment, alignment, hardware replacement, and minor trim finishing for homes and businesses across the DMV region.",
+    "Door installation and repair in Montgomery and Howard counties, with select D.C. and Northern Virginia projects based on scope and availability.",
   eyebrow: "Door Installation & Repair",
   heroCopy:
     "Address sticking, rubbing, alignment, hardware, and compatible interior door replacement with a scope matched to the existing opening.",
@@ -78,9 +78,9 @@ export const partitionWallsService: ServicePageContent = {
   path: "/services/partition-walls",
   name: "Partition Wall Installation",
   serviceType: "Non-load-bearing interior partition wall installation",
-  title: "Partition Wall Installation in the DMV | XAREON GROUP",
+  title: "Partition Walls in Montgomery & Howard Counties | XAREON GROUP",
   description:
-    "Non-load-bearing interior partition wall framing, drywall installation, finishing, and room division for appropriate projects across the DMV region.",
+    "Partition wall installation in Montgomery and Howard counties, with select D.C. and Northern Virginia projects based on scope and availability.",
   eyebrow: "Partition Walls",
   heroCopy:
     "Create a practical interior division with an appropriately planned non-load-bearing wall, drywall finishing, and coordinated finish details.",
@@ -116,9 +116,9 @@ export const fixtureInstallationService: ServicePageContent = {
   path: "/services/fixture-installation",
   name: "Fixture Installation",
   serviceType: "Household fixture and accessory installation",
-  title: "Fixture Installation Services in the DMV | XAREON GROUP",
+  title: "Fixture Installation in Montgomery & Howard Counties | XAREON GROUP",
   description:
-    "Installation of compatible household fixtures and accessories, including replacement light fixtures, mirrors, shelving, and curtain rods across the DMV region.",
+    "Fixture installation in Montgomery and Howard counties, with select D.C. and Northern Virginia projects based on scope and availability.",
   eyebrow: "Fixture Installation",
   heroCopy:
     "Install compatible customer-provided fixtures and household accessories with careful placement, secure attachment, and clear scope boundaries.",

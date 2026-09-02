@@ -6,7 +6,7 @@ import Navbar from "@/components/layout/Navbar";
 import JsonLd from "@/components/seo/JsonLd";
 import { TrackedEstimateLink, TrackedPhoneLink } from "@/components/analytics/TrackedLinks";
 import type { ServicePageContent } from "@/lib/services";
-import { BUSINESS } from "@/lib/site-metadata";
+import { BUSINESS, SERVICE_AREA_STATEMENT } from "@/lib/site-metadata";
 import { createServicePageSchema } from "@/lib/structured-data";
 
 const processSteps = [
@@ -22,7 +22,7 @@ const reasons = [
   "Professional workmanship and attention to detail",
   "Straightforward communication before and during the project",
   "Careful, clean completion of the agreed work area",
-  "Service for homeowners and businesses across the DMV region",
+  "Regular service in Montgomery and Howard counties, with select extended-area projects",
 ];
 
 export default function ServiceDetailPage({ service }: { service: ServicePageContent }) {
@@ -42,7 +42,7 @@ export default function ServiceDetailPage({ service }: { service: ServicePageCon
     <>
       <JsonLd data={structuredData} />
       <Navbar />
-      <main className="bg-white text-slate-900">
+      <main id="main-content" tabIndex={-1} className="bg-white text-slate-900">
         <section className="bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 pb-20 pt-32 text-white md:pb-24 md:pt-40">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <nav aria-label="Breadcrumb" className="text-sm text-blue-200">
@@ -166,9 +166,13 @@ export default function ServiceDetailPage({ service }: { service: ServicePageCon
         <section className="py-16 md:py-24" aria-labelledby="service-area">
           <div className="mx-auto max-w-5xl px-4 text-center sm:px-6">
             <MapPin aria-hidden="true" className="mx-auto text-blue-600" size={38} />
-            <h2 id="service-area" className="mt-4 text-3xl font-bold md:text-4xl">Serving Maryland, Washington, DC, and Northern Virginia</h2>
+            <h2 id="service-area" className="mt-4 text-3xl font-bold md:text-4xl">Primary and extended service areas</h2>
             <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-slate-600">
-              XAREON GROUP serves homeowners and businesses across the broader DMV region. Include your city and project details so we can review the location with the requested scope.
+              {SERVICE_AREA_STATEMENT} Include your city and project details so we can review the location with the requested scope.
+            </p>
+            <p className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-3">
+              <Link href="/service-areas/montgomery-county-md" className="font-semibold text-blue-700 hover:text-blue-900">Montgomery County service guide</Link>
+              <Link href="/service-areas/howard-county-md" className="font-semibold text-blue-700 hover:text-blue-900">Howard County service guide</Link>
             </p>
           </div>
         </section>

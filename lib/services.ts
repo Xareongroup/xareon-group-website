@@ -33,9 +33,9 @@ export const drywallRepairService: ServicePageContent = {
   path: "/services/drywall-repair",
   name: "Drywall Repair",
   serviceType: "Drywall repair and finishing",
-  title: "Drywall Repair Services in the DMV | XAREON GROUP",
+  title: "Drywall Repair in Montgomery & Howard Counties | XAREON GROUP",
   description:
-    "Drywall patching, wall repair, ceiling drywall repair, finishing, and paint preparation for homes and businesses across Maryland, Washington, DC, and Northern Virginia.",
+    "Drywall repair and finishing in Montgomery and Howard counties, with select Washington, D.C. and Northern Virginia projects based on scope and availability.",
   eyebrow: "Drywall Repair",
   heroCopy:
     "Repair holes, cracks, dents, and damaged wall or ceiling sections with careful patching, surface preparation, and finishing.",
@@ -122,9 +122,9 @@ export const interiorPaintingService: ServicePageContent = {
   path: "/services/interior-painting",
   name: "Interior Painting",
   serviceType: "Interior painting",
-  title: "Interior Painting Services in the DMV | XAREON GROUP",
+  title: "Interior Painting in Montgomery & Howard Counties | XAREON GROUP",
   description:
-    "Interior wall and room painting with surface preparation, minor patching, and careful finishing across Maryland, Washington, DC, and Northern Virginia.",
+    "Interior painting in Montgomery and Howard counties, with select Washington, D.C. and Northern Virginia projects based on scope and availability.",
   eyebrow: "Interior Painting",
   heroCopy:
     "Refresh rooms and interior surfaces with thoughtful preparation, protection of surrounding areas, and a clean, consistent finish.",
@@ -211,9 +211,9 @@ export const generalHomeRepairsService: ServicePageContent = {
   path: "/services/general-home-repairs",
   name: "General Home Repairs",
   serviceType: "General home repair",
-  title: "General Home Repair Services in the DMV | XAREON GROUP",
+  title: "Home Repairs in Montgomery & Howard Counties | XAREON GROUP",
   description:
-    "General home repair and installation help for drywall, doors, trim, shelving, mounting, assembly, fixtures, and smaller projects across the DMV region.",
+    "General home repair and installation help in Montgomery and Howard counties, with select D.C. and Northern Virginia projects based on scope and availability.",
   eyebrow: "General Home Repairs",
   heroCopy:
     "Take care of the smaller repairs, installations, and finishing tasks that keep a home or business working well and looking complete.",
@@ -300,15 +300,15 @@ export const furnitureAssemblyService: ServicePageContent = {
   path: "/services/furniture-assembly",
   name: "Furniture Assembly",
   serviceType: "Furniture and equipment assembly",
-  title: "Furniture Assembly Services in the DMV | XAREON GROUP",
+  title: "Furniture Assembly in Montgomery & Howard Counties | XAREON GROUP",
   description:
-    "Furniture assembly for beds, dressers, desks, tables, chairs, shelving, storage furniture, office furniture, and compatible fitness equipment across the DMV.",
+    "Furniture assembly in Montgomery and Howard counties, with select Washington, D.C. and Northern Virginia projects based on scope and availability.",
   eyebrow: "Furniture Assembly",
   heroCopy:
     "Turn packaged furniture and compatible equipment into properly assembled, ready-to-use pieces by following the supplied instructions and reviewing each item before work begins.",
   overview: [
     "Furniture assembly can involve one essential piece or several items for a room, home, or workplace. XAREON GROUP assembles common ready-to-assemble furniture for homeowners and businesses, including beds, dressers, desks, tables, chairs, bookshelves, shelving units, cabinets, and storage furniture.",
-    "The project scope is based on the supplied product, manufacturer instructions, available parts, assembly area, and requested placement. Customers across Montgomery County and the broader DMV region can share product details and photos so each item can be reviewed before scheduling.",
+    "The project scope is based on the supplied product, manufacturer instructions, available parts, assembly area, and requested placement. Customers in Montgomery and Howard counties, as well as extended service areas, can share product details and photos so each item can be reviewed before scheduling.",
   ],
   commonProjects: [
     {

@@ -8,12 +8,12 @@ import { TrackedEstimateLink, TrackedPhoneLink } from "@/components/analytics/Tr
 import { coreExpansionServices } from "@/lib/services-core-expansion";
 import { featuredServices } from "@/lib/services";
 import { phase2BServices } from "@/lib/services-phase-2b";
-import { BUSINESS, createPublicPageMetadata } from "@/lib/site-metadata";
+import { BUSINESS, SERVICE_AREA_STATEMENT, createPublicPageMetadata } from "@/lib/site-metadata";
 import { createPublicPageSchema } from "@/lib/structured-data";
 
 const title = "Home Repair & Installation Services | XAREON GROUP";
 const description =
-  "Explore home repair, drywall, painting, mounting, assembly, smart-home, minor plumbing and electrical, kitchen, bathroom, and installation services across the DMV.";
+  "Explore home repair, painting, mounting, assembly, installation, and improvement services in Montgomery and Howard counties, with select extended-area projects.";
 
 export const metadata = createPublicPageMetadata({
   path: "/services",
@@ -37,7 +37,7 @@ export default function ServicesPage() {
     <>
       <JsonLd data={structuredData} />
       <Navbar />
-      <main className="bg-white text-slate-900">
+      <main id="main-content" tabIndex={-1} className="bg-white text-slate-900">
         <section className="bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 pb-20 pt-32 text-white md:pb-24 md:pt-40">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <nav aria-label="Breadcrumb" className="text-sm text-blue-200">
@@ -49,7 +49,7 @@ export default function ServicesPage() {
               <p className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-300">Our Services</p>
               <h1 className="mt-4 text-4xl font-extrabold leading-tight sm:text-5xl md:text-6xl">Home repair and installation services for practical projects</h1>
               <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-200 md:text-xl">
-                XAREON GROUP helps homeowners and businesses complete repairs, installations, painting, and finishing work across Maryland, Washington, DC, and Northern Virginia.
+                {SERVICE_AREA_STATEMENT}
               </p>
               <div className="mt-9 flex flex-col gap-4 sm:flex-row">
                 <TrackedEstimateLink href="/#contact" placement="services_hub_hero" className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-blue-600 px-7 py-3 font-semibold text-white transition hover:bg-blue-700">Get a Free Estimate</TrackedEstimateLink>
@@ -149,8 +149,8 @@ export default function ServicesPage() {
 
         <section className="py-16 text-center md:py-24" aria-labelledby="services-area">
           <div className="mx-auto max-w-4xl px-4 sm:px-6">
-            <h2 id="services-area" className="text-3xl font-bold md:text-4xl">Serving customers across the DMV region</h2>
-            <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-slate-600">Current service coverage includes Maryland, Washington, DC, and Northern Virginia. Provide your city with the request so the project location and scope can be reviewed together.</p>
+            <h2 id="services-area" className="text-3xl font-bold md:text-4xl">Primary Maryland and extended DMV service areas</h2>
+            <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-slate-600">{SERVICE_AREA_STATEMENT} Provide your city with the request so the project location and scope can be reviewed together.</p>
             <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
               <TrackedEstimateLink href="/#contact" placement="services_hub_final" className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-blue-600 px-7 py-3 font-semibold text-white hover:bg-blue-700">Request a Free Estimate</TrackedEstimateLink>
               <Link href="/service-areas" className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-slate-300 px-7 py-3 font-semibold text-slate-700 hover:bg-slate-50">See Where We Provide Service</Link>

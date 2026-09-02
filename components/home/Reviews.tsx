@@ -1,4 +1,5 @@
 import { Star } from "lucide-react";
+import { GOOGLE_BUSINESS_PROFILE_URL } from "@/lib/site-metadata";
 
 const reviews = [
   {
@@ -42,7 +43,7 @@ export default function Reviews() {
           </h2>
 
           <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-600 md:mt-6 md:text-lg">
-            Customer satisfaction is our highest priority. Here's what
+            Customer satisfaction is our highest priority. Here&apos;s what
             homeowners say about working with XAREON GROUP.
           </p>
 
@@ -72,7 +73,7 @@ export default function Reviews() {
               </div>
 
               <p className="flex-grow text-sm leading-7 text-slate-600 md:text-base md:leading-8">
-                "{review.review}"
+                &ldquo;{review.review}&rdquo;
               </p>
 
               <div className="mt-6 border-t border-slate-100 pt-5">
@@ -91,6 +92,17 @@ export default function Reviews() {
 
           ))}
 
+        </div>
+
+        <div className="mt-10 text-center">
+          <a
+            href={GOOGLE_BUSINESS_PROFILE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-blue-600 px-7 py-3 font-semibold text-white transition hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          >
+            Read Our Google Reviews
+          </a>
         </div>
 
       </div>

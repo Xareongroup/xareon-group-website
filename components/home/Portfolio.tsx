@@ -49,8 +49,8 @@ export default function Portfolio() {
 
           <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-600 md:mt-6 md:text-lg">
             Take a look at some of our recent home improvement,
-            repair, installation and smart home projects completed
-            throughout Maryland, Washington DC and Northern Virginia.
+            repair, installation and smart home projects completed in our
+            primary Maryland service areas and select extended-area projects.
           </p>
 
         </div>

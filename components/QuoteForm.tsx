@@ -2,8 +2,9 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useDropzone } from "react-dropzone";
-import { useForm } from "react-hook-form";
+import { useForm, type FieldErrors } from "react-hook-form";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,18 +13,15 @@ import {
   trackGoogleAdsLeadConversion,
   trackMarketingEvent,
 } from "@/lib/utils/conversions";
+import {
+  ESTIMATE_PROPERTY_TYPES,
+  ESTIMATE_SERVICE_OPTIONS,
+  ESTIMATE_UPLOAD_LIMITS,
+  estimateRequestSchema,
+  type EstimateFieldName,
+} from "@/lib/estimate-request";
 
-const quoteSchema = z.object({
-  name: z.string().min(2, "Please enter your full name."),
-  email: z.string().email("Please enter a valid email."),
-  phone: z.string().min(10, "Please enter a valid phone number."),
-  service: z.string().min(1, "Please select a service."),
-  propertyType: z.string().min(1, "Please select a property type."),
-  city: z.string().min(2, "Please enter your city."),
-  description: z
-    .string()
-    .min(20, "Please describe your project in a little more detail."),
-});
+const quoteSchema = estimateRequestSchema.omit({ turnstileToken: true });
 
 type QuoteFormData = z.infer<typeof quoteSchema>;
 const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
@@ -34,6 +32,7 @@ export default function QuoteForm() {
   const [turnstileToken, setTurnstileToken] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [formStarted, setFormStarted] = useState(false);
+  const [submissionError, setSubmissionError] = useState("");
 
   useEffect(() => {
     if (process.env.NODE_ENV === "development") {
@@ -44,6 +43,7 @@ export default function QuoteForm() {
   const {
     register,
     handleSubmit,
+    setFocus,
     formState: { errors },
   } = useForm<QuoteFormData>({
     resolver: zodResolver(quoteSchema),
@@ -52,6 +52,15 @@ const onDrop = useCallback((acceptedFiles: File[]) => {
   if (!acceptedFiles.length) return;
   setFiles((previous) => {
     const nextFiles = [...previous, ...acceptedFiles];
+    if (nextFiles.length > ESTIMATE_UPLOAD_LIMITS.maxFiles) {
+      setSubmissionError(`Upload no more than ${ESTIMATE_UPLOAD_LIMITS.maxFiles} photos.`);
+      return previous;
+    }
+    if (nextFiles.reduce((total, file) => total + file.size, 0) > ESTIMATE_UPLOAD_LIMITS.maxCombinedFileBytes) {
+      setSubmissionError("Combined image uploads must be 4 MB or smaller.");
+      return previous;
+    }
+    setSubmissionError("");
     trackMarketingEvent("photo_upload", {
       form_context: "homepage_quote_form",
       photo_count: acceptedFiles.length,
@@ -68,11 +77,14 @@ const {
   isDragActive,
 } = useDropzone({
   onDrop: onDrop,
+  onDropRejected: () => setSubmissionError("Only JPG, PNG, and WEBP images up to 4 MB are accepted."),
   accept: {
-    "image/*": [],
+    "image/jpeg": [".jpg", ".jpeg"],
+    "image/png": [".png"],
+    "image/webp": [".webp"],
   },
-  maxFiles: 10,
-  maxSize: 10 * 1024 * 1024,
+  maxFiles: ESTIMATE_UPLOAD_LIMITS.maxFiles,
+  maxSize: ESTIMATE_UPLOAD_LIMITS.maxFileBytes,
 });
 async function onSubmit(data: QuoteFormData) {
     if (loading) return;
@@ -91,12 +103,14 @@ async function onSubmit(data: QuoteFormData) {
         error_type: "security_verification",
         ...attribution,
       });
-      alert("Please complete the security verification.");
+      setSubmissionError("Please complete the security verification.");
       return;
     }
   let errorType = "network_or_server";
+  let userError = "Unable to send your estimate request. Please try again.";
   try {
     setLoading(true);
+    setSubmissionError("");
 
 const formData = new FormData();
 
@@ -122,7 +136,8 @@ const response = await fetch("/api/contact", {
 
     if (!response.ok) {
       errorType = `http_${response.status}`;
-      throw new Error(result.error || "Something went wrong.");
+      if (typeof result.error === "string" && result.error.length <= 200) userError = result.error;
+      throw new Error("Estimate request rejected.");
     }
 
     trackMarketingEvent("estimate_form_success", {
@@ -145,7 +160,7 @@ const response = await fetch("/api/contact", {
       error_type: errorType,
       ...attribution,
     });
-    alert("❌ Unable to send your estimate request. Please try again.");
+    setSubmissionError(userError);
   } finally {
     setLoading(false);
   }
@@ -164,12 +179,14 @@ const response = await fetch("/api/contact", {
     });
   }
 
-  function onInvalid() {
+  function onInvalid(validationErrors: FieldErrors<QuoteFormData>) {
     trackMarketingEvent("estimate_form_error", {
       form_context: "homepage_quote_form",
       error_type: "validation",
       ...readEstimateAttribution(),
     });
+    const firstInvalidField = Object.keys(validationErrors)[0] as EstimateFieldName | undefined;
+    if (firstInvalidField) setFocus(firstInvalidField);
   }
 
   return (
@@ -177,6 +194,7 @@ const response = await fetch("/api/contact", {
       onSubmit={handleSubmit(onSubmit, onInvalid)}
       onChangeCapture={handleFormInteraction}
       className="rounded-3xl bg-white p-8 shadow-2xl space-y-6"
+      noValidate
     >
       <div className="text-center">
         <h2 className="text-3xl font-bold text-slate-900">
@@ -198,12 +216,14 @@ const response = await fetch("/api/contact", {
         <input
           id="quote-name"
           {...register("name")}
+          aria-invalid={Boolean(errors.name)}
+          aria-describedby={errors.name ? "quote-name-error" : undefined}
           placeholder="John Smith"
           className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-600"
         />
 
         {errors.name && (
-          <p className="mt-2 text-sm text-red-600">
+          <p id="quote-name-error" className="mt-2 text-sm text-red-600">
             {errors.name.message}
           </p>
         )}
@@ -222,12 +242,14 @@ const response = await fetch("/api/contact", {
             id="quote-email"
             type="email"
             {...register("email")}
+            aria-invalid={Boolean(errors.email)}
+            aria-describedby={errors.email ? "quote-email-error" : undefined}
             placeholder="john@email.com"
             className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-600"
           />
 
           {errors.email && (
-            <p className="mt-2 text-sm text-red-600">
+            <p id="quote-email-error" className="mt-2 text-sm text-red-600">
               {errors.email.message}
             </p>
           )}
@@ -244,12 +266,14 @@ const response = await fetch("/api/contact", {
             id="quote-phone"
             type="tel"
             {...register("phone")}
+            aria-invalid={Boolean(errors.phone)}
+            aria-describedby={errors.phone ? "quote-phone-error" : undefined}
             placeholder="(202) 286-8497"
             className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-600"
           />
 
           {errors.phone && (
-            <p className="mt-2 text-sm text-red-600">
+            <p id="quote-phone-error" className="mt-2 text-sm text-red-600">
               {errors.phone.message}
             </p>
           )}
@@ -267,27 +291,16 @@ const response = await fetch("/api/contact", {
         <select
           id="quote-service"
           {...register("service")}
+          aria-invalid={Boolean(errors.service)}
+          aria-describedby={errors.service ? "quote-service-error" : undefined}
           className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-600"
         >
           <option value="">Select a service</option>
-          <option>General Home Repairs</option>
-          <option>Drywall Repair</option>
-          <option>Door Installation &amp; Repair</option>
-          <option>TV Mounting</option>
-          <option>Furniture Assembly</option>
-          <option>Interior Painting</option>
-          <option>Smart Home Installation</option>
-          <option>Minor Plumbing Repairs</option>
-          <option>Minor Electrical Repairs</option>
-          <option>Kitchen Installation</option>
-          <option>Bathroom Improvements</option>
-          <option>Fixture Installation</option>
-          <option>Partition Wall Installation</option>
-          <option>Other</option>
+          {ESTIMATE_SERVICE_OPTIONS.map((option) => <option key={option}>{option}</option>)}
         </select>
 
         {errors.service && (
-          <p className="mt-2 text-sm text-red-600">
+          <p id="quote-service-error" className="mt-2 text-sm text-red-600">
             {errors.service.message}
           </p>
         )}
@@ -305,15 +318,16 @@ const response = await fetch("/api/contact", {
           <select
             id="quote-property-type"
             {...register("propertyType")}
+            aria-invalid={Boolean(errors.propertyType)}
+            aria-describedby={errors.propertyType ? "quote-property-type-error" : undefined}
             className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-600"
           >
             <option value="">Select</option>
-            <option>Residential</option>
-            <option>Commercial</option>
+            {ESTIMATE_PROPERTY_TYPES.map((option) => <option key={option}>{option}</option>)}
           </select>
 
           {errors.propertyType && (
-            <p className="mt-2 text-sm text-red-600">
+            <p id="quote-property-type-error" className="mt-2 text-sm text-red-600">
               {errors.propertyType.message}
             </p>
           )}
@@ -329,12 +343,14 @@ const response = await fetch("/api/contact", {
           <input
             id="quote-city"
             {...register("city")}
+            aria-invalid={Boolean(errors.city)}
+            aria-describedby={errors.city ? "quote-city-error" : undefined}
             placeholder="Rockville"
             className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-600"
           />
 
           {errors.city && (
-            <p className="mt-2 text-sm text-red-600">
+            <p id="quote-city-error" className="mt-2 text-sm text-red-600">
               {errors.city.message}
             </p>
           )}
@@ -353,31 +369,33 @@ const response = await fetch("/api/contact", {
           id="quote-description"
           rows={6}
           {...register("description")}
+          aria-invalid={Boolean(errors.description)}
+          aria-describedby={errors.description ? "quote-description-error" : undefined}
           placeholder="Tell us about your project..."
           className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-600"
         />
 
         {errors.description && (
-          <p className="mt-2 text-sm text-red-600">
+          <p id="quote-description-error" className="mt-2 text-sm text-red-600">
             {errors.description.message}
           </p>
         )}
         {/* Photo Upload */}
 
 <div>
-  <label className="mb-2 block text-sm font-semibold text-slate-700">
+  <label htmlFor="quote-photos" className="mb-2 block text-sm font-semibold text-slate-700">
     Upload Photos (Optional)
   </label>
 
   <div
     {...getRootProps()}
-    className={`cursor-pointer rounded-2xl border-2 border-dashed p-8 text-center transition ${
+    className={`cursor-pointer rounded-2xl border-2 border-dashed p-8 text-center transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 ${
       isDragActive
         ? "border-blue-600 bg-blue-50"
         : "border-slate-300 hover:border-blue-500 hover:bg-slate-50"
     }`}
   >
-    <input {...getInputProps()} />
+    <input {...getInputProps({ id: "quote-photos" })} />
 
     <div className="space-y-2">
       <p className="text-lg font-semibold text-slate-700">
@@ -389,7 +407,7 @@ const response = await fetch("/api/contact", {
       </p>
 
       <p className="text-xs text-slate-400">
-        JPG, PNG, WEBP • Maximum 10 files • 10 MB each
+        JPG, PNG, WEBP • Maximum 10 files • 4 MB total
       </p>
     </div>
   </div>
@@ -420,6 +438,11 @@ const response = await fetch("/api/contact", {
   )}
 </div>
       </div>
+      {submissionError && (
+        <p role="alert" aria-live="assertive" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+          {submissionError}
+        </p>
+      )}
 <div className="flex min-h-16 justify-center">
   {turnstileSiteKey ? (
     <Turnstile
@@ -450,10 +473,16 @@ const response = await fetch("/api/contact", {
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-2xl bg-blue-600 py-4 text-lg font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
+        className="w-full rounded-2xl bg-blue-600 py-4 text-lg font-semibold text-white transition hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 disabled:opacity-50"
       >
         {loading ? "Submitting..." : "Request Free Estimate"}
       </button>
+      <p className="text-center text-sm leading-6 text-slate-500">
+        By submitting this form, you ask XAREON GROUP to use the information provided to review and respond to your project request. Avoid including unnecessary sensitive information in descriptions or photos. See our{" "}
+        <Link href="/privacy" className="font-semibold text-blue-700 underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700">
+          Privacy Notice
+        </Link>.
+      </p>
     </form>
   );
 }

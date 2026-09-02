@@ -31,7 +31,7 @@ export default function BlogPage() {
     <>
       <JsonLd data={structuredData} />
       <Navbar />
-      <main className="min-h-screen bg-slate-50 pb-16 pt-28 md:pt-36">
+      <main id="main-content" tabIndex={-1} className="min-h-screen bg-slate-50 pb-16 pt-28 md:pt-36">
         <section className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="mb-10 max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-600">

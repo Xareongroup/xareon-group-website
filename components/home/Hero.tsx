@@ -1,6 +1,7 @@
 import Image from "next/image";
 import FadeIn from "@/components/ui/FadeIn";
 import { TrackedEstimateLink, TrackedPhoneLink } from "@/components/analytics/TrackedLinks";
+import { GOOGLE_BUSINESS_PROFILE_URL, SERVICE_AREA_STATEMENT } from "@/lib/site-metadata";
 
 export default function Hero() {
   return (
@@ -36,12 +37,8 @@ export default function Hero() {
 
           {/* Description */}
           <p className="mx-auto mt-6 max-w-3xl px-1 text-base leading-7 text-slate-200 sm:text-lg md:mt-8 md:text-xl">
-            Serving homeowners and businesses throughout
-            <strong> Maryland</strong>,
-            <strong> Washington DC</strong>, and
-            <strong> Northern Virginia</strong> with dependable
-            craftsmanship, honest pricing, and exceptional customer
-            service.
+            {SERVICE_AREA_STATEMENT} Dependable craftsmanship, honest pricing,
+            and exceptional customer service guide every accepted project.
           </p>
 
           {/* Buttons */}
@@ -64,9 +61,14 @@ export default function Hero() {
 
           {/* Trust Badges */}
           <div className="mt-10 flex flex-wrap justify-center gap-3 text-xs font-medium text-slate-200 sm:mt-16 sm:gap-6 sm:text-sm">
-            <span className="rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
-              ⭐ 24 Customer Reviews
-            </span>
+            <a
+              href={GOOGLE_BUSINESS_PROFILE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm transition hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              ⭐ 5-Star Rated on Google
+            </a>
 
             <span className="rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
               ✔ Fully Insured
@@ -77,7 +79,7 @@ export default function Hero() {
             </span>
 
             <span className="rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
-              ✔ Serving MD • DC • VA
+              ✔ Montgomery &amp; Howard Counties + Select DMV Projects
             </span>
           </div>
         </FadeIn>

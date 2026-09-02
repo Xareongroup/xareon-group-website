@@ -3,6 +3,7 @@
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import QuoteForm from "@/components/QuoteForm";
 import { TrackedEmailLink, TrackedPhoneLink } from "@/components/analytics/TrackedLinks";
+import { SERVICE_AREA_STATEMENT } from "@/lib/site-metadata";
 
 export default function Contact() {
   return (
@@ -80,13 +81,7 @@ export default function Contact() {
               Service Area
             </h3>
 
-            <p className="mt-3 text-slate-300">
-              Maryland
-              <br />
-              Washington DC
-              <br />
-              Northern Virginia
-            </p>
+            <p className="mt-3 text-slate-300">{SERVICE_AREA_STATEMENT}</p>
           </div>
 
           <div className="rounded-3xl bg-slate-800 p-6">

@@ -11,9 +11,9 @@ import JsonLd from "@/components/seo/JsonLd";
 import { createPublicPageMetadata } from "@/lib/site-metadata";
 import { createPublicPageSchema } from "@/lib/structured-data";
 
-const title = "Home Repair & Installation Services in the DMV | XAREON GROUP";
+const title = "Home Services in Montgomery & Howard Counties | XAREON GROUP";
 const description =
-  "Professional home repair and installation services for homeowners and businesses across Maryland, Washington, DC, and Northern Virginia. Request a free estimate.";
+  "Home repair and installation services in Montgomery and Howard counties, with select projects accepted in Washington, D.C. and Northern Virginia.";
 
 export const metadata = createPublicPageMetadata({
   path: "/",
@@ -33,7 +33,7 @@ export default function HomePage() {
     <>
       <JsonLd data={structuredData} />
       <Navbar />
-      <main>
+      <main id="main-content" tabIndex={-1}>
         <Hero />
         <Services />
         <WhyChoose />

@@ -16,7 +16,7 @@ export default function ThankYouPage() {
   return (
     <>
       <Navbar />
-      <main className="flex min-h-[75vh] items-center bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 px-4 pb-20 pt-32 text-white md:pt-40">
+      <main id="main-content" tabIndex={-1} className="flex min-h-[75vh] items-center bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 px-4 pb-20 pt-32 text-white md:pt-40">
         <section className="mx-auto w-full max-w-3xl rounded-3xl border border-white/10 bg-white/5 p-8 text-center shadow-2xl backdrop-blur-sm md:p-12" aria-labelledby="thank-you-title">
           <CheckCircle2 aria-hidden="true" className="mx-auto text-blue-400" size={58} />
           <p className="mt-6 text-sm font-semibold uppercase tracking-[0.25em] text-blue-300">Request received</p>

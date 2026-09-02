@@ -1,13 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { TrackedEstimateLink, TrackedPhoneLink } from "@/components/analytics/TrackedLinks";
 
 export default function Navbar() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const [menuOpenedOnPath, setMenuOpenedOnPath] = useState<string | null>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuOpen = menuOpenedOnPath === pathname;
+  const mobileMenuId = "mobile-navigation";
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      setMenuOpenedOnPath(null);
+      menuButtonRef.current?.focus();
+    }
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [mobileMenuOpen]);
+
+  function closeMobileMenu() {
+    setMenuOpenedOnPath(null);
+  }
 
   return (
     <header className="fixed inset-x-0 top-0 z-50">
@@ -65,6 +85,13 @@ export default function Navbar() {
           </Link>
 
           <Link
+            href="/about"
+            className="text-base font-semibold text-white transition hover:text-blue-400"
+          >
+            About
+          </Link>
+
+          <Link
             href="/#portfolio"
             className="text-base font-semibold text-white transition hover:text-blue-400"
           >
@@ -86,7 +113,7 @@ export default function Navbar() {
           </Link>
 
           <TrackedEstimateLink
-            href="/#contact"
+            href="/contact"
             placement="navbar_contact"
             className="text-base font-semibold text-white transition hover:text-blue-400"
           >
@@ -107,9 +134,12 @@ export default function Navbar() {
           </TrackedPhoneLink>
 
           <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="rounded-xl border border-white/10 p-3 text-white transition hover:bg-white/10 lg:hidden"
-            aria-label="Open navigation menu"
+            ref={menuButtonRef}
+            onClick={() => setMenuOpenedOnPath(mobileMenuOpen ? null : pathname)}
+            className="rounded-xl border border-white/10 p-3 text-white transition hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:hidden"
+            aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={mobileMenuOpen}
+            aria-controls={mobileMenuId}
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -122,13 +152,13 @@ export default function Navbar() {
 
       {mobileMenuOpen && (
 
-        <div className="mx-4 mt-2 rounded-2xl border border-white/10 bg-slate-950/95 p-4 shadow-2xl backdrop-blur-xl lg:hidden">
+        <div id={mobileMenuId} className="mx-4 mt-2 rounded-2xl border border-white/10 bg-slate-950/95 p-4 shadow-2xl backdrop-blur-xl lg:hidden">
 
           <nav className="flex flex-col gap-2">
 
             <Link
               href="/"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={closeMobileMenu}
               className="rounded-xl px-4 py-3 text-white transition hover:bg-blue-600"
             >
               Home
@@ -136,15 +166,23 @@ export default function Navbar() {
 
             <Link
               href="/services"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={closeMobileMenu}
               className="rounded-xl px-4 py-3 text-white transition hover:bg-blue-600"
             >
               Services
             </Link>
 
             <Link
+              href="/about"
+              onClick={closeMobileMenu}
+              className="rounded-xl px-4 py-3 text-white transition hover:bg-blue-600"
+            >
+              About
+            </Link>
+
+            <Link
               href="/#portfolio"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={closeMobileMenu}
               className="rounded-xl px-4 py-3 text-white transition hover:bg-blue-600"
             >
               Portfolio
@@ -152,7 +190,7 @@ export default function Navbar() {
 
             <Link
               href="/#reviews"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={closeMobileMenu}
               className="rounded-xl px-4 py-3 text-white transition hover:bg-blue-600"
             >
               Reviews
@@ -160,16 +198,16 @@ export default function Navbar() {
 
             <Link
               href="/blog"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={closeMobileMenu}
               className="rounded-xl px-4 py-3 text-white transition hover:bg-blue-600"
             >
               Blog
             </Link>
 
             <TrackedEstimateLink
-              href="/#contact"
+              href="/contact"
               placement="navbar_mobile_contact"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={closeMobileMenu}
               className="rounded-xl px-4 py-3 text-white transition hover:bg-blue-600"
             >
               Contact

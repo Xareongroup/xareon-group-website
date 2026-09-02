@@ -4,15 +4,15 @@ export const smartHomeInstallationService: ServicePageContent = {
   path: "/services/smart-home-installation",
   name: "Smart Home Installation",
   serviceType: "Smart-home device installation and basic setup",
-  title: "Smart Home Installation Services in the DMV | XAREON GROUP",
+  title: "Smart Home Installation in Montgomery & Howard Counties | XAREON GROUP",
   description:
-    "Installation, mounting, and basic setup for compatible video doorbells, smart locks, thermostats, cameras, and customer-provided smart-home devices across the DMV.",
+    "Smart-home installation in Montgomery and Howard counties, with select D.C. and Northern Virginia projects based on scope and availability.",
   eyebrow: "Smart Home Installation",
   heroCopy:
     "Install and set up compatible customer-provided smart-home devices at appropriate existing locations without expanding the project into new wiring or network engineering.",
   overview: [
     "Smart-home projects often combine physical installation with a straightforward device setup. XAREON GROUP installs compatible video doorbells, smart locks, thermostats, cameras, and similar customer-provided devices after reviewing the product, intended location, existing conditions, and supplied instructions.",
-    "The agreed scope may include mounting, replacement at an appropriate existing location, and basic pairing with a customer-controlled phone or account. Customers in Montgomery County and across the DMV retain control of passwords and subscription decisions, and projects requiring new circuits, concealed wiring, or advanced network work must be handled by an appropriately qualified provider.",
+    "The agreed scope may include mounting, replacement at an appropriate existing location, and basic pairing with a customer-controlled phone or account. Customers in Montgomery and Howard counties and accepted extended-area projects retain control of passwords and subscription decisions, and projects requiring new circuits, concealed wiring, or advanced network work must be handled by an appropriately qualified provider.",
   ],
   commonProjects: [
     { title: "Video doorbells", description: "Installing compatible customer-provided video doorbells at appropriate existing locations and supporting basic device pairing." },
@@ -41,15 +41,15 @@ export const minorPlumbingRepairsService: ServicePageContent = {
   path: "/services/minor-plumbing-repairs",
   name: "Minor Plumbing Repairs",
   serviceType: "Minor accessible plumbing fixture repair and replacement",
-  title: "Minor Plumbing Repair Services in the DMV | XAREON GROUP",
+  title: "Minor Plumbing Repairs in Montgomery & Howard Counties | XAREON GROUP",
   description:
-    "Narrowly scoped faucet, tub-spout, fixture-hardware, and other accessible minor plumbing repair or replacement work for suitable existing locations across the DMV.",
+    "Minor accessible plumbing repairs in Montgomery and Howard counties, with select D.C. and Northern Virginia projects based on scope and availability.",
   eyebrow: "Minor Plumbing Repairs",
   heroCopy:
     "Address clearly defined, accessible fixture-level plumbing tasks while keeping repiping, sewer, gas, concealed-line, and major drain work outside the service scope.",
   overview: [
     "Some plumbing-related requests involve a compatible fixture or visible piece of hardware rather than a larger plumbing system. XAREON GROUP reviews narrowly scoped work such as compatible faucet or tub-spout replacement and minor accessible fixture-level hardware issues where existing conditions support the proposed task.",
-    "This is not full plumbing contracting. Before scheduling work in Montgomery County or elsewhere in the DMV, the existing fixture, accessible connections, replacement product, and visible condition must be reviewed. Repiping, sewer or gas work, concealed supply reconstruction, water mains, major drains, and permit-dependent plumbing require an appropriately licensed plumber.",
+    "This is not full plumbing contracting. Before scheduling work in a primary or extended service area, the existing fixture, accessible connections, replacement product, and visible condition must be reviewed. Repiping, sewer or gas work, concealed supply reconstruction, water mains, major drains, and permit-dependent plumbing require an appropriately licensed plumber.",
   ],
   commonProjects: [
     { title: "Compatible faucet replacement", description: "Replacing a suitable customer-provided faucet at an accessible existing sink location after compatibility is reviewed." },
@@ -78,9 +78,9 @@ export const minorElectricalRepairsService: ServicePageContent = {
   path: "/services/minor-electrical-repairs",
   name: "Minor Electrical Repairs",
   serviceType: "Minor existing-location electrical fixture and device repair",
-  title: "Minor Electrical Repair Services in the DMV | XAREON GROUP",
+  title: "Minor Electrical Repairs in Montgomery & Howard Counties | XAREON GROUP",
   description:
-    "Narrowly scoped review and correction of compatible existing-location light-fixture, device-hardware, and other accessible minor electrical issues across the DMV.",
+    "Minor accessible electrical repairs in Montgomery and Howard counties, with select D.C. and Northern Virginia projects based on scope and availability.",
   eyebrow: "Minor Electrical Repairs",
   heroCopy:
     "Review clearly defined, accessible fixture- or device-level electrical issues at existing locations without implying panel, circuit, rewiring, or unrestricted electrical work.",
@@ -115,15 +115,15 @@ export const kitchenInstallationService: ServicePageContent = {
   path: "/services/kitchen-installation",
   name: "Kitchen Installation",
   serviceType: "Kitchen component installation and finish improvements",
-  title: "Kitchen Installation Services in the DMV | XAREON GROUP",
+  title: "Kitchen Installation in Montgomery & Howard Counties | XAREON GROUP",
   description:
-    "Narrowly scoped kitchen cabinet, shelving, hardware, trim, wall repair, painting, and compatible component installation for practical DMV improvement projects.",
+    "Kitchen installation in Montgomery and Howard counties, with select D.C. and Northern Virginia projects based on scope and availability.",
   eyebrow: "Kitchen Installation",
   heroCopy:
     "Complete clearly defined kitchen component and finish work without presenting the service as unrestricted renovation, structural, plumbing, electrical, or gas contracting.",
   overview: [
     "Kitchen installation work can focus on selected components and finishes rather than a full renovation. XAREON GROUP reviews compatible customer-provided cabinets or storage components, shelving, hardware, trim, wall patching, painting, and accessory installation as clearly documented projects.",
-    "The existing room, product specifications, wall conditions, layout, and required specialty-trade connections must be understood before work is scheduled in Montgomery County or elsewhere in the DMV. Structural changes, countertops outside the agreed supported scope, major appliance connections, and plumbing, electrical, gas, or permit work may require separately qualified professionals.",
+    "The existing room, product specifications, wall conditions, layout, and required specialty-trade connections must be understood before work is scheduled in a primary or extended service area. Structural changes, countertops outside the agreed supported scope, major appliance connections, and plumbing, electrical, gas, or permit work may require separately qualified professionals.",
   ],
   commonProjects: [
     { title: "Compatible cabinets and storage", description: "Installing or replacing suitable customer-provided cabinet or storage components after dimensions, support, and existing conditions are reviewed." },
@@ -152,15 +152,15 @@ export const bathroomImprovementsService: ServicePageContent = {
   path: "/services/bathroom-improvements",
   name: "Bathroom Improvements",
   serviceType: "Cosmetic bathroom improvements and finish repairs",
-  title: "Bathroom Improvement Services in the DMV | XAREON GROUP",
+  title: "Bathroom Improvements in Montgomery & Howard Counties | XAREON GROUP",
   description:
-    "Practical bathroom drywall repair, painting, trim, caulking, mirrors, shelving, accessories, and compatible cosmetic fixture improvements across the DMV.",
+    "Bathroom improvements in Montgomery and Howard counties, with select D.C. and Northern Virginia projects based on scope and availability.",
   eyebrow: "Bathroom Improvements",
   heroCopy:
     "Refresh practical bathroom finishes and accessories with a defined cosmetic scope that avoids unsupported structural, waterproofing, plumbing, and electrical claims.",
   overview: [
     "A bathroom can benefit from targeted repairs and finish updates without becoming a full remodeling project. XAREON GROUP reviews practical work such as localized drywall repair, interior painting, trim, caulking, mirrors, shelving, bathroom accessories, and compatible cosmetic fixture or hardware replacement.",
-    "Each project is scoped around visible, accessible conditions and appropriate customer-provided products. For homes and businesses across Montgomery County and the broader DMV region, major plumbing renovation, shower-pan or waterproofing-system replacement, structural work, major electrical changes, and permit-dependent work remain outside this service unless handled by separately qualified professionals.",
+    "Each project is scoped around visible, accessible conditions and appropriate customer-provided products. In both primary and extended service areas, major plumbing renovation, shower-pan or waterproofing-system replacement, structural work, major electrical changes, and permit-dependent work remain outside this service unless handled by separately qualified professionals.",
   ],
   commonProjects: [
     { title: "Localized drywall repair", description: "Repairing suitable holes, dents, access openings, or limited damaged drywall after any active moisture source has been corrected." },

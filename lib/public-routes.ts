@@ -1,5 +1,8 @@
 export const PUBLIC_INDEXABLE_ROUTES = [
   { path: "", changeFrequency: "monthly", priority: 1 },
+  { path: "/about", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/contact", changeFrequency: "monthly", priority: 0.9 },
+  { path: "/privacy", changeFrequency: "yearly", priority: 0.3 },
   { path: "/services", changeFrequency: "monthly", priority: 0.9 },
   { path: "/services/drywall-repair", changeFrequency: "monthly", priority: 0.8 },
   { path: "/services/interior-painting", changeFrequency: "monthly", priority: 0.8 },
@@ -16,6 +19,7 @@ export const PUBLIC_INDEXABLE_ROUTES = [
   { path: "/services/fixture-installation", changeFrequency: "monthly", priority: 0.8 },
   { path: "/service-areas", changeFrequency: "monthly", priority: 0.8 },
   { path: "/service-areas/montgomery-county-md", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/service-areas/howard-county-md", changeFrequency: "monthly", priority: 0.8 },
   { path: "/blog", changeFrequency: "weekly", priority: 0.7 },
 ] as const;
 

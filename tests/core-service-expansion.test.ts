@@ -26,7 +26,7 @@ describe("core service expansion", () => {
   });
 
   it("adds every approved page to the centralized sitemap and IndexNow registry", () => {
-    expect(PUBLIC_INDEXABLE_ROUTES).toHaveLength(18);
+    expect(PUBLIC_INDEXABLE_ROUTES).toHaveLength(22);
     for (const path of expectedPaths) {
       expect(PUBLIC_INDEXABLE_PATHS.has(path)).toBe(true);
     }

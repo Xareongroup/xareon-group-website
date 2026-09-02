@@ -1,6 +1,20 @@
 import type { Metadata } from "next";
 
 export const SITE_URL = "https://www.xareongroup.com";
+export const GOOGLE_BUSINESS_PROFILE_URL = "https://share.google/zPjwgAT9QIoc6d0wy";
+
+export const PRIMARY_SERVICE_AREAS = [
+  "Montgomery County, Maryland",
+  "Howard County, Maryland",
+] as const;
+
+export const EXTENDED_SERVICE_AREAS = [
+  "Washington, DC",
+  "Northern Virginia",
+] as const;
+
+export const SERVICE_AREA_STATEMENT =
+  "XAREON GROUP regularly serves Montgomery and Howard counties, with select projects accepted throughout Washington, D.C. and Northern Virginia depending on project scope and availability.";
 
 export const BUSINESS = {
   name: "XAREON GROUP",
@@ -10,17 +24,19 @@ export const BUSINESS = {
   email: "info@xareongroup.com",
   logo: `${SITE_URL}/logo/xareon1-logo.png`,
   image: `${SITE_URL}/og-image.png`,
-  serviceAreas: ["Maryland", "Washington, DC", "Northern Virginia"],
+  primaryServiceAreas: PRIMARY_SERVICE_AREAS,
+  extendedServiceAreas: EXTENDED_SERVICE_AREAS,
+  serviceAreas: [...PRIMARY_SERVICE_AREAS, ...EXTENDED_SERVICE_AREAS],
 } as const;
 
 export const DEFAULT_TITLE =
   "XAREON GROUP | Professional Home Repair & Installation Services";
 
 export const DEFAULT_DESCRIPTION =
-  "Professional general home repairs, drywall repair, interior painting, TV mounting, furniture assembly, smart-home installation, minor plumbing and electrical repairs, door and fixture installation, partition walls, kitchen installation, and bathroom improvements across Maryland, Washington, DC, and Northern Virginia.";
+  "Professional home repair and installation services in Montgomery and Howard counties, Maryland, with select projects accepted in Washington, D.C. and Northern Virginia based on scope and availability.";
 
 export const SOCIAL_DESCRIPTION =
-  "Professional Home Repair & Installation Services serving Maryland, Washington DC and Northern Virginia.";
+  "Home repair and installation services in Montgomery and Howard counties, with select projects accepted in Washington, D.C. and Northern Virginia.";
 
 interface PublicPageMetadataOptions {
   path: string;

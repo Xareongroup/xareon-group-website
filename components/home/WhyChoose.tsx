@@ -37,9 +37,9 @@ const features = [
     icon: Wrench,
   },
   {
-    title: "Serving MD • DC • VA",
+    title: "Montgomery & Howard Counties",
     description:
-      "Local professionals proudly serving homeowners and businesses throughout the region.",
+      "Our primary regular service areas, with select D.C. and Northern Virginia projects accepted based on scope and availability.",
     icon: MapPin,
   },
   {
