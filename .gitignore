@@ -20,6 +20,9 @@
 # production
 /build
 
+# private project source photographs
+/project-assets/
+
 # misc
 .DS_Store
 *.pem

@@ -76,8 +76,8 @@ export default function Footer() {
                 Service Areas
               </Link>
 
-              <Link href="/#portfolio" className="text-slate-400 hover:text-blue-400">
-                Portfolio
+              <Link href="/projects" className="text-slate-400 hover:text-blue-400">
+                Projects
               </Link>
 
               <Link href="/#reviews" className="text-slate-400 hover:text-blue-400">

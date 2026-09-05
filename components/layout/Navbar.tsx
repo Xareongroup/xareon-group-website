@@ -92,10 +92,10 @@ export default function Navbar() {
           </Link>
 
           <Link
-            href="/#portfolio"
+            href="/projects"
             className="text-base font-semibold text-white transition hover:text-blue-400"
           >
-            Portfolio
+            Projects
           </Link>
 
           <Link
@@ -181,11 +181,11 @@ export default function Navbar() {
             </Link>
 
             <Link
-              href="/#portfolio"
+              href="/projects"
               onClick={closeMobileMenu}
               className="rounded-xl px-4 py-3 text-white transition hover:bg-blue-600"
             >
-              Portfolio
+              Projects
             </Link>
 
             <Link

@@ -215,6 +215,15 @@ export default function MontgomeryCountyPage() {
           </div>
         </section>
 
+        <section className="bg-blue-50 py-16 md:py-20" aria-labelledby="county-project">
+          <div className="mx-auto max-w-5xl px-4 sm:px-6">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-700">Completed in Montgomery County</p>
+            <h2 id="county-project" className="mt-3 text-3xl font-bold md:text-4xl">A coordinated whole-home restoration and renovation</h2>
+            <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-700">See how XAREON GROUP brought repairs, room improvements, installations, flooring, painting, stair work, and finishing details together within one completed project.</p>
+            <Link href="/projects/whole-home-restoration-renovation" className="mt-7 inline-flex min-h-12 items-center rounded-2xl bg-blue-600 px-7 py-3 font-semibold text-white hover:bg-blue-700">View the Montgomery County project</Link>
+          </div>
+        </section>
+
         <section className="py-16 text-center md:py-24" aria-labelledby="county-final-cta">
           <div className="mx-auto max-w-4xl px-4 sm:px-6">
             <h2 id="county-final-cta" className="text-3xl font-bold md:text-4xl">Ready to discuss your Montgomery County project?</h2>

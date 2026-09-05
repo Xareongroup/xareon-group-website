@@ -129,6 +129,15 @@ export default function ServicesPage() {
           </div>
         </section>
 
+        <section className="bg-blue-50 py-16 md:py-20" aria-labelledby="services-project-example">
+          <div className="mx-auto max-w-5xl px-4 sm:px-6">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-700">Completed project</p>
+            <h2 id="services-project-example" className="mt-3 text-3xl font-bold md:text-4xl">See multiple services coordinated across one home</h2>
+            <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-700">Explore a Montgomery County whole-home restoration that brought kitchen and bathroom improvements, repairs, flooring, painting, doors, partitions, mounting, and finish work together.</p>
+            <Link href="/projects/whole-home-restoration-renovation" className="mt-7 inline-flex min-h-12 items-center rounded-2xl bg-blue-600 px-7 py-3 font-semibold text-white hover:bg-blue-700">View the completed project</Link>
+          </div>
+        </section>
+
         <section className="bg-slate-950 py-16 text-white md:py-24" aria-labelledby="services-process">
           <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:items-center">
             <div>

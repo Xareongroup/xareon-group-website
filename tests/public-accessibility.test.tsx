@@ -32,6 +32,7 @@ describe("public navigation accessibility", () => {
       "app/page.tsx", "app/services/page.tsx", "components/services/ServiceDetailPage.tsx",
       "app/service-areas/montgomery-county-md/page.tsx", "app/service-areas/howard-county-md/page.tsx",
       "app/about/page.tsx", "app/contact/page.tsx", "app/privacy/page.tsx",
+      "app/projects/page.tsx", "app/projects/whole-home-restoration-renovation/page.tsx",
     ];
     for (const file of publicMainFiles) {
       expect(fs.readFileSync(path.join(process.cwd(), file), "utf8"), file).toContain('id="main-content"');

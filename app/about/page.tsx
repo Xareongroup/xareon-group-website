@@ -154,7 +154,10 @@ export default function AboutPage() {
                 </article>
               ))}
             </div>
-            <Link href="/services" className="mt-8 inline-flex min-h-12 items-center rounded-2xl border border-slate-300 px-7 py-3 font-semibold text-slate-700 hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700">Explore all detailed services</Link>
+            <div className="mt-8 flex flex-wrap gap-4">
+              <Link href="/services" className="inline-flex min-h-12 items-center rounded-2xl border border-slate-300 px-7 py-3 font-semibold text-slate-700 hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700">Explore all detailed services</Link>
+              <Link href="/projects/whole-home-restoration-renovation" className="inline-flex min-h-12 items-center rounded-2xl bg-blue-600 px-7 py-3 font-semibold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700">See a coordinated whole-home project</Link>
+            </div>
           </div>
         </section>
 

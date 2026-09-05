@@ -8,6 +8,7 @@ import { TrackedEstimateLink, TrackedPhoneLink } from "@/components/analytics/Tr
 import type { ServicePageContent } from "@/lib/services";
 import { BUSINESS, SERVICE_AREA_STATEMENT } from "@/lib/site-metadata";
 import { createServicePageSchema } from "@/lib/structured-data";
+import { projectRelatedServicePaths, wholeHomeRestorationProject } from "@/lib/projects";
 
 const processSteps = [
   "Tell us about the project",
@@ -26,6 +27,7 @@ const reasons = [
 ];
 
 export default function ServiceDetailPage({ service }: { service: ServicePageContent }) {
+  const hasRelatedProject = projectRelatedServicePaths.has(service.path);
   const structuredData = createServicePageSchema({
     path: service.path,
     name: service.name,
@@ -212,6 +214,17 @@ export default function ServiceDetailPage({ service }: { service: ServicePageCon
             </div>
           </div>
         </section>
+
+        {hasRelatedProject && (
+          <section className="bg-slate-950 py-16 text-white md:py-20" aria-labelledby="related-project">
+            <div className="mx-auto max-w-5xl px-4 sm:px-6">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-300">Related completed project</p>
+              <h2 id="related-project" className="mt-3 text-3xl font-bold md:text-4xl">See this service within a coordinated whole-home scope</h2>
+              <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-300">The Montgomery County whole-home restoration brought multiple repairs, room improvements, installations, and finish details together as one project.</p>
+              <Link href={wholeHomeRestorationProject.path} className="mt-7 inline-flex min-h-12 items-center rounded-2xl bg-blue-600 px-7 py-3 font-semibold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">View the whole-home project</Link>
+            </div>
+          </section>
+        )}
 
         <section className="bg-blue-600 py-16 text-white md:py-20" aria-labelledby="service-final-cta">
           <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">

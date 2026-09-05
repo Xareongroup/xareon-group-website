@@ -3,6 +3,8 @@ export const PUBLIC_INDEXABLE_ROUTES = [
   { path: "/about", changeFrequency: "monthly", priority: 0.8 },
   { path: "/contact", changeFrequency: "monthly", priority: 0.9 },
   { path: "/privacy", changeFrequency: "yearly", priority: 0.3 },
+  { path: "/projects", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/projects/whole-home-restoration-renovation", changeFrequency: "monthly", priority: 0.8 },
   { path: "/services", changeFrequency: "monthly", priority: 0.9 },
   { path: "/services/drywall-repair", changeFrequency: "monthly", priority: 0.8 },
   { path: "/services/interior-painting", changeFrequency: "monthly", priority: 0.8 },
