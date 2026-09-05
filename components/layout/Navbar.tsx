@@ -44,7 +44,7 @@ export default function Navbar() {
             alt="XAREON GROUP"
             width={70}
             height={70}
-            priority
+            loading="eager"
             style={{
               width: "56px",
               height: "56px",

@@ -15,23 +15,23 @@ const features = [
   {
     title: "Fully Insured",
     description:
-      "Your home and business are protected. We complete every project with professionalism and care.",
+      "XAREON GROUP is fully insured and reviews each requested scope before work is accepted.",
     icon: ShieldCheck,
   },
   {
-    title: "Honest Pricing",
+    title: "Clear Scope Review",
     description:
-      "Upfront estimates with no hidden fees. We believe in transparency and fairness.",
+      "Project details, location, and requested work are reviewed so the proposed scope can be discussed clearly.",
     icon: BadgeCheck,
   },
   {
-    title: "Fast Response",
+    title: "Available 24/7",
     description:
-      "Quick scheduling and dependable service to get your project completed on time.",
+      "Customers can call, email, or submit an estimate request at any time. Scheduling depends on scope and availability.",
     icon: Clock3,
   },
   {
-    title: "Experienced Craftsmanship",
+    title: "Coordinated Workmanship",
     description:
       "From repairs to installations, every project is completed with attention to detail.",
     icon: Wrench,
@@ -69,9 +69,9 @@ export default function WhyChoose() {
             </h2>
 
             <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-slate-600">
-              XAREON GROUP is committed to delivering dependable
-              workmanship, honest pricing, and exceptional customer
-              service on every project.
+              XAREON GROUP approaches repairs, installations, improvements,
+              and renovation inquiries with clear communication and attention
+              to the agreed project scope.
             </p>
           </div>
 

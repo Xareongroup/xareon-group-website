@@ -22,24 +22,6 @@ export const metadata: Metadata = {
 
   description: DEFAULT_DESCRIPTION,
 
-  keywords: [
-    "XAREON GROUP",
-    "Handyman",
-    "Home Repair",
-    "TV Mounting",
-    "Furniture Assembly",
-    "Smart Home",
-    "Ring Doorbell Installation",
-    "Nest Thermostat",
-    "Painting",
-    "Drywall Repair",
-    "Minor Plumbing",
-    "Minor Electrical",
-    "Maryland Handyman",
-    "Washington DC Handyman",
-    "Northern Virginia Handyman",
-  ],
-
   authors: [
     {
       name: "XAREON GROUP",

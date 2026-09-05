@@ -11,7 +11,8 @@ export default function Hero() {
         src="/images/hero/hero.jpg"
         alt="XAREON GROUP Professional Home Services"
         fill
-        priority
+        preload
+        sizes="100vw"
         className="object-cover"
       />
 
@@ -37,8 +38,8 @@ export default function Hero() {
 
           {/* Description */}
           <p className="mx-auto mt-6 max-w-3xl px-1 text-base leading-7 text-slate-200 sm:text-lg md:mt-8 md:text-xl">
-            {SERVICE_AREA_STATEMENT} Dependable craftsmanship, honest pricing,
-            and exceptional customer service guide every accepted project.
+            {SERVICE_AREA_STATEMENT} Clear communication, careful workmanship,
+            and attention to the agreed scope guide every accepted project.
           </p>
 
           {/* Buttons */}

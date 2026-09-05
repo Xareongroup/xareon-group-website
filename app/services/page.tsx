@@ -52,7 +52,7 @@ export default function ServicesPage() {
                 {SERVICE_AREA_STATEMENT}
               </p>
               <div className="mt-9 flex flex-col gap-4 sm:flex-row">
-                <TrackedEstimateLink href="/#contact" placement="services_hub_hero" className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-blue-600 px-7 py-3 font-semibold text-white transition hover:bg-blue-700">Get a Free Estimate</TrackedEstimateLink>
+                <TrackedEstimateLink href="/contact#estimate-form" placement="services_hub_hero" className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-blue-600 px-7 py-3 font-semibold text-white transition hover:bg-blue-700">Get a Free Estimate</TrackedEstimateLink>
                 <TrackedPhoneLink placement="services_hub_hero" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-white/30 bg-white/10 px-7 py-3 font-semibold text-white transition hover:bg-white hover:text-slate-950">
                   <Phone aria-hidden="true" size={19} /> Call {BUSINESS.telephoneDisplay}
                 </TrackedPhoneLink>
@@ -161,7 +161,7 @@ export default function ServicesPage() {
             <h2 id="services-area" className="text-3xl font-bold md:text-4xl">Primary Maryland and extended DMV service areas</h2>
             <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-slate-600">{SERVICE_AREA_STATEMENT} Provide your city with the request so the project location and scope can be reviewed together.</p>
             <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
-              <TrackedEstimateLink href="/#contact" placement="services_hub_final" className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-blue-600 px-7 py-3 font-semibold text-white hover:bg-blue-700">Request a Free Estimate</TrackedEstimateLink>
+              <TrackedEstimateLink href="/contact#estimate-form" placement="services_hub_final" className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-blue-600 px-7 py-3 font-semibold text-white hover:bg-blue-700">Request a Free Estimate</TrackedEstimateLink>
               <Link href="/service-areas" className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-slate-300 px-7 py-3 font-semibold text-slate-700 hover:bg-slate-50">See Where We Provide Service</Link>
             </div>
           </div>

@@ -65,7 +65,7 @@ export default function ServiceAreasPage() {
               <h1 className="mt-4 text-4xl font-extrabold leading-tight sm:text-5xl md:text-6xl">Home services in Montgomery and Howard counties</h1>
               <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-200 md:text-xl">{SERVICE_AREA_STATEMENT}</p>
               <div className="mt-9 flex flex-col gap-4 sm:flex-row">
-                <TrackedEstimateLink href="/#contact" placement="service_areas_hero" className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-blue-600 px-7 py-3 font-semibold text-white transition hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Get a Free Estimate</TrackedEstimateLink>
+                <TrackedEstimateLink href="/contact#estimate-form" placement="service_areas_hero" className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-blue-600 px-7 py-3 font-semibold text-white transition hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Get a Free Estimate</TrackedEstimateLink>
                 <TrackedPhoneLink placement="service_areas_hero" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-white/30 bg-white/10 px-7 py-3 font-semibold text-white transition hover:bg-white hover:text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"><Phone aria-hidden="true" size={19} />Call {BUSINESS.telephoneDisplay}</TrackedPhoneLink>
               </div>
             </div>
@@ -130,7 +130,7 @@ export default function ServiceAreasPage() {
           <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
             <h2 id="area-estimate" className="text-3xl font-bold md:text-4xl">Tell us where your project is located</h2>
             <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-300">Provide the city, property type, requested work, and photos when available so location and scope can be reviewed together.</p>
-            <TrackedEstimateLink href="/#contact" placement="service_areas_final" className="mt-8 inline-flex min-h-12 items-center justify-center rounded-2xl bg-blue-600 px-7 py-3 font-semibold text-white hover:bg-blue-700">Request a Free Estimate</TrackedEstimateLink>
+            <TrackedEstimateLink href="/contact#estimate-form" placement="service_areas_final" className="mt-8 inline-flex min-h-12 items-center justify-center rounded-2xl bg-blue-600 px-7 py-3 font-semibold text-white hover:bg-blue-700">Request a Free Estimate</TrackedEstimateLink>
           </div>
         </section>
       </main>

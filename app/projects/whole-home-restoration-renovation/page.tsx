@@ -78,7 +78,7 @@ export default function WholeHomeRestorationPage() {
                 <div className="mt-8 flex flex-wrap gap-3 text-sm font-semibold"><span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2"><MapPin aria-hidden="true" size={17} />{project.location}</span><span className="rounded-full bg-white/10 px-4 py-2">Completed project</span></div>
               </div>
               <div className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-2xl ring-1 ring-white/10">
-                <Image src={project.heroImage.src} alt={project.heroImage.alt} fill priority sizes="(max-width: 1024px) 100vw, 60vw" className="object-cover" />
+                <Image src={project.heroImage.src} alt={project.heroImage.alt} fill preload sizes="(max-width: 1024px) 100vw, 60vw" className="object-cover" />
               </div>
             </div>
           </div>

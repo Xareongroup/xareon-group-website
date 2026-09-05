@@ -111,7 +111,7 @@ export default function AboutPage() {
               <h1 className="mt-4 text-4xl font-extrabold leading-tight sm:text-5xl md:text-6xl">A practical, scope-led approach to home service</h1>
               <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-200 md:text-xl">XAREON GROUP is a service-area company providing repair, installation, improvement, and renovation services for homes and appropriate business spaces. Every request begins with the property, the work requested, and a clear definition of what the project should include.</p>
               <div className="mt-9 flex flex-col gap-4 sm:flex-row">
-                <TrackedEstimateLink href="/#contact" placement="about_hero" className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-blue-600 px-7 py-3 font-semibold text-white transition hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Get a Free Estimate</TrackedEstimateLink>
+                <TrackedEstimateLink href="/contact#estimate-form" placement="about_hero" className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-blue-600 px-7 py-3 font-semibold text-white transition hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Get a Free Estimate</TrackedEstimateLink>
                 <TrackedPhoneLink placement="about_hero" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-white/30 bg-white/10 px-7 py-3 font-semibold text-white transition hover:bg-white hover:text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"><Phone aria-hidden="true" size={19} />Call {BUSINESS.telephoneDisplay}</TrackedPhoneLink>
               </div>
             </div>
@@ -218,7 +218,7 @@ export default function AboutPage() {
             <h2 id="about-trust" className="mt-7 text-3xl font-bold md:text-4xl">Tell XAREON GROUP what your project needs</h2>
             <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">Share the location, property type, complete task list, photos, and product details available. The company will review the information and follow up about the appropriate scope.</p>
             <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
-              <TrackedEstimateLink href="/#contact" placement="about_final" className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-blue-600 px-7 py-3 font-semibold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700">Request a Free Estimate</TrackedEstimateLink>
+              <TrackedEstimateLink href="/contact#estimate-form" placement="about_final" className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-blue-600 px-7 py-3 font-semibold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700">Request a Free Estimate</TrackedEstimateLink>
               <TrackedPhoneLink placement="about_final" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-slate-300 px-7 py-3 font-semibold text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"><Phone aria-hidden="true" size={19} />Call {BUSINESS.telephoneDisplay}</TrackedPhoneLink>
             </div>
           </div>

@@ -67,7 +67,7 @@ export default function ServiceDetailPage({ service }: { service: ServicePageCon
               </p>
               <div className="mt-9 flex flex-col gap-4 sm:flex-row">
                 <TrackedEstimateLink
-                  href="/#contact"
+                  href="/contact#estimate-form"
                   placement="service_detail_hero"
                   className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-blue-600 px-7 py-3 font-semibold text-white transition hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
@@ -231,7 +231,7 @@ export default function ServiceDetailPage({ service }: { service: ServicePageCon
             <h2 id="service-final-cta" className="text-3xl font-bold md:text-4xl">Ready to discuss your {service.name.toLowerCase()} project?</h2>
             <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-blue-100">Share the project details and available photos to request a free estimate from XAREON GROUP.</p>
             <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
-              <TrackedEstimateLink href="/#contact" placement="service_detail_final" className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-white px-7 py-3 font-semibold text-blue-700 hover:bg-slate-100">Get a Free Estimate</TrackedEstimateLink>
+              <TrackedEstimateLink href="/contact#estimate-form" placement="service_detail_final" className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-white px-7 py-3 font-semibold text-blue-700 hover:bg-slate-100">Get a Free Estimate</TrackedEstimateLink>
               <TrackedPhoneLink placement="service_detail_final" className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-white px-7 py-3 font-semibold text-white hover:bg-white hover:text-blue-700">Call {BUSINESS.telephoneDisplay}</TrackedPhoneLink>
             </div>
           </div>

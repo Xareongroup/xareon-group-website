@@ -46,7 +46,7 @@ export default function ProjectsPage() {
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <div className="grid overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl lg:grid-cols-[1.15fr_0.85fr]">
               <div className="relative aspect-[4/3] min-h-72 lg:aspect-auto">
-                <Image src={project.heroImage.src} alt={project.heroImage.alt} fill priority sizes="(max-width: 1024px) 100vw, 58vw" className="object-cover" />
+                <Image src={project.heroImage.src} alt={project.heroImage.alt} fill preload sizes="(max-width: 1024px) 100vw, 58vw" className="object-cover" />
               </div>
               <div className="flex flex-col justify-center p-7 md:p-10 lg:p-12">
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">Featured project · {project.location}</p>
